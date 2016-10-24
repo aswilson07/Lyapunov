@@ -1,0 +1,2087 @@
+\documentclass[11pt]{article}
+\usepackage{tikz}
+\usepackage{fullpage, url,amsmath,amsfonts,amssymb,mathtools,mathrsfs,graphicx,  algorithm, float, sansmath,epstopdf,color,caption,enumitem,tabularx}
+\usepackage[final]{pdfpages}
+\usepackage{amsthm}
+\usetikzlibrary{automata,topaths}
+\usetikzlibrary{decorations.pathreplacing,shapes.misc}
+\usepackage{fancyhdr}
+
+%\renewcommand{\chaptername}{Lecture}
+
+\usepackage{multirow}
+\usetikzlibrary{calc,arrows}
+\theoremstyle{plain}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{properties}{Properties}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+%\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{observation}{Observation}
+\usepackage{floatrow}
+\usepackage{blindtext}
+\def \endprf{\hfill {\vrule height6pt width6pt depth0pt}\medskip}
+%\newenvironment{proof}{\noindent {\bf Proof} }{\endprf\par}
+\usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
+\setlength{\tabcolsep}{18pt}
+%\tikzset{
+%    %Define standard arrow tip
+%    >=stealth',
+%    %Define style for boxes
+%    punkt/.style={
+%           rectangle,
+%           rounded corners,
+%           draw=black, very thick,
+%           text width=6.5em,
+%           minimum height=2em,
+%           text centered},
+%    % Define arrow style
+%    pil/.style={
+%           ->,
+%           thick,
+%           shorten <=2pt,
+%           shorten >=2pt,}
+%}
+\newcommand{\vct}[1]{#1}
+\newcommand{\mtx}[1]{#1}
+\newcommand{\sfT}{\mathsf{T}}  % tangent space
+
+
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\E}{{\mathcal E}}
+\newcommand{\Z}{{\mathbb Z}}
+\newcommand{\Q}{{\mathbb Q}}
+\newcommand{\C}{{\mathbb C}}
+\newcommand{\N}{{\mathbb N}}
+\newcommand{\X}{{\mathcal X}}
+\newcommand{\tx}{\tilde{x}}
+\newcommand{\ty}{\tilde{y}}
+\newcommand{\tu}{\tilde{u}}
+\newcommand{\tz}{\tilde{z}}
+\newcommand{\TxX}{\sfT_x\X}  % tangent space
+
+\newcommand{\A}{\mathcal{A}}
+
+\newcommand{\loss}{\operatorname*{loss}}
+\newcommand{\minimize}{\mathrm{minimize}}
+\newcommand{\st}{\mathrm{subject to}}
+
+\newcommand{\todo}[1]{\vspace{5 mm}\par \noindent \marginpar{\textsc{ToDo}}
+\framebox{\begin{minipage}[c]{0.95 \columnwidth} \tt #1
+\end{minipage}}\vspace{5 mm}\par}
+
+\newcommand{\insertrep}[1]{%
+\hspace*{-2.4cm}
+\fbox{\includegraphics[page=1,scale=0.4]{#1}}
+\includepdf[scale=0.4,pages=1-,frame]{#1}
+}
+
+\setlength{\oddsidemargin}{0pt}
+\setlength{\evensidemargin}{0pt}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{0in}
+\setlength{\textheight}{8.5in}
+
+\begin{document}
+\title{A Lyapunov Analysis of Momentum Methods \\ in  Optimization}
+%\title{A Lyapunov Perspective on Momentum Methods \\ in  Optimization}
+\date{}
+\author{Ashia C. Wilson \and Benjamin Recht \and Michael I. Jordan}
+\maketitle
+\begin{abstract}
+Momentum methods play a central role in convex optimization. Several momentum methods are provably optimal and all use a technique called {\em estimate sequences} to analyze their behavior.  The technique of estimate sequences has long been considered difficult to understand. In the following paper, we show there is an equivalence between the technique of estimate sequences and a family of Lyapunov functions in both continuous and discrete-time. This framework allows us to develop a simplified and unified analysis of several existing algorithms, introduce a couple of interesting new methods, and deepens the connection between algorithms and differential equations. 
+\end{abstract}
+
+\section{Introduction}
+
+Momentum is a powerful heuristic for accelerating the convergence of optimization methods.    One can intuitively ``add momentum'' to a method by adding to the current step a weighted version of the previous step, encouraging the method to move along search directions that had been previously seen to be fruitful.  Such methods were first popularized by Polyak~\cite{Polyak1964}, and have been employed in many practical optimization solvers.  In particular, since the 1980s, momentum methods have been popular in neural networks as a way to accelerate the backpropagation algorithm.  Here, the intuition is that momentum allows local search to avoid ``long ravines'' and ``sharp curvatures'' in the sublevel sets of cost functions~\cite{Rumelhardt}.
+
+Polyak motivated momentum methods by an analogy to a ``Heavy Ball'' moving in a potential well defined by the cost function.  However, Polyak's physical intuition was exceedingly difficult to make rigorous.  For quadratics costs, Polyak was able to apply an eigenvalue argument that showed that his Heavy Ball method required no more iterations than the method of conjugate gradients~\cite{Polyak1964}.  
+Indeed, when applied to positive definite quadratic cost functions, Polyak's Heavy Ball method is equivalent to Chebyshev's iterative method~\cite{Chebyshev}.   Despite its intuitive elegance, Polyak's eigenvalue analysis does not apply globally for general convex functions. Indeed, Lessard~\emph{et al} derived a simple one dimensional counterexample where the standard Heavy-Ball method does not converge~\cite{Lessard14}.  
+
+In order to make momentum methods rigorous, a different approach was required.  In celebrated work, Nesterov devised a general scheme to accelerate convex optimization methods, which achieve optimal running times for a myriad of oracle models in convex programming~\cite{Nesterov04}.  To achieve such rigorous general applicability, however, Nesterov's proof techniques abandoned the physical intuition of Polyak~\cite{Nesterov04}.  In lieu of differential equations and potential functions, Nesterov devised the method of \emph{estimate sequences} to verify the correctness of his methods.  Researchers have struggled with understanding the intuition and underpinnings of the estimate sequence methodology since Nesterov's initial papers.  Nesterov himself often refers to the associated proof techniques as an ``algebraic trick.''  
+
+To overcome this lack of intuition, several authors have recently proposed schemes to achieve acceleration without appealing to estimate sequences~\cite{Fazel, BubeckLeeSingh15, Lessard14}.  Orthogonally, another set of authors have taken a different approach by analyzing the continuous-time limit of accelerated methods and showing that the stability of the resulting differential equations can be verified by analyzing a simple Lyapunov function~\cite{SuBoydCandes14,Krichene15,Acceleration}.  Unfortunately, none of these works provide a clear path of moving from a continuous time ODE to a discrete time optimization algorithm.  There are a vast number of ways to discretize differential equations, but not all of them give rise to convergent methods.  Indeed, for unconstrained optimization on Euclidean space, Polyak's Heavy Ball method and Nesterov's optimal method have the same continuous time limit.
+
+In this paper, we propose a bridge between the continuous time limits and discrete time algorithms.  Our method takes as its primary object, a general Lyapunov function for momentum methods in continuous time.  Through a diverse set of examples, we demonstrate how the proofs of momentum methods can be understood as bounding discretization errors of the Lyapunov function when moving to discrete time.  In this way, we show how the discretization of the associated continuous time ODE needs to be performed in such a way that the Lyapunov function remains valid when transitioning to discrete time.
+
+Using this technique, we provide a clean, direct proof of the convergence of Nesterov's method for strongly convex functions in Euclidean spaces.  We explore how only particular parameterizations of the continuous differential equation lead to discrete time methods.  In doing so, we explain the need for the extragradient step inside Nesterov's method which does not appear in Polyak's method.  
+
+Finally, we show there is an equivalence between estimate sequences and Lyapunov functions.  In continuous time and discrete time, estimate sequences can be derived directly from the Lyapunov function and vice versa.  We show that the associated continuous time estimate sequence can also be directly discretized to give standard estimate-sequence based proofs of momentum methods.  This clarifies how Nesterov's ``algebraic trick'' is closely related invariant reduction proofs that are more common in algorithm analysis.
+
+The paper proceeds as follows.  We first describe the related work in viewing optimization algorithms as discretizations of continuous dynamical systems.  We then introduce the notion of Lyapunov functions that we will use throughout the paper to demonstrate convergence of algorithms.  In particular, we will introduce time-varying Lyapunov functions that not only prove algorithm convergence but additionally verify a \emph{convergence rate}.  We review how such Lyapunov analysis has been used to analyze mirror decent, reviewing the concepts of Bregman divergence and mirror maps in the process.  We then turn to accelerated methods, providing a general Lyapunov analysis for Nesterov's accelerated method, the quasi-monotone subgradient method, the conditional gradient method, and a few novel algorithms.  We pay particular attention to the strongly convex case in Euclidean space, highlighting some unique properties of this setup.  Finally, we describe the connection between estimate sequences and Lyapunov functions and describe directions for future investigation.
+
+\section{The dynamical view of momentum methods}
+
+
+This paper is concerned with the class of constrained optimization problems
+\begin{align}\label{eq:main-problem}
+\min_{x \in \X} \; f(x),
+\end{align}
+where $\X \subseteq \R^d$ is a closed convex set and $f \colon \X \to \R$ is a continuously differentiable convex function. 
+% We primarily focus on the case $\X = \R^d$ unless explicitly noted otherwise. 
+%We also assume $f$ has a unique minimizer, $x^* \in \X$, satisfying the optimality condition $\nabla f(x^*) = 0$. 
+We use the standard Euclidean norm $\|x\| = \langle x,x \rangle^{1/2}$ throughout.
+
+We denote a discrete-time sequence in lower case, e.g., $x_k$ with $k \ge 0$ an integer. We denote a continuous-time curve in upper case, e.g., $X_t$ with $t \in \R$. An over-dot means derivative with respect to time, i.e., $\dot X_t = \frac{d}{dt} X_t$.
+
+We consider the general non-Euclidean setting in which the space $\X$ is endowed with a distance-generating function $h \colon \X \to \R$ that is convex and essentially smooth (i.e., $h$ is continuously differentiable in $\X$, and $\|\nabla h(x)\|_* \to \infty$ as $\|x\| \to \infty$). The function $h$ can also be used to define an alternative measure of distance in $\X$ via its Bregman divergence:
+\begin{align*}
+D_h(y,x) = h(y) - h(x) - \langle \nabla h(x), y-x \rangle,
+\end{align*}
+which is nonnegative since $h$ is convex. 
+The \emph{Euclidean setting} is obtained when $h(x) = \frac{1}{2} \|x\|^2$.
+
+The intuition for solving problem~\eqref{eq:main-problem} with momentum methods comes from looking at optimization algorithms as discrete-time approximations to ordinary differential equations. In particular, the second order differential equation:
+ \begin{align}\label{eq:heavy-ball-ode}
+ m \frac{d^2x}{dt^2}& = - \nabla f(x) - m \gamma \frac{dx}{dt}
+ \end{align}
+corresponds to the equations of motion of an object with mass $m$ in the presence of  friction or viscosity as well as a potential $f$.  Note that the fixed points of such dynamics are those where the gradient of $f$ vanishes.   The trajectories of this dynamical systems will tend to continue to move in the direction they were moving before, analogous to how heavier objects move down hill faster than light objects in the presence of friction.  In the limit that the mass goes to zero, where $\gamma \propto 1/m$, we recover the continuous time limit of the gradient descent.  Thus, the mass term here serves to \emph{accelerate} the progress towards the bottom of the well. 
+
+In seminal work, Polyak proposed the \emph{Heavy Ball method} for optimization which amounted to applying the Euler method to the dynamical system~\eqref{eq:heavy-ball-ode}.  Polyak was able to show \emph{local convergence} of this method, but was unable to prove global convergence.  Moreover, Polyak's local convergence required the assumption that $f$ was strongly convex in the neighborhood of the associated stationary point.
+
+Until recently, this ODE perspective on optimization algorithms was largely abandoned in favor of Nesterov's estimate sequence framework.  However, there has been a recent resurgence in interest in ODE based analyses.  Su, Boyd and Cand\`es~\cite{SuBoydCandes14}, showed that the continuous-time limit of Nesterov's accelerated gradient descent method corresponds to the following second-order ODE, 
+ \begin{equation}\label{Eq:SuBoydCandes}
+ \ddot X_t + \frac{r}{t} \dot X_t + \nabla f(X_t) = 0,\,\,\,\,r \geq 3.
+ \end{equation}
+This is similar to~\eqref{eq:heavy-ball-ode} but has a time-dependent damping term $\gamma_t = r\log t$.  Another particularly elegant aspect of the analysis was the introduction of a {\em Lyapunov function} which can be used to show a $O(1/t^2)$ convergence rate for the continuous time dynamics. This matches the $O(1/\epsilon k^2)$ convergence rate of accelerated gradient descent, given the discretization chooses time-step $t= \sqrt\epsilon k$. Thus, the convergence rate is maintained passing from continuous-time to discrete-time. Two things remain unclear from their analysis however;  they introduce an additional sequence $\{y_k\}_{k=1}^\infty$ while discretizing the ODE~\cite[Sec 2]{Acceleration},  which does not correspond to a straightforward discretization technique; and they do not demonstrate what connection -- if any --   there is between the Lypaunov argument used to analyze the continuous-time dynamics and the technique of estimate sequences used to analyze the discrete-time algorithm. 
+
+Krichene, Bartlett and Bayen~\cite{Krichene15} derive a modified accelerated mirror descent algorithm using a ``discretized'' Lyapunov function. However, their proof was for a slightly modified algorithm than the algorithm which appeared in Nesterov's non-Euclidean extension~\cite{Nesterov05}. In particular, their analysis entailed an additional smoothness assumption which is not necessary for the original algorithm~\cite{Nesterov05}, or the original proof technique using estimate sequences.\footnote{In particular, they assume $\frac{\ell }{2} \|x-y\|^2 \leq  D_h(x,y) \leq \frac{L}{2}\|x-y\|^2$%, so that for all intensive purposes, their setting is given by the norm
+. This additional assumption greatly simplifies the proof. However, only the assumption of an upper-bound is needed for the most general form of accelerated methods is that $\frac{\ell }{2} \|x-y\|^2 \leq  D_h(x,y)$.} 
+
+ Wibisono, Wilson, and Jordan~\cite{Acceleration} followed up on the work of Su, Boyd and Candes~\cite{SuBoydCandes14}, introducing a class of dynamical systems whose discretizations give rise to a family of general accelerated gradient algorithms. They showed that many accelerated methods can be viewed as a discretization of the following second-order ODE,
+ \begin{align} \label{Eq:ELBreg} 
+\frac{d}{dt} \nabla h(X_t + e^{-\alpha_t} \dot X_t) = -e^{\alpha_t+\beta_t} \nabla f(X_t)\,.
+\end{align}
+Here $h$ is a strongly convex function associated with the geometry of the space.  In the case where $\alpha_t=-\log m$, and $\beta_t = \log m$,  the continuous time limit $m \rightarrow 0$ of this differential equation recovers the mirror descent dynamic~\cite[(78)]{Acceleration}, with $h$ playing the role of the distance generating function.  Indeed, the original motivation for mirror descent by Nemirovski and Yudin was from this continuous perspective, and they demonstrated a Lyapunov argument for the convergence of the continuous time dynamics (see Section 3.1 of Nemirovski and Yudin~\cite{NemirovskiiYudin}).
+
+In order to have stable dynamics, the functions $\alpha_t$, $\beta_t$, and $\gamma_t$ must satisfy the necessary conditions
+\begin{subequations}\label{Eq:IdeSca}
+\begin{align}
+\dot \beta_t \,&\leq\, e^{\alpha_t}   \label{Eq:IdeScaBet} \\
+\dot \gamma_t \,&=\, e^{\alpha_t}  \label{Eq:IdeScaGam}.
+\end{align}
+\end{subequations}
+These conditions were dubbed the~\emph{ideal scaling}, and they will play a predominant role in the present work.  Wibosono et al~\cite{Acceleration} also require that  $f$ and $h$ be differentiable and convex, and that $h$ be strictly convex. Under the ideal scaling, it was demonstrated that the momentum dynamic~\eqref{Eq:ELBreg} is the Euler-Lagrange equation (stationary condition) of a functional called the {\em Bregman Lagrangian}. This means that the family of accelerated gradient dynamics -- like the gradient flows which generate gradient methods -- can be understood as being generated from a {\em variational principal}. They also generalize the Lyapunov function of Su et al~\cite{SuBoydCandes14} and use it to show that the family of momentum dynamics~\eqref{Eq:ELBreg} obtain the convergence rate $O(e^{-\beta_t})$. However, they did not provide a Lyapunov analysis of the discrete-time algorithm, nor did they make explicit the connection between the Lyapunov function and the estimate sequence technique. We address some of these issues in the present work, providing a framework that generalizes these earlier results.
+
+\section{Rate-generating Lyapunov Functions}
+Lyapunov's method~\cite{Lyapunov} is based on the idea of constructing a positive definite quantity $\E: \X \rightarrow \R$ --  called a {\em Lyapunov function} -- which decreases along the trajectories of the dynamical system $\dot X_t = v(X_t)$. Using equations, this condition is written,
+\begin{equation*}
+\dot \E(X_t) =\langle \nabla \E(X_t), v(X_t)\rangle < 0.
+\end{equation*}
+The existence of a Lyapunov function guarantees that the dynamical system converges: if the function is positive yet strictly decreasing along all trajectories, then the dynamical system must eventually approach a region where $\E(X)=0$.  If this region coincides with the stationary points of the dynamics, then all trajectories must converge to a stationary point.  The technique of Lyapunov -- of finding a function which decreases with each iteration -- is a ubiquitous tool in algorithm analysis~\cite{CLR}.   An additional advantage of exhibiting a Lyapunov function is that enables us to understand properties of entire trajectories of the dynamical system we are analyzing (e.g boundedness, stability, etc.).  
+
+In this paper, we are interested in obtaining Lyapunov functions for dynamical systems designed for optimization.  Specifically, we are  interested in the~\emph{rate of convergence} of a method, not simply convergence alone.  To facilitate such rate analysis, we will study time dependent Lyapunov functions.  We emphasize that Lyapunov analysis is the most standard technique to prove the convergence of optimization methods.   Standard proofs of gradient descent, mirror descent, subgradient descent, and Newton's method can all be analyzed by exhibiting some function which decreases at every iteration of the algorithm. The most common Lyapunov functions are the optimality gap $f(x)-f(x^\ast)$ or the distance to the optimal solution $D_h(x^\ast,x)$.  The main contribution of this paper is to demonstrate that most of the common momentum methods can be analyzed in a very similar framework.
+ 
+ 
+ 
+
+We now introduce a simple family of time varying Lyapunov functions that can verify the convergence of momentum flows.
+\paragraph{General Accelerated Mirror Descent} In~\cite{Acceleration}, the following Lyapunov function 
+\begin{align}\label{Eq:E}
+\E_t \,=\, e^{\beta_t} (f(X_t)-f(x^*)) + D_h\left(x^*, \, X_t + e^{-\alpha_t} \dot X_t\right),
+\end{align}
+ was introduced to analyze the dynamic which forms the basis for accelerated gradient descent (and it's non-Euclidean variants).
+%  Notice, assuming we start from rest $\dot X_0 = 0$, the  Lyapunov property allows us to conclude,
+ %\begin{equation*}
+ %f(X_t) - f(x^\ast)\leq \frac{e^{\beta_0} (f(X_0) - f(x^\ast) )+ D_h(x^\ast, X_0)}{e^{\beta_t}}.
+ %\end{equation*}
+In Section~\ref{Sec:MomLyap}, 
+  we show how to derive the Lyapunov function for a family of momentum dynamics; furthermore, we show how to discretize the Lyapunov function and obtain a tool which can be used to analyze several algorithms that are discretizations of the family of momentum dynamics.\footnote{The same derivation of the Lyapunov function was added to~\cite[App. C]{Acceleration}}
+%
+%
+%
+%ACCC GRAD STRONG
+\paragraph{Accelerated Gradient Descent (Strong Convexity)}
+ The following function 
+   \begin{equation}\label{eq:general-sc-lyap}
+  \E_t =  e^{\beta_t} \left(f(X_t) - f(x^\ast) + \mu D_h(x^\ast ,X_t + e^{-\alpha_t} \dot X_t)\right),
+ \end{equation}
+ is a Lyapunov function for a family of momentum dynamics when $f$ is $\mu$-strongly convex ($D_f(y,x) \geq \mu D_h(y,x)$) and $e^{\alpha_t} = \dot \beta_t$. 
+In this paper, we only focus on the setting where $h = \frac{1}{2}\|\cdot\|^2$ is Euclidean. In Section~\ref{Sec:StrongConv}, we show how to derive the Lyapunov function and how it can be used to demonstrate a linear rate of convergence for the family of accelerated gradient descent dynamics.  We also show how a particular discretization of the family of dynamics provides an algorithm for which a commensurate discretization of~\eqref{eq:general-sc-lyap} is a Lyapunov function.
+
+We briefly mention the appearance of the $e^{-\alpha_t}$ term in~\eqref{Eq:E} and~\eqref{eq:general-sc-lyap}. In~\cite{Acceleration2}, this scaling was studied at length. In particular, it was shown that the family of Lagrangian functionals which generates~\eqref{Eq:EL} is invariant under the action of time reparameterization, which explain the appearance of the $e^{-\alpha_t}$ in front of $\dot X_t$. By contrast, the mirror descent dynamic, which is a gradient flow, is not invariant under time-reparameterization. This invariance property might suggest why momentum family is more natural for the purposes of optimization (that is, it might help us understand why the discrete-time implementations of the family of momentum dynamics achieves systematically better rates of convergence than the family of gradient flows). 
+
+
+Note that in both the strongly convex and weakly convex setting, the structure of the Lyapunov function allows to conclude a rate of convergence for the optimality gap $f(X_t) - f(x^\ast)$. In particular, the Lyapunov property $\E_t \leq \E_0$ allows to conclude 
+\begin{equation}\label{eq:Guarantee1}
+f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast)) + D_h(x^\ast, X_0 + e^{-\alpha_0} \dot X_0)}{e^{\beta_t}}
+\end{equation}
+and 
+\begin{equation}
+f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast) +\mu D_h(x^\ast ,X_0 -e^{-\alpha_0} \dot X_0))}{e^{\beta_t}}
+\end{equation}
+for~\eqref{Eq:E} and \eqref{eq:general-sc-lyap} respectively. The typical convention is that we start from rest $\dot X_0 = 0$. Notice that in both these settings, the rates of convergence in continuous time are the same. The family of dynamics corresponding to the Lyapunov function in the strongly convex setting however explicitly uses strong convexity of $f$, and this allows us to obtain a tighter bound in discrete-time.
+
+
+\section{Momentum Methods}
+\label{Sec:MomLyap}
+ \subsection{Lyapunov Analysis}
+In this section, we study dynamics which are based on the Euler-Lagrange equation \eqref{Eq:ELBreg} in the setting where the ideal scaling~\eqref{Eq:IdeScaBet} holds with equality~$\dot \beta_t = e^{\alpha_t}$. Notice, now the entire Bregman Lagrangian is parameterized by $\beta_t$, which determines the convergence rate:
+ \begin{subequations}\label{Eq:EL}
+ \begin{align}
+ Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t \label{Eq:ELZ},\\
+ \frac{d}{dt}\nabla h(Z_t) &= -\dot \beta_t e^{\beta_t} \nabla f(X_t)\label{Eq:ELH}.
+ \end{align}
+ \end{subequations}
+  We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for the momentum dynamic~\eqref{Eq:ELBreg} in a way similar to Lyapunov analysis of the mirror descent dynamic by Nemirovski and Yudin:
+
+  
+  
+%\begin{small}
+\begin{subequations}\label{Eq:LyapAnal}
+\begin{align}
+ \frac{d}{dt}D_h\left(x, Z_t\right)  &= \frac{d}{dt}\left( h(x) - h(Z_t) - \langle \nabla h(Z_t), x- Z_t\rangle \right) \notag\\
+& = - \langle \nabla h(Z_t), \dot Z_t\rangle -\left\langle \frac{d}{dt} \nabla h(Z_t),x - Z_t\right\rangle  + \langle \nabla h(Z_t), \dot Z_t\rangle \notag\\ 
+ &= - \left\langle \frac{d}{dt} \nabla h\left(Z_t\right), x - Z_t\right\rangle \, \notag\\%\label{eq:apply-identity}\\
+&=    \left\langle \frac{d}{dt}\left(e^{\beta_t}\right)\nabla f(X_t), x  - X_{t} - \frac{1}{\dot \beta_t} \dot X_{s} \right\rangle  \, \label{eq:apply-dynamics}   \\
+& =  \frac{d}{dt}\left(e^{\beta_t}\right) \langle \nabla f(X_t), x - X_t \rangle\, - e^{ \beta_t} \langle \nabla f(X_t), \dot X_t\rangle dt\, \notag   \\
+& = \frac{d}{dt} \left(e^{\beta_t}\right) \langle \nabla f(X_t), x - X_t \rangle\,  -  \frac{d}{dt} \left(e^{ \beta_t} f(X_t)\right)\,   + \frac{d}{dt} \left(e^{\beta_t}\right)  f(X_t)  \notag\\
+&= \frac{d}{dt}\left( e^{\beta_t}\right) [f(X_t)+ \langle \nabla f(X_t), x - X_t \rangle] -\frac{d}{dt} \left(e^{ \beta_t} f(X_t)\right)\,  \notag  \\ %\label{Eq:Line9}\\
+& \leq   \frac{d}{dt}\left( e^{\beta_t}\right) f(x) - \frac{d}{dt} \left(e^{ \beta_t} f(X_t)\right)\, \label{eq:apply-convexity}\\
+& = - \frac{d}{dt} \left(e^{\beta_t}\left(f(X_t) - f(x)\right)\right) \label{Eq:cond1}.
+\end{align}
+\end{subequations}
+%\end{small}
+Here~\eqref{eq:apply-dynamics} uses the momentum dynamics~\eqref{Eq:ELH} and~\eqref{Eq:ELZ}. The inequality~\eqref{eq:apply-convexity} follows from the convexity of $f$. Rearranging terms and taking $x = x^\ast$, we have show that the function~\eqref{Eq:E} has nonpositive derivative for all $t$ and is hence a Lyapunov function for the dynamical system~\eqref{Eq:ELBreg}.
+
+ The structure of this derivation provides a tool for us to analyze several discretizations of momentum dynamics~\eqref{Eq:ELBreg}.
+ In the following subsections, we demonstrate how to analyze the quasi-monotone subgradient method~\cite{Nesterov15}, the class of accelerated gradient methods~\cite{Baes09,Acceleration}, and the general family of conditional gradient algorithms~\cite{NesterovCond15} using the Lyapunov argument above.
+ \subsection{Implicit and Explicit-Euler}
+We study two different ways of discretizing the dynamic $ \dot X_t = v(X_t)$, to obtain an algorithm. The first, called the explicit-Euler method, evaluates the vector field at the current point:
+\begin{align*}
+\frac{x_{k+1} - x_k}{\delta} = \frac{X_{t+ \delta} - X_t}{\delta}= v(X_t) = v(x_k).
+\end{align*}
+%This can be written,
+%\begin{align*}
+%x_{k+1} - x_k = \delta v(x_k).
+%\end{align*}
+The second method, called the implicit-Euler method, evaluates the vector field at the future point,
+\begin{align*}
+\frac{x_{k+1} - x_k}{\delta} = \frac{X_{t+ \delta} - X_t}{\delta}= v(X_{t+\delta}) = v(x_{k+1}).
+\end{align*}
+%and  can be written
+%\begin{align*}
+%x_{k+1} - x_k = \delta v(x_{k+1}).
+%\end{align*}
+For first-order dynamics, applying these methods to obtain an algorithm is straight-forward. For the momentum dynamic~\eqref{Eq:EL} on the other hand, which is a system of two first-order equations, one can combine the implicit- and explicit-Euler methods in four different ways, leading to four separate algorithms. To illustrate how this works, we write~\eqref{Eq:EL} as the following system of first-order ODEs,
+ \begin{subequations}\label{Eq:DynaBeta}
+ \begin{align}
+ Z_t &= X_t + \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} \dot X_t, \label{Eq:Z}\\
+ \frac{d}{dt} \nabla h(Z_t) &= -\left(\frac{d}{dt}e^{\beta_t}\right) \nabla f(X_t). \label{Eq:X}
+ \end{align}
+ \end{subequations}
+ Taking $e^{\beta_t} = A_k$ and $\frac{d}{dt}e^{\beta_t} =\frac{A_{k+1} - A_k}{\delta}$, the implicit-Euler method applied to \eqref{Eq:Z} results in the following sequence:
+ \begin{align*}
+ z_{k+1} &= x_{k+1} + \frac{A_k}{\frac{A_{k+1} - A_k}{\delta}} \frac{x_{k+1} - x_k}{\delta}=  x_{k+1} + \frac{A_k}{A_{k+1} - A_k} (x_{k+1} - x_k).
+ \end{align*}
+The explicit-Euler method on the other hand, results in the sequence 
+\begin{align*}
+ z_{k} &= x_{k} + \frac{A_k}{\frac{A_{k+1} - A_k}{\delta}} \frac{x_{k+1} - x_k}{\delta}=  x_{k} + \frac{A_k}{A_{k+1} - A_k} (x_{k+1} - x_k).
+\end{align*}
+ For equation~\eqref{Eq:X}, the implicit-Euler method results in the following sequence
+ \begin{align*}
+ \frac{1}{\delta}(\nabla h(z_{k+1}) - \nabla h(z_k)) = \frac{A_{k+1} - A_k}{\delta} \nabla f(x_{k+1}),
+ \end{align*}
+ whereas the explicit-Euler method results in the sequence
+ \begin{align*}
+  \frac{1}{\delta}(\nabla h(z_{k+1}) - \nabla h(z_k)) = \frac{A_{k+1} - A_k}{\delta} \nabla f(x_{k}).
+ \end{align*}
+ In what follows, we analyze three combinations of the implicit and explicit-Euler methods using the Lyapunov analysis above. Furthermore, we show there are at least two slightly different methods, which do not comport to a straight-forward discretization technique, that can also be analyzed using the above Lyapunov analysis. 
+   \subsection{Momentum-Based Algorithms}
+ We give a short analysis of the result of implicit-Euler discretization of both~\eqref{Eq:Z} and~\eqref{Eq:X}. We can write the algorithm as follows,
+\begin{algorithm}[H]
+%\begin{subequations}\label{Eq:AlgoForward}
+\caption{Implicit-Euler Based Method}
+{\bf Assumptions:} $f, h$ are convex and differentiable.\\
+Choose $A_0 = 1$, $x_{-1}= x_0 = z_0$ and $\tau_{k+1} = \frac{A_{k+1} - A_k}{A_k}$. Define recursively,
+\begin{subequations}\label{Eq:AlgoForward1}
+\begin{align}
+z_{k} &= x_{k} + \frac{1}{\tau_{k}} (x_{k} - x_{k-1}),\\%\label{Eq:ZSeq}\\
+x_{k+1} &= \underset{\substack{\,\,\,\,\,\,x\in\X\\ \,\,\,\,\,\,z =  \frac{1 + \tau_{k+1}}{\tau_{k+1}} x - \frac{1}{\tau_{k+1}} x_k}}{\text{arg\,\,\,min}} \left\{ f(x) + \frac{1}{A_{k+1} - A_k}D_h\left(z, z_k\right)\right\},
+\end{align}
+\end{subequations}
+\end{algorithm}
+\noindent the optimality conditions for which constitute our discretization
+\begin{subequations}
+\begin{align}
+z_{k+1} = x_{k+1} + \frac{A_k}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeq}\\
+\nabla h(z_{k+1}) - \nabla h(z_k) = -(A_{k+1} - A_{k})\nabla f(x_{k+1})\label{Eq:XSeq}.
+\end{align}
+\end{subequations}
+\noindent To analyze this algorithm, we follow a similar argument to that in~\eqref{Eq:LyapAnal}. %Thus, following argument holds for~\eqref{Eq:AlgoForward},
+First, we define our discrete-time energy function~\eqref{Eq:E},
+\begin{align}\label{Eq:DiscLyapFunc1}
+ E_k = A_k(f(x_k) - f(x)) + D_h(x, z_{k}),
+ \end{align}
+which is the result of making the same continuous to discrete time identifications. Note that,
+\begin{small}
+\begin{subequations}\label{Eq:LyapDiscArg}
+\begin{align}
+%{\color{red} \frac{d}{dt}D_h(x, X_{t} + e^{-\alpha_{t}} \dot X_{t})}\,  
+%& =  \int_{t_0}^{t_1} \frac{d}{ds}D_h(x, X_{s} + e^{-\alpha_{s}} \dot X_{s})\, ds +D_h(x, X_{t_0} + e^{-\alpha_{t_0}} \dot X_{t_0})\\
+%& {\color{red} =  - \left\langle \frac{d}{dt} \nabla h(X_t+ e^{-\alpha_t}\dot X_t), x - X_t - e^{-\alpha_t} \dot X_t\right\rangle} \,  \notag\\
+E_{k+1} - E_k &= A_{k+1}(f(x_{k+1}) - f(x)) - A_k(f(x_k) - f(x)) -\langle \nabla h(z_{k+1}) - \nabla h(z_k), x - z_{k+1}\rangle - D_h(z_{k+1}, z_k)\notag\\
+%&{\color{red} \overset{\eqref{Eq:ELBreg}}{=}e^{\alpha_t + \beta_t} \langle \nabla f(X_t), x - X_t \rangle\, - e^{ \beta_t} \langle \nabla f(X_t), \dot X\rangle}\, \notag   \\
+& \overset{\eqref{Eq:XSeq}}{=} A_{k+1}(f(x_{k+1}) - f(x)) - A_k(f(x_k) - f(x)) + (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x - z_{k+1}\rangle - D_h(z_{k+1}, z_k)\notag\\
+& \overset{\eqref{Eq:ZSeq}}{=} A_{k+1}(f(x_{k+1}) - f(x)) - A_k(f(x_k) - f(x)) + (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x - x_{k+1}\rangle \notag\\
+&\quad + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle- D_h(z_{k+1}, z_k)\notag\\
+%
+&\leq A_{k+1}(f(x_{k+1}) - f(x)) - A_k(f(x_k) - f(x)) + (A_{k+1} - A_k)(f(x) - f(x_{k+1})) \notag\\
+&\quad  + A_k (f(x_k) - f(x_{k+1}))- D_h(z_{k+1}, z_k), 
+%& {\color{red}= - \frac{d}{dt}\left\{ e^{\beta_t}\left(f(X_t) - f(x)\right)\right\}\label{Eq:cond1}}\\
+%& = - D_h(z_{k+1}, z_k), \notag
+\end{align}
+\end{subequations}
+\end{small}
+where the inequality follows from the convexity of $f$. From \eqref{Eq:LyapDiscArg}, we have shown that $E_{k+1} - E_k \leq \varepsilon_k $, where the error $\varepsilon_k = -D_h(z_{k+1}, z_k) \leq 0 $ is negative. Taking $x = x^\ast$, writing $E_k \leq E_0$ allows us to obtain the convergence rate guarantee, 
+\begin{equation}
+f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast, x_0) + A_0 (f(x_0) - f(x^\ast))}{A_k},
+\end{equation} 
+which is equivalent to~\eqref{eq:Guarantee1}, using the same discrete-time identifications. 
+
+The subequations corresponding to~\eqref{Eq:AlgoForward1} may be difficult to solve. For reference, the proximal minimization method~\cite{ChenTeboulle93}, 
+\begin{equation}
+x_{k+1} = \arg\min_{x\in\X} \left\{ f(x) + \frac{1}{A_{k+1} - A_k}D_h\left(x, x_k\right)\right\},
+\end{equation}
+involves applying the implicit-Euler method to the mirror descent dynamic, and both obtain a $O(1/A_k)$ convergence rate. Nevertheless, the proof structure which we demonstrated from this thought experiment serves as the backbone for analyzing many discretizations of \eqref{Eq:DynaBeta}, several of which constitute popular methods used throughout optimization.
+
+\subsection{The Quasi-Monotone Subgradient Method}
+\label{Sec:QuasiMono}
+The quasi-monotone subgradient method was developed by Nesterov~\cite{Nesterov15} as an alternative to the dual averaging method -- though both achieve the $O(1/\sqrt{k})$ lower bound for the class of methods with bounded subgradients. The advantage of the quasi-monotone method however is that a convergence rate guarantee can be shown for the entire sequence of iterates instead of the average (or minimum) iterate, as is the case with the dual averaging method in the non-Euclidean setting. {\em We begin by studying the quasi-monotone method in the situation where we have full gradients, which we assume to be bounded}. We also set the dual averaging term $\gamma_k \equiv 1$ for convenience and give an analysis of the full algorithm in Appendix~\ref{App:ProofQuasiGen}.  With these minor modifications, the algorithm can understood as the explicit-Euler method applied to~\eqref{Eq:Z} and the implicit-Euler method applied to~\eqref{Eq:X} (where now, we take $e^{\beta_t} = A_{k+1}$):
+
+
+
+\begin{algorithm}[H]
+\caption{The Quasi-Monotone Subgradient Method $\gamma_k \equiv 1$}
+{\bf Assumptions:} $f, h$ are convex and differentiable. $h$ is strongly-convex and $f$ has bounded gradients, $\sup_{x\in\X}\|\nabla f(x)\| = G <\infty$. \\
+Let $A_0 = 1$, $x_0 = z_0$, $\tau_k = \frac{A_{k+1} - A_k}{A_{k+1}}$, $\alpha_k = A_{k} - A_{k-1}$ . Define recursively,
+\begin{subequations}\label{Eq:QuasiSub1}
+\begin{align}
+x_{k+1} &= \tau_k z_k + (1 - \tau_k)x_{k} ,\label{Eq:ZSeqQuasi1}\\
+z_k &= \arg \min_{z\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla f(x_i), z\rangle + D_h(z, x_0)\right\} \label{Eq:XSeqQuasi1}.
+\end{align} 
+\end{subequations}
+\end{algorithm}
+\noindent This modified quasi-monotone subgradient method has optimality conditions
+\begin{subequations}\label{Eq:QuasiSub}
+\begin{align}
+z_{k} &= x_{k} + \frac{A_{k+1}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeqQuasi}\\
+\nabla h(z_{k+1}) -\nabla h(z_k) &= -(A_{k+1} - A_{k})\nabla f(x_{k+1})\label{Eq:XSeqQuasi}.
+\end{align} 
+\end{subequations}
+%%%%%%%%%%%%%%%%%%%%%%% Estimate Sequences
+%\noindent Notice,~\eqref{Eq:QuasiSub} can be interpreted as applying something akin to the explicit-Euler discretization to~\eqref{Eq:Z} instead of the implicit-discretization method~\eqref{Eq:ZSeq}. 
+The following result illustrates how the Lyapunov function can be used to analyze~\eqref{Eq:QuasiSub}:
+\begin{theorem}
+\label{Thm:Quasi}
+Using the Lyapunov function~\eqref{Eq:DiscLyapFunc1},
+%\begin{equation}
+%E_k = A_k (f(x_k) - f(x^\ast)) +  D_h(x^\ast, z_k)
+%\end{equation}
+we can show the quasi-monotone method as defined above satisfies \[E_{k+1} - E_k \leq \,\,\varepsilon_k,\] where the error scales in the following way,%\footnote{For reference, the error for subgradient descent scales in the same way (see Appendix~\ref{App:MirrorDesc})}
+\[\varepsilon_k = \frac{(A_{k+1}- A_k)^2}{2}\|\nabla f(x_{k+1})\|^2 \leq \frac{(A_{k+1}- A_k)^2}{2}G^2.\]
+\end{theorem}
+\noindent Taking $x = x^\ast$ and summing over $k$ results in the following convergence rate:
+\begin{align}\label{Eq:BoundQuasi}
+f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast , x_0) +A_0 (f(x_0) - f(x^\ast)) + \frac{1}{2}\sum_{i=0}^{k}\varepsilon_i }{A_k}.
+\end{align}
+If we optimize the bound~\eqref{Eq:BoundQuasi} over $A_k$, we can obtain an $O(1/\sqrt{k})$ convergence rate guarantee by setting a time-horizon for the algorithm to be run, and choosing $A_{k+1} - A_{k} =\frac{D_h(x,x_0)}{G\sqrt{k+1}}.$ Without this step, we suffer an additional $\log k$ factor in the the numerator.\footnote{See~\cite[2]{Nesterov15} for more details on this history on subgradient methods.}
+
+ In the proof given in Appendix~\ref{App:ProofQuasi}, convexity is the only property of $f$ that is necessary to show~\eqref{Eq:BoundQuasi}. Thus, the proof can be extended to include subgradient steps instead of full gradient steps, where now the condition on $f$ is that its subgradients are  bounded. This recovers the result of Nesterov~\cite{Nesterov15} using the technique of estimate sequences. 
+
+\subsection{Other Discretizations}
+We give examples of two other algorithms that are the result of ``discretizing'' the momentum dynamic~\eqref{Eq:DynaBeta}, and analyze them using the discretized Lyapunov function~\eqref{Eq:DiscLyapFunc1}. The proofs of these results can be found in the Appendix~\ref{App:OtherDiscret}. The first method is the result of applying explicit-Euler method to~\eqref{Eq:X} and the implicit-Euler method to~\eqref{Eq:Z}:
+\begin{algorithm}[H]
+\caption{Method 1}
+{\bf Assumptions:} $f$ is smooth and $\X$ is convex and compact. \\
+Let $A_0 = 1$, $x_0 = z_0$, $\alpha_k = A_{k+1} - A_k$ and $\tau_k = \frac{A_{k+1}- A_k}{A_{k}}$. Define recursively,
+\begin{subequations}\label{Eq:QuasiSub2}
+\begin{align}
+z_{k+1} &= \arg \min_{z \in \X} \left\{\langle \nabla f(x_k),z \rangle + \frac{1}{\alpha_k} D_h(z, z_k)\right\}\\
+x_{k+1} &= \frac{\tau_k}{\tau_k - 1}z_{k+1} + \frac{1}{\tau_k - 1}  x_k
+\end{align} 
+\end{subequations}
+\end{algorithm}
+\noindent This algorithm has optimality conditions,
+\begin{subequations}
+\begin{align}
+z_{k+1} &= x_{k+1} - \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeqOther1}\\
+\nabla h(z_{k+1}) -\nabla h(z_k) &= -(A_{k+1} - A_{k})\nabla f(x_{k}) \label{Eq:XSeqOther1}.
+\end{align}
+\end{subequations}
+\noindent Choosing $A_k = k(k+1)/2$ results in an $O(1/k)$ convergence rate. Note, structurally this algorithm is very similar to the conditional gradient method (see~\ref{App:OtherDiscret} for details). The second method does not comport to a straight-forward discretization technique and is given by the updates,
+\begin{algorithm}[H]
+\caption{Method 2}
+{\bf Assumptions:} $f, h$ are convex and differentiable. $h$ is strongly-convex and $f$ has bounded gradients, $\sup_{x\in\X}\|\nabla f(x)\| = G <\infty$. 
+Let $A_0 = 1$, $x_0 = z_0$ and $\tau_k = \frac{A_{k+1}- A_k}{A_{k}}$. Define recursively,
+\begin{subequations}\label{Eq:QuasiSub3}
+\begin{align}
+x_{k+1}  &= \frac{\tau_k}{\tau_k + 1} z_k + \frac{1}{\tau_k+1}x_k,\\%\label{Eq:ZSeqQuasi}\\
+z_{k+1} &= \arg \min_{z \in \X} \left\{\langle \nabla f(x_{k+1}),z\rangle + \frac{1}{\alpha_k} D_h(z, z_k)\right\}.
+\end{align} 
+\end{subequations}
+\end{algorithm}
+\noindent This algorithm has optimality conditions,
+\begin{subequations}\label{Eq:QuasiSub3}
+\begin{align}
+z_{k} &= x_{k+1} + \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeqMethod2}\\%\label{Eq:ZSeqQuasi}\\
+\nabla h(z_{k+1}) -\nabla h(z_k) &= -(A_{k+1} - A_{k})\nabla f(x_{k+1}).\label{Eq:XSeqMethod2}
+\end{align} 
+\end{subequations}
+Notice, \eqref{Eq:QuasiSub3} is very similar to the quasi-monotone subgradient method~\eqref{Eq:QuasiSub1}. In particular, under the same assumptions, it obtains a $O(1/\sqrt{k})$ convergence guarantee. Furthermore, like the quasi-monotone subgradient method, it can be extended to functions which have bounded subgradients instead of full gradients and an additional weighting term can be added.
+
+%%%%%%%%%%%%%%%%%%%%%ACCELERATED GRAD DESCENT %%%%%%%%%%%%%%
+\subsection{Accelerated Mirror Descent}
+\label{Sec:AccGrad}
+We present two variants of the accelerated mirror descent algorithm (the accelerated gradient descent algorithm in the setting where $h = \frac{1}{2}\|\cdot \|^2$). Neither of these correspond to a straight-forward discretization of~\eqref{Eq:E} -- they both entail introducing an additional sequence $\{y_k\}$ to obtain a better bound on the error. The first was the version was introduced by Michel Baes~\cite{Baes09}:
+\begin{algorithm}[H]
+\begin{subequations}\label{Eq:AcceleratedGrad2}
+\caption{Accelerated Mirror Descent (Weakly Convex Setting)}
+{\bf Assumptions:} $f, h$ are convex and differentiable. $h$ is $1$-strongly convex and $f$ has smooth gradients  $\|\nabla^{2} f\|\leq L$\\
+Choose $A_0 = 1$, $M>0$, $\tilde A_{k+1} = L^{-1} A_{k+1}$,  $\tau_k = \frac{\tilde A_{k+1}- \tilde A_k}{\tilde A_{k+1}}:= \frac{\alpha_k}{\tilde A_{k+1}}$ and $x_0 = z_0 = y_0$. Define recursively, 
+\begin{align}
+z_k &= \arg \min_{z\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla f(y_i), z\rangle + D_h(z, z_0)\right\}\label{Eq:ZSeqAcc2}\\
+y_k &= \arg \min_{x \in \X} \left \{ \langle \nabla f(x_k), x\rangle + \frac{ L}{4M}\|y - x_k\|^2\right\}\\\
+x_{k+1} &= \tau_k z_k + (1- \tau_k)  y_k\label{Eq:XSeqAcc2}
+\end{align}
+\end{subequations}
+\end{algorithm}
+\noindent This algorithm satisfies the following optimality conditions, 
+
+\begin{subequations}
+\begin{align}
+z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_k),  \label{Eq:ZSeqAcc3}\\%\label{Eq:ZSeqAcc2}\\
+\nabla h(z_{k+1}) - \nabla h(z_{k}) &= -(\tilde A_{k+1} -  \tilde A_{k})  \nabla f(y_{k+1})  \label{Eq:XSeqAcc3}\\ %\label{Eq:XSeqAcc}\\
+\quad M \|L^{-1} \nabla f(y_{k})\|_\ast^{2} &\leq L^{-1}\langle\nabla f(y_{k}), x_{k} - y_{k}\rangle \label{Eq:YSeqAcc3}
+\end{align}
+\end{subequations}
+The advantage of this version of the accelerated mirror descent algorithm is that it can be extended to accelerate higher-order gradient methods (the details of which we give in Appendix~\ref{App:ProofAccGrad}). The second version, originally introduced by Nesterov~\cite{Nesterov05} entails computing the mirror descent update~\eqref{Eq:ZSeqAcc2} from the gradient at $x$:
+\begin{equation*}
+z_k = \arg \min_{z\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla  f(x_i), z\rangle + D_h(z, z_0)\right\}
+\end{equation*}
+which results in an algorithm with the following optimality conditions, 
+\begin{subequations}
+\begin{align}
+z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_k), \label{Eq:ZSeqAcc4}\\
+\nabla h(z_{k+1}) - \nabla h(z_{k}) &= -(\tilde A_{k+1} -  \tilde A_{k})  \nabla f(x_{k+1})\label{Eq:XSeqAcc4}\\
+\quad f(y_k) - f(x_k)  &\leq  -\frac{1}{2L} \| \nabla f(x_{k})\|_\ast^{2} \label{Eq:YSeqAcc4}
+\end{align}
+\end{subequation}
+As mentioned above, to obtain a convergence guarantee we have replaced the current state $x_k$ by another sequence $y_k$ which simply needs to satisfy~\eqref{Eq:YSeqAcc3}. Furthermore, we have replaced our sequence $A_{k+1}$ by $\tilde A_{k+1}$ which depends on the Lipschitz parameter. We make the same adjustments to the Lyapunov function~\eqref{Eq:DiscLyapFunc1} which we sum up in the following theorem:
+\begin{theorem} \label{Thm:AccGrad}
+Using the following Lyapunov function
+\begin{equation}\label{Eq:LyapAccGrad}
+E_k = \tilde A_k(  f(y_k) -  f(x)) + D_h(x, z_k),
+\end{equation}
+we can show
+  % which has the effect of scaling the gradient by $\epsilon$ as well. 
+\[E_{k+1} - E_k \leq \varepsilon_k\]
+where the error scales in the following way 
+\[\varepsilon_k =  \left(\frac{1}{2}(\tilde A_{k+1} -\tilde A_{k})^{2}- \tilde A_{k+1}M\right)\|\nabla f(y_{k+1})\|^2 \]
+for the accelerated gradient method~\eqref{Eq:AcceleratedGrad2}.
+\end{theorem}
+Choosing $x = x^\ast$ and $A_k$ such that $\tilde A_{k+1}^{-1}(\tilde A_{k+1} -\tilde A_{k})^{2} \leq 2M$ so that the error is non-positive, we obtain the following convergence rate,
+\begin{equation}
+ f(y_k) -  f(x^\ast) \leq \frac{\tilde A_0(f(x_0) - f(x^\ast)) + D_h(x^\ast, x_0)}{\tilde A_k}.
+\end{equation}
+Note, this condition requires that $A_k$ can grow at most quadratically which gives an $O(1/k^2)$ rate of convergence.
+We give a proof for both of these methods in Appendix~\ref{App:ProofAccGrad}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FRANK-WOLFE %%%%%%%%%%%%%%%%%
+\subsection{The Conditional Gradient Algorithm}
+\label{Sec:CondGrad}
+ The conditional Gradient Method, also called the {\em Frank-Wolfe} algorithm~\cite{FrankWolfe}, has garnered renewed interest over the last several years. This interest has inspired several different analyses~\cite{Freund14, Bach15} of the algorithm. Of particular note, is the analysis provided by Nesterov~\cite{NesterovCond15}, who used to technique of estimate sequences to evaluate the algorithm under varying smoothness assumptions and step-size conditions. Nesterov also extended the algorithm to provide an analysis of a trust-region Newton-type method. Here, we explore the conditional gradient method from a dynamical view, and give an alternate analysis of both methods. To do so, we first revisit the derivation of the Lyapunov function. Notice, that if $\dot \beta_t >0 $ and we can ensure
+\begin{align}\label{Eq:Frank1} 
+0 \leq \langle \nabla f(X_t), x-  Z_t\rangle, \quad \quad \forall x \in \X 
+\end{align}
+where 
+\begin{align}\label{Eq:Frank2}
+Z_t = X_t + \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} \dot X_t,
+\end{align}
+then the Lyapunov analysis~\eqref{Eq:LyapAnal} follows without the use of the Bregman divergence: 
+\begin{subequations}\label{Eq:LyapAnalFrank}
+\begin{align}
+0 &\leq  
+\dot \beta_t e^{\beta_t} \left\langle \nabla f(X_t), x -Z_t\right\rangle \,  \notag\\
+& \leq  \dot \beta_t e^{\beta_t} f(x) -\frac{d}{dt}\left( e^{ \beta_t}  f(X_t)\right)\, \notag\\
+& = -\frac{d}{dt} \left( e^{\beta_t}\left(f(X_t) - f(x)\right)\right). \notag
+\end{align}
+\end{subequations}
+Integrating shows that the following function 
+\begin{equation}\label{Eq:FrankE}
+\mathcal{E}_t = e^{\beta_t} (f(X_t) - f(x)).
+\end{equation} 
+is a Lyapunov function for any dynamic satisfying~\eqref{Eq:Frank1} and~\eqref{Eq:Frank2}.  The conditional gradient method maintains the following iterates: 
+\begin{algorithm}[H]
+\begin{subequations}\label{Eq:Fank-Wolfe}
+\caption{Conditional Gradient Method}
+{\bf Assumptions:} $f$ is smooth and $\X$ is convex and compact. \\
+Choose $A_0 = 1$, $x_0 = z_0$ $\tau_k = \frac{A_{k+1} - A_k}{A_{k+1}}$.
+\begin{align*}
+z_k &= \arg \min_{z \in \X}\,\,  \langle \nabla f(x_k), z\rangle, \label{Eq:XSeqFrank1}\\
+x_{k+1} &= \tau_k z_k + (1- \tau_k) x_k.\label{Eq:ZSeqFrank1}
+\end{align*}
+%\end{align}
+\end{subequations}
+\end{algorithm}
+\noindent The algorithm satisfies the variational inequalities
+\begin{subequations}
+\begin{align}
+0 \leq \langle \nabla f(x_k), x - z_k\rangle \quad \forall x \in \X,\\
+z_{k} = x_k + \frac{A_{k+1}}{A_{k+1} -A_{k}} (x_{k+1} - x_k).\label{Eq:ZSeqFrank}
+\end{align}
+\end{subequations}
+This suggests the following Lyapunov analysis of the conditional gradient method:
+\begin{theorem}
+Using the Lyapunov function
+\begin{equation}\label{Eq:FrankWolfeLyap}
+E_k = A_k(f(x_k) - f(x^\ast)),
+\end{equation}
+we can show that the conditional gradient method satisfies
+\begin{equation}\label{Eq:CondGradBound}
+E_{k+1} - E_k \leq \varepsilon_k,
+\end{equation}
+where the error scales in the following way,
+\[  \varepsilon_k = \frac{1}{2}\frac{(A_{k+1} - A_k)^2}{A_{k+1}} diam(\X)^2. \]
+This matches the analysis of the conditional gradient method by Nesterov using the technique of estimate sequences as well as the analysis provided by others~\cite{Freund14, Bach15}. In particular, choosing $A_k = \frac{k(k+1)}{2}$ gives the standard $O(1/k)$ convergence rate (see Nesterov~\cite[Eq (2.16)]{NesterovCond15} for details). 
+\end{theorem}
+The proof of this theorem can be found in Appendix~\ref{App:CondMethod}.
+%
+%
+%%%%%%%%%%%%%%EXTENSIONS
+\subsubsection{Extensions}
+We briefly point out that the algorithm resulting from applying something like the implicit-Euler method to both \eqref{Eq:Frank1}  and \eqref{Eq:Frank2}, 
+\begin{subequations}
+\begin{align*}
+z_{k+1} &= \arg \min_{z \in \X}\,\,  \langle \nabla f(x_{k+1}), z\rangle\\
+z_{k+1} &= x_{k+1} + \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),
+\end{align*}
+\end{subequations}
+results in algorithm for which we can show $E_{k+1} - E_k \leq 0$ using~\eqref{Eq:FrankWolfeLyap}. However, like most implicit discretization techniques applied to the momentum dynamic~\eqref{Eq:ELBreg}, this does not lead to an algorithm with manageable subproblems.
+%
+We now turn our attention to analyzing trust region Newton-like method introduced by Nesterov. This method is given by the following update, 
+\begin{algorithm}[H]
+\begin{subequations}\label{Eq:Fank-Wolfe}
+\caption{Conditional Gradient Method~\cite[(5.1)]{NesterovCond15}}
+{\bf Assumptions:} $f$ is twice continuously differentiable, $\|\nabla^3 f\|\leq L$ and $\X$ is convex and compact. \\
+Choose $A_0 = 1$, $x_0 = z_0$ $\tau_k = \frac{A_{k+1} - A_k}{A_{k+1}}$.
+\begin{align}
+x_{k+1} \in \arg \underset{y=(1-\tau_k)x_k + \tau_k x}{\min} \left\{\langle \nabla f(x_k), y- x_k\rangle + \frac{1}{2} \langle \nabla f(x_k)(y-x_k), y-x_k\rangle
+: x \in dom(\X) \right\}
+\end{align}
+%\end{align}
+\end{subequations}
+\end{algorithm}
+This algorithm has the following optimality conditions 
+\begin{subequations}\label{Eq:FrankTrust}
+\begin{align}
+z_{k} &= x_{k} + \frac{A_{k+1}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeqFrankTrust}\\
+\langle \nabla f(x_k)& + \nabla^2 f(x_k)(x_{k+1}- x_k), y- x_{k+1}\rangle\geq 0, \label{Eq:Var2Cond}\\
+\forall y &= (1-\tau_k)x_k + \tau_k x, \quad x \in dom(\X).\label{Eq:Var3Cond}
+\end{align}
+\end{subequations}
+In Appendix~\ref{App:CondMethod} we show how to recover the bound shown by Nesterov using the Lyapunov function~\eqref{Eq:FrankWolfeLyap}. 
+%
+%
+%
+%%%%%%%%%%STRONG CONVEXITY
+\section{Strong Convexity}
+\label{Sec:StrongConv}
+\subsection{Lyapunov Analysis}
+In this section, we study the Lyapunov function~\eqref{eq:general-sc-lyap},
+\begin{equation}\label{Eq:StrongLyap}
+\E_t = e^{\beta_t}\left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\|x^\ast- Z_t \|^2\right),
+\end{equation}
+and use it to analyze the following dynamic: 
+\begin{subequations}\label{Eq:StrongDyn}
+\begin{align}
+Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t\\
+\mu \dot Z_t &= - \mu\dot X_t - \dot \beta_t \nabla f(X_t).
+\end{align}
+\end{subequations}
+We briefly remark that~\eqref{Eq:StrongDyn} is the Euler-Lagrange equation for the following Lagrangian,
+\begin{equation}\label{Eq:LagStrongConv}
+\mathcal{L}(x, \dot x, t) = \dot \beta_t e^{2\beta_t} \left(\frac{\mu}{2}\left\|\frac{\dot x}{\dot \beta_t}\right\|^2 - f(x)\right),
+\end{equation}
+however further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to show an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
+$\dot{\tilde{\E}}_t \leq - \dot \beta_t \tilde{\E}_t$
+for 
+\begin{equation}\label{Eq:StrongLyap2}
+\tilde \E_t = f(X_t) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - Z_t \|^2,
+\end{equation}
+then \eqref{Eq:StrongLyap} is a Lyapunov function. To that end, we have the following argument:
+\begin{subequations}\label{Eq:StrongContProof}
+\begin{align}
+\dot {\tilde{\E}}_t  &= \langle \nabla f(X_t), \dot X_t\rangle - \mu\left\langle \dot Z_t, x^\ast - X_t -\frac{1}{\dot \beta_t}  \dot X_t\right\rangle \notag\\
+& = \langle \nabla f(X_t), \dot X_t\rangle +  \left\langle\mu \dot X_t +  \dot \beta_t \nabla f(X_t),x^\ast - X_t -\frac{1}{\dot \beta_t}  \dot X_t\right\rangle \notag\\
+& = \dot \beta_t \langle  \nabla f(X_t),x^\ast - X_t\rangle +    \mu\left\langle  \dot X_t, x^\ast - X_t- \frac{1}{\dot \beta_t}  \dot X_t\right\rangle \notag\\
+& \leq - \dot \beta_t \left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - X_t\|^2\right)+   \mu \left\langle  \dot X_t, x^\ast - X_t- \frac{1}{\dot \beta_t}  \dot X_t\right\rangle\label{Eq:StrongContStrong}\\
+& =  - \dot \beta_t \left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\left\|x^\ast - X_t - \frac{1}{\dot \beta_t} \dot X_t\right\|^2\right) -\mu\left\langle \dot X_t, x^\ast - X_t - \frac{1}{\dot \beta_t} \dot X_t\right\rangle- \frac{\mu}{2\dot \beta_t}\|\dot X_t\|^2\notag \\
+&\quad + \mu \left\langle \dot X_t,x^\ast - X_t- \frac{1}{\dot \beta_t}  \dot X_t\right\rangle\notag\\
+& \leq   - \dot \beta_t \left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\left\|x^\ast - Z_t\right\|^2\right) \notag.
+\end{align}
+\end{subequations}
+where \eqref{Eq:StrongContStrong} uses our strong convexity assumption. In the following subsections, we demonstrate how to discretize the dynamic~\eqref{Eq:StrongDyn}, and how this discretization can be analyzed using a Lyapunov argument analogous to \eqref{Eq:StrongContProof}.
+%
+%
+%
+%
+\subsection{Discretizing the Dynamic}
+As a proof of concept, we begin by analyzing an implicit discretization of the dynamic~\eqref{Eq:StrongDyn}. 
+Denoting  $\tau_k = \frac{A_{k+1} - A_k}{A_k}$, $\dot Z_t = \frac{z_{k+1} - z_k}{\delta}$, $\dot X_t = \frac{x_{k+1} - x_k}{\delta}$, $\frac{1}{\dot \beta_t} = \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} = \frac{A_{k}}{\frac{A_{k+1} - A_k}{\delta}}$, 
+we obtain the following algorithm, 
+\begin{algorithm}[H]
+\caption{Implicit-Euler Based Method (Strong Convexity)}
+{\bf Assumptions:} $f, h$ are convex and differentiable.\\
+Choose $A_0 = 1$, $x_{-1}=x_0 = z_0$ and $\tau_{k+1} = \frac{A_{k+1} - A_k}{A_k}$. Define recursively,
+\begin{subequations}
+\begin{align}\label{Eq:AlgoForward}
+z_{k} &= x_{k} + \frac{1}{\tau_{k-1}}(x_{k} - x_{k-1})\\
+x_{k+1} &= \arg\underset{x\in\X}{\text{min}} \left\{ f(x) - \frac{\mu}{2\tau_k}\left\|\tau_k(x_k - z_k) - (x - x_k)\right\|^2\right\},
+\end{align}
+\end{subequations}
+\end{algorithm}
+\noindent The optimality conditions of this algorithm corresponds to our discretization: 
+\begin{subequations}\label{Eq:ImpStrong}
+\begin{align}
+z_{k+1} - z_k &= \tau_k \left( x_{k+1} - z_{k+1} - \frac{1}{\mu} \nabla f(x_{k+1})\right) \label{Eq:ZImpStrong}\\
+z_{k+1} &= x_{k+1} + \frac{1}{\tau_k}(x_{k+1} - x_k)\label{Eq:ImpStrong}.
+\end{align}
+\end{subequations}
+Using  the discrete-time Lyapunov function
+\begin{equation}
+\tilde E_k = f(x_k) - f^\ast + \frac{\mu}{2}\|x^\ast- z_k\|^2,
+\end{equation}
+notice that a similar argument to~\eqref{Eq:StrongContProof} holds:
+\begin{subequations}
+\begin{align*}
+E_{k+1} - E_k & =  f(x_{k+1}) - f(x_k) - \mu\langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2} \|z_{k+1} - z_k\|^2 \\
+%&= - \mu\langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2} \|z_{k+1} - z_k\|^2\\
+%&=f(y_k) - f(x_k) - \frac{1}{2\epsilon}\|\nabla f(y_k)\|^2 - \mu\langle z_{k+1} - z_k, x^\ast - x_k + \frac{1}{\tau_k}(x_{k+1} - x_k)\rangle - \frac{\mu}{2} \|z_{k+1} - z_k\|^2\\
+&\overset{\eqref{Eq:ZImpStrong}}{=}  f(x_{k+1}) - f(x_k)+  \tau_k \langle  \nabla f(x_{k+1}) -\mu(x_{k+1} - z_{k+1}), x^\ast - z_{k+1}\rangle  - \frac{\mu}{2} \|z_{k+1} - z_k\|^2\\
+&=   \tau_k \langle  \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle  + f(x_{k+1}) - f(x_k) + \tau_k \langle  \nabla f(x_{k+1}),x_{k+1} - z_{k+1}\rangle - \frac{\mu}{2} \|z_{k+1} - z_k\|^2\\
+&\quad+\mu \tau_k\langle z_{k+1} - x_{k+1}, x^\ast - z_{k+1}\rangle\\
+&\leq    -\tau_k\left (f(x_k) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - x_{k+1}\|^2\right)   +\tau_k \langle  \nabla f(x_{k+1}),x_{k+1} - z_{k+1}\rangle   \\
+&\quad-\frac{\mu}{2} \|z_{k+1} - z_k\|^2 + \mu \tau_k\langle z_{k+1} - x_{k+1}, x^\ast - z_{k+1}\rangle \\
+& \leq - \tau_k \left( f(x_{k+1}) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_{k+1}\|^2\right) + f(x_{k+1}) - f(x_k) + \tau_k \langle \nabla f(x_{k+1}), x_{k+1} - z_{k+1}\rangle\\
+&\quad  - \frac{\mu}{2} \|z_{k+1} - z_k\|^2. \\
+& \overset{\eqref{Eq:ImpStrong}}{=}   - \tau_k \left( f(x_{k+1}) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_{k+1}\|^2\right)+  f(x_{k+1}) - f(x_k)+\langle \nabla f(x_{k+1}), x_k - x_{k+1}\rangle\\
+&\quad  - \frac{\mu}{2} \|z_{k+1} - z_k\|^2. \\
+& \leq  - \tau_k \left( f(x_{k+1}) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_{k+1}\|^2\right). 
+\end{align*}
+\end{subequations}
+Therefore,
+\begin{equation}
+E_{k+1} - E_k \leq - \tau_k \left( f(x_{k+1}) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_{k+1}\|^2\right) = -\tau_k E_{k+1}.
+\end{equation}
+Choosing $\tau_k = \sqrt{\kappa}$ gives the $O(e^{-\sqrt{\kappa} k})$ convergence rate. However, there is no restriction on $\tau_k$;  we are free to scale it arbitrarily. Given the subproblems for this algorithm are difficult to solve, we consider other discretizations based on the explicit-Euler method. In particular, we utilize the same trick of introducing a new sequence $\{y_k\}_{k=1}^\infty$ in order to bound the error. We find that we can use a Lyapunov argument to analyze the following two sequences: 
+\begin{subequations}\label{Eq:StrongConv1}
+\begin{align} 
+z_{k+1} - z_k &= \tau_k \left( x_{k+1} - z_k - \frac{1}{\mu} \nabla f(x_{k+1})\right), \label{Eq:ZSeq2}\\
+\tau_k(x_{k+1} - z_k) &= y_k - x_{k+1} \label{Eq:Coupling2}\\
+y_{k+1} &= x_{k+1} - \frac{1}{L} \nabla f(x_{k+1}),\label{Eq:Grad2}
+\end{align}
+\end{subequations}
+and 
+%another discretization based on the explicit method. However,  similar to the accelerated gradient method, we find that it is necessary to use the :
+\begin{subequations}\label{Eq:StrongConv2}
+\begin{align}
+z_{k+1} - z_k &= \tau_k \left( x_k - z_k - \frac{1}{\mu} \nabla f(x_k)\right), \label{Eq:ZSeq1}\\
+\tau_k(x_k - z_k) &= y_k - x_k\label{Eq:Coupling1}\\
+y_{k+1} &= x_k - \frac{1}{L} \nabla f(x_k). \label{Eq:Grad1}
+\end{align}
+\end{subequations}
+The second sequence is the accelerated gradient scheme introduced by Nesterov~\cite[(2.2.8)]{Nesterov04}, which can be further simplified into two sequences. We summarize our results in the following theorem:
+\begin{theorem}Using the following Lyapunov function, 
+\begin{equation}\label{Eq:LyapStrong}
+\tilde E_k = f(y_k) - f(x^\ast) + \frac{\mu}{2}\|z_k - x^\ast\|^2,
+\end{equation}
+we can show 
+\begin{equation}
+\tilde E_{k+1} -\tilde  E_k \leq -\tau_k \tilde E_k + \varepsilon_k
+\end{equation}
+for both methods~\eqref{Eq:StrongConv1} and~\eqref{Eq:StrongConv2}, where
+\begin{equation}
+\varepsilon_k = \left(\frac{\tau_k^2}{2\mu} - \frac{1}{2L}\right)\|\nabla f(x_{k+1})\|^2 + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_{k+1} - y_k\|^2
+\end{equation}
+ and 
+\begin{equation}
+\varepsilon_k = \left(\frac{\tau_k^2}{2\mu} - \frac{1}{2L}\right)\|\nabla f(x_k)\|^2 + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2
+\end{equation}
+for~\eqref{Eq:StrongConv1} and~\eqref{Eq:StrongConv2} respectively.
+\end{theorem}
+The proof of this result is in Appendix \ref{App:StrongConvexity}. In both cases, to ensure the error is nonpositive we must set  $\tau_k\leq 1/\sqrt{\kappa}$, where $\kappa = L/\mu$ is the condition number.
+
+
+\section{Estimate Sequences}
+
+In this section, we connect our Lyapunov functions to the more standard method of estimate sequences.  This connection is formal in continuous time.  We derive continuous time estimate sequences directly from our Lyapunov function.  Moreover, we show how discretizing the estimate sequence gives a proof of convergence of the associated momentum methods.
+
+We begin with a brief reivew of the technique of estimate sequences. 
+In \cite{Nesterov04}, Nesterov introduced estimate sequences by giving the following definition
+\begin{definition}\cite[2.2.1]{Nesterov04} A pair of sequences $\{\phi_k(x)\}_{k=1}^\infty$ and $\{A_k\}_{k=0}^\infty$ $A_k \geq1$ is called an {\em estimate sequence} of function $f(x)$ if 
+\[ \frac{1}{A_k} \rightarrow 0 \]
+and for any $x \in \R^n$ and all $k \geq 0$, we have 
+\begin{equation}\label{Eq:Ineq1}
+\phi_k(x) \leq \Big(1 - \frac{1}{A_k}\Big)f(x) + \frac{1}{A_k}\phi_0(x).
+\end{equation}
+\end{definition}
+\noindent The following lemma, given by Nesterov, explains why estimate sequences are useful.
+%
+%
+%Lemma 
+\begin{lemma}\label{Lem:Nest2.2.1} \cite[2.2.1]{Nesterov04}
+If for some sequence $\{x_k\}_{k\geq0}$ we have 
+\begin{equation}\label{Eq:Seq}
+f(x_k) \leq \phi_k^\ast \equiv \min_{x \in \X} \phi_k(x),
+\end{equation}
+then $f(x_k) - f(x^\ast) \leq \frac{1}{A_k} [\phi_0(x^\ast) - f(x^\ast)]$. 
+\end{lemma}
+%
+%
+\begin{proof}The proof is simple and can be shown in two lines.
+\begin{align*}
+f(x_k) \leq \phi_k^\ast \equiv \min_{x \in \X} \phi_k(x) &\overset{\eqref{Eq:Ineq1}}{\leq}\min_{x \in\X}\left[\Big(1 - \frac{1}{A_k}\Big)f(x) + \frac{1}{A_k}\phi_0(x)\right]\\
+&\overset{\eqref{Eq:Seq}}{\leq} \Big(1 - \frac{1}{A_k}\Big)f(x^\ast) + \frac{1}{A_k}\phi_0(x^\ast).
+\end{align*}
+Rearranging gives the desired inequality.
+\end{proof}
+%
+%
+Notice, this definition is not at all constructive. Finding sequences which satisfy these conditions is a highly non-trivial task. The next proposition, introduced by Baes in \cite{Baes09} as a slight of extension of Nesterov's Lemma 2.2.2 \cite{Nesterov04}, provides guidance for constructing estimate sequences. Note, this construction is used in \cite{Nesterov04, Nesterov05, Nesterov08, Baes09, Nesterov15, NesterovCond15}, and is the only known way so far to construct an estimate sequence.
+\begin{proposition}\cite[2.2]{Baes09}\label{Eq:Prop}
+ Let $\phi_0: \X \rightarrow \R$ be a convex function such that $\min_{x \in \X} \phi_0(x)\geq f^\ast$. Suppose also that we have a sequence $\{f_k\}_{k\geq 0}$ of functions form $\X$ to $\R$ that underestimates $f$:
+\begin{align}\label{Eq:Under}
+f_k(x) \leq f(x) \quad \text{ for all $x \in \X$ and all $k \geq 0$}
+\end{align}
+Define recursively $A_0 = 1$ 
+\begin{align}
+\alpha_{k} &:= A_{k+1} - A_k \label{Eq:alpha}\\ 
+\tau_k &:= \frac{a_{k}}{A_{k+1}},\label{Eq:tau}
+\end{align}
+and 
+\begin{equation}\label{Eq:Est}
+\phi_{k+1}(x) := (1 - \tau_k) \phi_k(x) + \tau_k f_k(x) = \frac{1}{A_{k+1}} \left(A_0\phi_0(x) + \sum_{i=0}^k a_i f_i(x)\right)
+\end{equation}
+for all $k\geq 0$. Then $\left(\{\phi_k\}_{k\geq0}, \{A_k\}_{k\geq0}\right)$ is an estimate sequence.
+\end{proposition}
+%\begin{remark}
+%Going forth, we will denote the object
+%\begin{equation}\label{Eq:Est2}
+%\psi_k(x) := \sum_{i=0}^k a_i f_i(x) + \phi_0(x)
+%\end{equation}
+%as our estimate sequence. 
+
+\noindent From \eqref{Eq:Seq} and \eqref{Eq:Est}, we observe that the following  invariant,
+\begin{align}\label{Eq:EstSeqInv}
+A_{k+1} f(x_{k+1}) &\leq \min_x A_{k+1} \phi_{k+1}(x) = \min_x  \sum_{i=0}^k \alpha_i f_i(x) +  A_0\phi_0(x)
+\end{align}
+is maintained. In \cite{Nesterov15, NesterovCond15}, this technique was extended to incorporate a error term $\{\tilde \varepsilon_k\}_{k=1}^\infty$,
+\begin{equation}\label{Eq:Est2}
+\phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} := (1 - \tau_k) \left(\phi_k(x) - \frac{\tilde \varepsilon_{k}}{A_k}\right) + \tau_k f_k(x) = \frac{1}{A_{k+1}} \left(A_0(\phi_0(x) - \tilde \varepsilon_0) + \sum_{i=0}^k a_i f_i(x)\right) 
+\end{equation}
+Rearranging, we have
+\begin{align}\label{Eq:EstSeqInv2}
+A_{k+1} f(x_{k+1}) &\leq \min_x A_{k+1}\phi_{k+1}(x) = \min_x  \sum_{i=0}^k \alpha_i f_i(x) +  A_0\left(\phi_0(x) - \frac{\tilde \varepsilon_0}{A_0}\right) + \tilde \varepsilon_{k+1}.
+\end{align}
+Notice the similar argument to Lemma~\ref{Lem:Nest2.2.1} holds,
+\begin{subequations}\label{Eq:EstSeqErr}
+\begin{align}
+A_{k+1} f(x_{k+1}) &\leq \sum_{i=0}^k \alpha_i f_i(x^\ast) + A_0 (\phi_0(x^\ast) - \tilde \varepsilon_0)  + \tilde \varepsilon_{k+1}\notag\\
+&\overset{\eqref{Eq:Under}}{\leq} \sum_{i=0}^k \alpha_i f(x^\ast) +  A_0\phi_0(x^\ast)  + \tilde \varepsilon_{k+1}\notag\\
+& \overset{\eqref{Eq:alpha}}{=} A_{k+1} f(x^\ast) +  A_0\phi_0(x^\ast) + \tilde \varepsilon_{k+1}.
+\end{align}
+\end{subequations}
+where in the second inequality we use the fact that $\varepsilon_k \geq 0,\,\, \forall k$. Rearranging,
+\begin{align*}
+f(x_{k+1}) - f(x^\ast) \leq \frac{1}{A_{k+1}}\left(A_0\phi_0(x^\ast)  + \tilde \varepsilon_{k+1}\right),
+\end{align*}
+we see that we simply need to choose our sequence $\{A_k\}_{k=1}^\infty$ to ensure $\tilde \varepsilon_{k+1}/ A_{k+1} \rightarrow 0$. The following table illustrates the choices of $\phi_k(x)$ and $\tilde \varepsilon_k$ for the four methods analyzed using estimate sequences: 
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline 
+Algorithm & $f_i(x)$ &  $\phi_k(x)$ & $\tilde \varepsilon_k$ \\ \hline
+$\substack{\text{Quasi-Monotone} \\\text{Subgradient}\\\text{ Method}}$ & linear & $\frac{1}{A_k}D_h(x, z_k) + f(x_k)$ & $\frac{1}{2}\sum_{i=0}^{k} \frac{(A_i - A_{i-1})^2}{2}\|\nabla f(x_i)\|^2$  \\ \hline
+$\substack{\text{Accelerated } \\\text{Gradient Method} \\\text{ (Weakly Convex)}} $& linear  &$\frac{1}{A_k}D_h(x, z_k) +  f(x_k) $ & 0 \\  \hline
+$\substack{\text{Accelerated  } \\\text{Method Gradient}\\\text{ (Strongly Convex)}} $  & quadratic &$  f(x_k)  + \frac{\mu}{2}\|x - z_k\|^2$ &  0 \\ \hline
+$\substack{\text{Frank-Wolfe}\\\text{ Algorithm }}$ & linear  & $f(x_k)$ & $ \frac{1}{2}\sum_{i=0}^{k}\frac {(A_{i+1} - A_i)^2}{A_{i+1}} diam(\X)^2$\\
+\hline
+\end{tabular}
+\end{center}
+where linear is defined as 
+\begin{equation}
+f_i(x) = f(x_i) + \langle \nabla f(x_i), x - x_i\rangle
+\end{equation}
+and quadratic is defined as, 
+\begin{equation}
+f_i(x) = f(x_i) + \langle \nabla f(x_i), x - x_i\rangle + \frac{\mu}{2}\|x - x_i\|^2.
+\end{equation}
+%Furthermore, the condition $A_0 \geq 1$ is imposed; for simplicity, we take $A_0 =1$.
+%\subsection{Connection to Framework}
+%If we ignore the the error term $B_k$, the accelerated gradient method and quasi-monotone gradient method maintains the invariant 
+%\subsection{Accelerated Gradient and Quasi-Monotone Subgradient}
+\subsection{Accelerated Gradient Descent}
+\paragraph{Equivalence in Discrete time}
+The discrete-time estimate sequence~\eqref{Eq:Est} for accelerated gradient descent can be written:
+\begin{align*}
+\phi_{k+1}(x) &:= f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) \\
+& \overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \phi_k(x)  + \tau_k f_k(x) \\
+&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k)\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+\end{align*}
+Multiplying through by $A_{k+1}$, we have
+\begin{align*}
+A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1})\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k)\right) + (A_{k+1} - A_k) f_k(x)\\
+&=  A_k \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) \right) + (A_{k+1} - A_k) f_k(x)\\
+& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k)+ (A_{k+1} - A_k) f(x)\
+\end{align*}
+Rearranging, we obtain the inequality $E_{k+1} \leq E_k$ for our Lyapunov function~\eqref{Eq:DiscLyapFunc1}. 
+%
+%
+%
+Going the other direction, from our Lyapunov analysis we can derive the following bound:
+\begin{subequations}\label{Eq:EstSeqErr}
+\begin{align}
+E_k &\leq E_0\\
+A_{k}(f(x_{k}) - f(x)) + D_h(x, z_{k}) &\leq A_0 (f(x_0) - f(x)) + D_h(x, z_0) \notag\\
+A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + \left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) \notag \\
+A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) \label{Eq:EstSeq}
+\end{align}
+\end{subequations}
+Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$):
+\begin{subequations}
+\begin{align}
+\phi_k(x) &\leq \Big(1 -\frac{A_0}{A_k}\Big) f(x) + \frac{A_0}{A_k} \phi_0(x) \\
+&\leq \Big(1 - \frac{1}{A_k}\Big)f(x) + \frac{1}{A_k}\phi_0(x).
+\end{align}
+\end{subequations}
+% Note, the error term $\tilde \varepsilon_{k=1} \equiv 0$ for the accelerated gradient descent method, allowing us to recover the standard estimate sequence~\eqref{Eq:Ineq1}. 
+\paragraph{Equivalence in Continuous time}
+From the derivation of the Lyapunov function \eqref{Eq:LyapAnal}, we have the following equality:
+\begin{align*}
+\frac{d}{ds}D_h\left(x, Z_s\right)  &= \frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left\{ e^{ \beta_s}  f(X_s)\right\}\,.
+\end{align*}
+If we integrate and assume we start from rest $\dot X_0 = 0$, we can write this as,
+\begin{align}\label{Eq:Ineq2}
+ D_h(x, Z_t) \leq \int_0^t\frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle]ds  -  e^{ \beta_t}  f(X_t) + e^{\beta_0} f(X_0) + D_h(x, X_0).
+\end{align}
+Now, by pattern matching, we can use this inequality to extract a continuous time estimate sequence. 
+%Notice, since $A_0 = 1$, we can write \eqref{Eq:Ineq1} as,
+%\begin{align*}
+%\phi_k(x) \leq \Big(1 - \frac{A_0}{A_k}\Big)f(x) + \frac{A_0}{A_k}\phi_0(x).
+%\end{align*}
+%which rearranging becomes,
+%\begin{align}\label{Eq:EstSeqInv}
+%A_k \phi_k(x) \leq \Big(A_k - A_0\Big)f(x) + A_0\phi_0(x).
+%\end{align}
+From~\eqref{Eq:Ineq2} we have the inequality,
+\begin{align*}
+e^{\beta_t}f(X_t) + D_h(x, Z_t) &\leq \int_0^t\frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle]ds + e^{\beta_0}f(X_0)+  D_h(x,Z_0)\\
+&\leq \int_0^t \frac{d}{ds}\{e^{\beta_t}\}f(x) + e^{\beta_0}f(X_0)+  D_h(x,Z_0)\\
+ &= (e^{\beta_t} - e^{\beta_0}) f(x) + e^{\beta_0}f(X_0)+  D_h(x,Z_0).
+\end{align*}
+Comparing this to~\eqref{Eq:EstSeq}, and ignoring the discretization error $\tilde \varepsilon_{k+1}$, if we define
+\begin{align*}
+\phi_t(x)=f(X_t) + e^{-\beta_t}D_h(x, Z_t)
+\end{align*}
+then the above discussion shows that $\{\phi_t(x), e^{\beta_t}\}$ is a continuous-time estimate sequence. In Appendix~\ref{App:EstSeq} we extend this argument to the quasi-monotone subgradient method by adding an error term $\varepsilon_k$. 
+
+%
+%
+%
+\subsection{Conditional Gradient Method} 
+\paragraph{Continuous time Estimate Sequence}
+For the conditional gradient method, the algorithm simply needed to ensure,
+\begin{align}\label{Eq:InEq4}
+0 &\leq \int_0^t\frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left\{ e^{ \beta_s}  f(X_s)\right\}\,ds
+\end{align}
+for our Lyapunov analysis to go through. Note, we can write~\eqref{Eq:InEq4} as, 
+\begin{align*}
+e^{ \beta_t}  f(X_t) \leq \int_0^t\frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle]ds   + e^{\beta_0} f(X_0).
+\end{align*}
+From the derivation of the Lypaynov function, we can conclude
+\begin{align*}
+e^{\beta_t} f(X_t) \leq  (e^{\beta_t} - e^{\beta_0}) f(x) + e^{\beta_0}f(X_0).
+\end{align*}
+which shows that $\{f(X_t),e^{\beta_t}\}$ is a continuous-time estimate sequence for this method. In Appendix~\ref{App:EstSeq}, we show the equivalence in discrete-time between estimate sequences and our Lyapunov framework in this setting.
+%
+
+%
+%
+\subsection{Accelerated Gradient Strong Convexity}
+Notice that for the dynamic~\eqref{Eq:StrongDyn} we can show the following,
+\begin{align}\label{Eq:Ineq4}
+ \frac{d}{dt}\left\{e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2\right\}\, &=  \dot \beta_t e^{\beta_t} \frac{\mu}{2} \|x - Z_t\|^2 - e^{\beta_t} \mu\langle \dot Z_t, x - Z_t\rangle \notag\\
+ &=  \dot \beta_t e^{\beta_t} \frac{\mu}{2} \|x - Z_t\|^2 + e^{\beta_t} \mu\langle \dot X_t, x - Z_t\rangle  + \dot  \beta_t e^{\beta_t} \left\langle \nabla f(X_t), x - X_t - \frac{1}{\dot \beta_t} \dot X_t\right\rangle \notag \\
+  &=\dot  \beta_t e^{\beta_t} \frac{\mu}{2} \|x - Z_t\|^2 + \dot \beta_te^{\beta_t} \mu\langle  Z_t - X_t, x - X_t \rangle - \dot \beta_te^{\beta_t} \frac{\mu}{2}\| Z_t - X_t\|^2 \notag\\
+ &\quad + \dot \beta_t e^{\beta_t} \langle \nabla f(X_t), x - X_t \rangle  - e^{\beta_t} \langle \nabla f(X_t),\dot X_t\rangle \notag\\
+ & =  \dot \beta_t e^{\beta_t} \frac{\mu}{2} \|x - X_t\|^2 + \dot \beta_t e^{\beta_t} \langle \nabla f(X_t), x - X_t \rangle   - e^{\beta_t} \langle \nabla f(X_t),\dot X_t\rangle \notag \\
+ %&\quad  - \left(\frac{1}{\dot \beta_s} - \dot \beta_s\right)e^{\beta_s} \frac{\mu}{2}\| \dot X_s\|^2\\
+ &=   \frac{d}{dt}\left\{e^{\beta_t}\right\}\left(\langle \nabla f(X_t), x - X_t \rangle+ \frac{\mu}{2} \|x - X_t\|^2\right) \notag\\
+ & \quad   - \left(  \frac{d}{dt}\left\{ e^{ \beta_t}  f(X_t)\right\}\,  - \frac{d}{ds}\left\{e^{\beta_t}\right\}  f(X_t)  \right), 
+\end{align}
+where the the second to last line follows from completing the square.\footnote{We remark also that this derivation also shows how to derive the Lyapunov function~\eqref{Eq:StrongLyap} from the dynamic~\eqref{Eq:StrongDyn}.} %and choosing $\dot \beta_t^2 \leq 1$\footnote{The residual $e^{\beta_t}\frac{\mu \dot \beta_t}{2}\left(\frac{1}{\dot \beta_t^2} - 1\right)$ is the same as the residual term~\eqref{Eq:StrongResid} in the discrete-time setting (where $\dot \beta_t$ is discretized into the sequence $\{\tau_k\}_{k=1}^\infty$), except that it is scaled by an additional $e^{\beta_t}$. We dropped the exponential scaling in the discrete-time energy functional for simplicity.}
+ Integrating results in the following inequality, 
+\begin{align*}
+e^{\beta_t} f(X_t) \leq \int_0^t\frac{d}{ds}\left\{e^{\beta_s}\right\}[ f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle+ \frac{\mu}{2} \|x - X_s\|^2]\, ds + e^{\beta_0}f(X_0) + e^{\beta_0}\frac{\mu}{2} \|x - X_0\|^2.
+\end{align*}
+From~\eqref{Eq:Ineq4}, we have 
+\begin{align*}
+e^{\beta_t} f(X_t) + e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2 \leq (e^{\beta_t} - e^{\beta_0}) f(x) + e^{\beta_0}  f(X_0) + e^{\beta_0} \frac{\mu}{2} \|x - Z_0\|^2.
+\end{align*}
+and hence \begin{align*}
+\{f(X_t) + \frac{\mu}{2} \|x - Z_t\|^2, e^{\beta_t}\},
+\end{align*}
+is a continuous time estimate sequence. In Appendix~\ref{App:EstSeq}, we show the equivalence in discrete-time between estimate sequences and our Lyapunov framework in this setting.
+
+\section{Discussion and future work}
+In this paper, we have presented a Lyapunov framework for analyzing several method used in optimization. We showed that a single family of Lyapunov functions can be used to verify the convergence rates of a variety of momentum methods, making Polyak's original physical intuition rigorous.  We demonstrated that convergence rates could be understood as the consequence of discretization errors incurred when passing from continuous to discrete time.  Consistently, implicit discretization schemes result in harder subproblems for algorithms, but provide an almost exact approximation of the continuous-time dynamics.   On the other hand, when explicit discretization schemes are used, the algorithms incur discretization error, and require assumptions about the problem instance to guarantee good convergence properities.
+
+We believe this framework is general for optimization, and aim to investigate how to extend these methods in a variety of directions. We close this paper with some of these possible directions for future work.
+
+\subsection{Other discretization methods}  Requiring that the continuous time Lyapunov function remain a Lyapunov function in discrete time places significant constraints on which ODE solvers can be used.  In this paper, we show that we can derive a few new algorithms using a restricted set of ODE techniques, but it remains to be seen if other methods can be analyzed.  Techniques such as the midpoint method and Runge Kutta provide more accurate solutions of ODEs than Euler methods~\cite{Butcher20001}.  Is it possible to analyze such techniques as optimization methods?  We expect that these methods do not achieve better asymptotic convergence rates, but may inherit additional favorable properties.  Determining the advantages of such schemes could provide more robust optimization techniques in certain scenarios.
+
+
+\subsection{Restart Schemes}
+Several restart schemes have been suggested for the strongly convex setting based on the momentum dynamic~\eqref{Eq:ELBreg}. In many settings,  while the Lipschitz parameter can be estimated using backtracking line-search, the strong convexity parameter is often hard -- if not impossible -- to estimate~\cite{SuBoydCandes15}.  Therefore, many~\cite{ODonoghue15,SuBoydCandes15,Krichene15} have developed heuristics to empirically speed up the convergence rate of the ODE (or discrete-time algorithm), based on model misspecification. In particular, both Su, Boyd, and Candes~\cite{SuBoydCandes15} and Krinchene, Bayen and Bartlett~\cite{Krichene15} develop restart schemes designed for the strongly convex setting based on the momentum dynamic~\eqref{Eq:ELBreg}. Our analysis suggests that restart schemes based on the dynamic~\eqref{Eq:StrongDyn} might lead to better results. 
+
+\subsection{Further Extensions}
+As mentioned in Section~\ref{Sec:StrongConv}, the dynamic~\eqref{Eq:StrongDyn} developed for the setting when $f$ is strongly convex can be viewed variationally, as the Euler-Lagrange equation for a different Lagrangian functional. %A quick check shows that it is the Euler-Lagrange equation for the following Lagrangian
+%\begin{equation}\label{Eq:LagStrongConv}
+%\mathcal{L}(x, \dot x, t) = \dot \beta_t e^{2\beta_t} \left(\frac{\mu}{2}\left\|\frac{\dot x}{\dot \beta_t}\right\|^2 - f(x)\right)
+%\end{equation}
+While outside the scope of this paper, the Lagrangian~\eqref{Eq:LagStrongConv} can be generalized to a non-Euclidean setting. In follow-up work, we study this second Lagrangian family and its properties further. A natural question this research raise is whether the 
+the Lyapunov analysis introduced in this paper can be extended other settings, such as accelerated coordinate ascent~\cite{Zeyuan16} and stochastic gradient descent, and whether a dynamical perspective can be developed in these settings. In future work, we explore these questions further.  %. Preliminary results suggests that this extension is indeed possible. %In followup work, we will present these extensions. 
+%Of particular interest will be understanding the dynamical perspective these extensions potentially provide when randomness is introduced to~\eqref{Eq:EL} and~\eqref{Eq:StrongDyn}. %Furthermore, recently there has been several connections made between optimization and sampling schemes~\cite{ }
+
+
+\subsection{Searching for invariants}
+Earlier work by Drori and Teboulle~\cite{DroriTeboulle13}, Kim and Fessler~\cite{Kim2016}, Taylor \emph{et al}~\cite{Taylor2016}, and Lessard~\emph{et al}~\cite{Lessard14} have shown that optimization algorithms could be analyzed by solving convex programming problems.  In particular, Lessard~\emph{et al} show that Lyapunov-like potential functions called \emph{integral quadratic constraints} can be found by solving a constant-sized semidefinite programming problem. It would be interesting to see if these results can be adapted to directly search for Lyapunov functions like those studied in this paper.  This would provide a method to automate the analysis of new techniques, possibly moving beyond momentum methods to novel families of optimization techniques.
+
+  \clearpage
+\bibliographystyle{plain}
+\bibliography{refs.bib}
+\clearpage
+
+\appendix
+ \section{Mirror Descent Dynamic}
+ \label{App:Mirror}
+ We begin with a smooth manifold $\X$ with a local metric $\mathrm{g}(x)$ and a function $f:\X \rightarrow \R$ we would like to minimize. The gradient flow associated with $f$ is the flow induced by the differential equation,
+\begin{equation}
+\dot X_t = v(X_t),
+\end{equation} where the vector field $v(X_t)$ is the ``steepest descent'' direction (the direction that makes $f$ decrease the fastest)
+\begin{equation}
+v(x) = \arg \min _v \left\{ \langle \nabla f(X_t), v\rangle + \frac{1}{2}\|v\|_{\mathrm{g}(X_t)}^2\right\}.
+\end{equation}
+We can write the gradient flow equation explicitly as,
+ %along which $f$ decreases the most, when measured by the metric $\mathrm{g}(X_t)$. If we unpack this statement, notice that  % which characterized the direction of steepest descent. In particular, 
+%\begin{equation}
+%\frac{d}{dt} f(X_t) = \langle \nabla f(X_t), \dot X_t\rangle = \langle \mathrm{g}(X_t)^{-1} \nabla f(X_t), \dot X_t\rangle_x = \langle \mathrm{g}(X_t)^{-1} \nabla f(X_t), v(X_t)\rangle_x.
+%\end{equation} 
+%From above, we can conclude that the direction $v(X_t)$, along which $f$ can be said to decrease the most when measured by the metric, is $v(X_t) = -\mathrm{g}(X_t)^{-1}\nabla f(X_t)$.  Thus, for a smooth manifold $\X$ with local metric $\mathrm{g}(x)$, the gradient flow equation can be written as
+\begin{equation}\label{Eq:ManGradFlow}
+\dot X_t = - \mathrm{g}(X_t)^{-1} \nabla f(X_t).
+\end{equation}
+%
+%the interpretation of a gradient flow as a steepest descent flow becomes more obvious. 
+%However, it is often thought of vector field  the metric to map the differential of the function $\nabla f(x)$ to the tangent space. 
+%Intuitively, the gradient is a directional derivative and is therefore an element of the cotangent space. The metric is used to map the gradient onto the tangent space to figure out the corresponding vector field.  
+%\paragraph{The Mirror Descent Dynamic} 
+The dynamic which forms the basis for the mirror descent algorithm arises from a special structure that appears when the metric is chosen to be the Hessian of a strictly convex function $h$:
+% $\mathrm{g}(x) = \nabla^2 h(x)$, 
+\begin{equation}\label{Eq:NatGrad}
+\dot X_t = -[\nabla^2 h(X_t)]^{-1} \nabla f(X_t).
+\end{equation}
+which we can also write as,
+\begin{equation}\label{Eq:MirrorFlow}
+\frac{d}{dt} \nabla h(X_t) = - \nabla f(X_t).
+\end{equation}
+While on the surface, the ability to rewrite \eqref{Eq:NatGrad} as \eqref{Eq:MirrorFlow} appears to be a nice algebraic trick, it is actually a manifestation of the following fact: \begin{center}{\em When $h:\X \rightarrow \R$ is strictly convex and $\mathrm{g}(x)= \nabla^2 h(x)$, there is a special map \\$\phi:\X \rightarrow \mathcal{Y}$ called the {\em mirror map}, given by $\phi = \nabla h$, whose push-forward maps\\ a gradient flow on $\X$ to a gradient flow on $\mathcal{Y}$. \cite{Acceleration}}\end{center} As a quick exercise, we can check that the following holds under the mirror map:
+
+\begin{center}
+\begin{tikzpicture}
+\node  at (-4.8,3.6) {$\X$};
+\filldraw[fill=blue!6,opacity=0.4]
+ (-4.8,2) ellipse (3cm and 1.2cm);
+
+\node at (0, 4) {{\bf ``Mirror Map''}};
+\node at (0, 3.5) {$y = \nabla h(x)$};
+\node at (-4.8,-.3) {\small Hessian Metric $\nabla^2 h(x)$};
+\node at (-4.8,.3) {\small Function $f(x)$ };
+\node at (-4.8,-.9) {\small Gradient Flow $\dot X_t = -[\nabla^2 h(X_t)]^{-1}\nabla f(X_t) $};
+
+\node  at (4.8,3.6) {$\mathcal{Y}$};
+\node at (4.8,-.3) {\small Hessian Metric $\nabla^2 h^\ast(y) = [\nabla h^2(x)]^{-1}$};
+\node at (4.8,.3) {\small Function $f(\nabla h^\ast(y)) = \tilde{f}(y)$};
+\node at (4.8,-.9) {\small Gradient Flow $\dot Y_t = -[\nabla^2 h^\ast(Y_t)]^{-1}\nabla \tilde{f}(Y_t)$};
+\node at (5.65,-1.5) {\small $ = -\nabla f(\nabla h^\ast(Y_t)) $};
+\filldraw[fill=blue!6,opacity=0.4]
+ (4.8,2) ellipse (3cm and 1.2cm);
+ \path[->] (-3,2.4) edge [bend left=30] (3,2.4);
+
+
+%\path[->] (-2,1.4) edge [bend left=45] (3,2.0);
+%\draw [red] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
+%\node 
+%\path[->] (-3,2.4) edge [bend left=45] (3,2.4);
+%\quad \quad \quad 
+%\draw[->] [black] plot [smooth cycle] coordinates {(-6,1.4) (-4,2.4)};%(-2,2.4)};
+  %\draw (-6,1.4) node[circle, inner sep=0.8pt, fill=black, label={below:{}}] (E) {};  
+ % \draw (-2,2.4) node[circle, inner sep=0.8pt, fill=black, label={below:{}}] (F) {}; 
+
+%  \draw[red ->]  (E) .. controls +(5,-3) and +(-4,1).. (F);
+  %\path  ($(E)+(0,0.2)$) .. controls +(5,-3) and +(-4,1)..  ($(F)+(0,0.2)$) 
+     %{\foreach \i in {1,...,40} {  coordinate[pos=0.15+0.75*\i/40] (p\i) } };
+
+%  \draw[blue, ->] (p1) { \foreach \i in {1,...,40} {-- (p\i) } };
+%\path[-] (-4,2.4) edge [bend left= 45] (-2,2.4);
+
+\end{tikzpicture}
+\end{center}
+
+%
+%\begin{equation}\label{Eq:Mirror}
+%\frac{d}{dt} \nabla h(X_t)  =- \nabla f(X_t)
+%\end{equation}
+%The importance of the Hessian Riemannian gradient flow \eqref{Eq:NatGrad} is that there exists a Lyapunov functional that can be used to show convergence of the dynamic.%, which 
+\paragraph{Time-Dilation} 
+The gradient flow equation does not explicitly depend on time. As in \cite{Acceleration}, let  $\tau: \mathbb{T} \rightarrow \mathbb{T}'$ be a smooth twice-continuously differential function, where $\mathbb{T}' = \tau(\mathbb{T}) \subseteq \R$ is the image of $\mathbb{T}$. Given a curve $X:\mathbb{T}' \rightarrow \X$, we consider the reparameterized curve $Y:\mathbb{T} \rightarrow \X$ given by 
+\[Y_t = X_{\tau(t)}.\]
+ That is,  the new curve is obtained by traversing the old curve at a new speed of time. If we consider the arbitrary time-dilation function $\tau(t) = e^{\beta(t)}:= e^{\beta_t}$, where $\dot \beta_t >0$, applied to the mirror descent dynamic \eqref{Eq:MirrorFlow}, we obtain the following equation, %that the time-dilated mirror descent dynamic is given by the equation
+\begin{equation}\label{Eq:MirrorTime}
+\frac{d}{dt} \nabla h(X_t) = -\dot \tau(t)\nabla f(X_t) = - \frac{d}{dt}\left\{e^{\beta_t}\right\} \nabla f(X_t).
+\end{equation}
+Since the vector field explicitly depends on time, \eqref{Eq:MirrorTime} is no longer a gradient flow. Nevertheless, a we can generate a Lyapunov function from the general time-dilated dynamic. 
+%we will outline in the following sections. 
+\subsection{Lyapunov Analysis}
+Using the Bregman divergence of $h$,
+\begin{equation}
+D_h(y,x) = h(y) - h(x) - \langle \nabla h(x), y- x\rangle, 
+\end{equation}
+we illustrate how the special property of the Hessian metric provides a Lyapunov analysis of the mirror descent dynamic~\eqref{Eq:MirrorFlow}. First, notice that 
+\begin{subequations}\label{Eq:Disc}
+\begin{align}
+\frac{d}{dt} D_h(x^\ast,X_t) & =  \frac{d}{dt} \left\{h(x^\ast) - h(X_t) - \langle \nabla h(X_t), x^\ast- X_t\rangle \right\} ds\notag\\
+& = - \langle \nabla h(X_t), \dot X_t\rangle -\left\langle \frac{d}{dt} \nabla h(X_t),x^\ast - X_t\right\rangle  + \langle \nabla h(X_t), \dot X_t\rangle \notag\\
+&=  -\left\langle \frac{d}{dt} \nabla h(X_t),x^\ast - X_t\right\rangle\notag\\
+& \overset{\eqref{Eq:MirrorTime}}{=}  \frac{d}{dt}\left\{e^{\beta_t}\right\} \left\langle \nabla f(X_t), x^\ast - X_t\right\rangle \notag\\
+& \leq   \frac{d}{dt}\left\{e^{\beta_t}\right\} (f(X_t) - f(x^\ast)) dt,\label{Eq:Bound1} 
+\end{align}
+\end{subequations}
+where in the last step we have used the convexity of $f$. Jensen's inequality ensures a $O(e^{-\beta_t})$ convergence rate on the average iterate,  %using Jensen's, we obtain a bound on the time-averaged iterate $\hat X_s = \frac{\int_0^t X_s ds}{t}$, 
+%we obtain the following bound
+\begin{align*}
+f\left(\frac{\int_0^t \dot \beta_s e^{\beta_s} X_s ds}{e^{\beta_t} - e^{\beta_0}}\right) - f(x^\ast) &\leq \frac{ - \int_0^t \frac{d}{ds} D_h(x^\ast,X_s)ds}{e^{\beta_t} - e^{\beta_0}} \\
+&\leq \frac{D_h(x^\ast,X_0) - D_h(x^\ast, X_t)}{e^{\beta_t} - e^{\beta_0}}\\
+&\leq \frac{D_h(x^\ast,X_0)}{e^{\beta_t} - e^{\beta_0}}.
+\end{align*}
+ However, notice that the primal form~\eqref{Eq:NatGrad} of the mirror descent dynamic allows us to obtain a stronger guarantee,
+ \begin{subequations}\label{Eq:Lem}
+ \begin{align}
+\frac{d}{dt}\left\{ e^{\beta_t} f(X_t) \right\} &= \frac{d}{dt} \{e^{\beta_t}\}f(X_t) + e^{\beta_t}\langle \nabla f(X_t), \dot X_t\rangle\notag \\
+&= \frac{d}{dt} \{e^{\beta_t}\}f(X_t) - \dot \beta_t e^{2\beta_t}\langle \nabla f(X_t), \nabla^2 h(X_t)^{-1}\nabla f(X_t)\rangle \notag\\
+& = \frac{d}{dt} \{e^{\beta_t}\}f(X_t) - \dot \beta_t e^{2\beta_t}\frac{1}{2}\|\nabla f(X_t)\|_{\ast,X_t}^2 \notag \\
+&\leq \frac{d}{dt} \{e^{\beta_t}\}f(X_t). 
+\end{align}
+\end{subequations}
+%Therefore 
+%\[- f(X_t) \leq -\frac{d}{dt} \left\{t f(X_t)\right\} \]
+If we plug this into \eqref{Eq:Bound1}, we obtain the following inequality,
+%Of course, this analysis 
+\begin{align*}
+ \frac{d}{dt} \left\{ e^{\beta_t}( f(X_t) - f(x^\ast))\right\} \leq\frac{d}{dt} \{e^{\beta_t}\}\left( f(X_t) - f(x^\ast)\right) \leq - \frac{d}{dt} D_h(x^\ast,X_t). 
+\end{align*}
+Integrating gives a Lyapunov function for the mirror descent dynamic~\eqref{Eq:MirrorFlow},
+%%\begin{equation*}
+%%\E_t = t(f(X_t) - f(x^\ast)) + D_h(x^\ast, X_t),
+%%\end{equation*}
+%as well as a $O(e^{-\beta_t})$ convergence rate on the actual iterate.
+%
+%%\begin{equation*}
+%%f(X_t) - f(x^\ast) \leq \frac{D_h(x^\ast, X_0)}{t}.
+%%\end{equation*}
+%%
+%%%%%%%%%%%%%%%%%%%%%
+%%\subsection{Time Dilation}
+%%The gradient flow equation does not explicitly depend on time. As in \cite{Acceleration}, let  $\tau: \mathbb{T} \rightarrow \mathbb{T}'$ be a smooth twice-continuously differential function, where $\mathbb{T}' = \tau(\mathbb{T}) \subseteq \R$ is the image of $\mathbb{T}$. Given a curve $X:\mathbb{T}' \rightarrow \X$, we consider the reparameterized curve $Y:\mathbb{T} \rightarrow \X$ given by 
+%%\[Y_t = X_{\tau(t)}.\]
+%% That is,  the new curve is obtained by traversing the old curve at a new speed of time. If we consider the arbitrary time-dilation function $\tau(t) = e^{\beta(t)}:= e^{\beta_t}$, where $\dot \beta_t >0$, applied to the mirror descent dynamic \eqref{Eq:MirrorFlow}, we obtain the following equation, %that the time-dilated mirror descent dynamic is given by the equation
+%%\begin{equation}\label{Eq:MirrorTime}
+%%\frac{d}{dt} \nabla h(X_t) = -\dot \tau(t)\nabla f(X_t) = - \frac{d}{dt}\left\{e^{\beta_t}\right\} \nabla f(X_t).
+%%\end{equation}
+%%Since the vector field explicitly depends on time, \eqref{Eq:MirrorTime} is no longer a gradient flow. Nevertheless, the same Lyapunov analysis can be performed on the new time-dilated curve. That is, we can show a convergence rate on the average iterate, 
+%%\begin{align*}
+%%f(\hat X_t) - f(x^\ast) \leq \frac{D_h(x^\ast,X_0) }{e^{\beta_t} - e^{\beta_0} }
+%%\end{align*}
+%%where $\hat X_t = \frac{\int_0^t \dot \beta_s e^{\beta_s} X_s ds}{\int_0^t \dot \beta_s e^{\beta_s} ds}$, as well as obtain the Lyapunov function~\eqref{Eq:GradFlowLyapFunc}
+%%%\begin{equation}
+%%%\E_t = e^{\beta_t}(f(X_t) - f(x^\ast)) + D_h(x^\ast, X_t),
+%%%\end{equation}
+%%using the same argument~\eqref{Eq:Lem}. 
+%%What this example shows is that in continuous time the notion of a convergence rate is not really meaningful; we can simply reparameterize time to obtain any rate of convergence we want. Constraints arise only when mapping the continuous-time dynamic to a discrete-time algorithm. 
+% 
+%% \subsection{Mapping to Discrete-time}
+%%The goal of this section is to illustrate how the Lyapunov analysis in continuous time guides the analysis for discretizations of the mirror descent dynamic~\eqref{Eq:MirrorFlow}. We begin in the same way as~\eqref{Eq:Disc}, where we integrate over a small region $\delta$:     
+%%\begin{align}
+%%\int_t^{t+\delta} \frac{d}{ds} D_h(x^\ast,X_s)ds & = \int_t^{t+\delta} \frac{d}{ds} \left\{- h(X_s) - \langle \nabla h(X_s), x^\ast- X_s\rangle \right\}\notag\\
+%%& = h(X_t) + \langle \nabla h(X_t), x^\ast - X_t\rangle - [h(X_{t+\delta}) + \langle \nabla h(X_{t+\delta}), x^\ast - X_{t+\delta}\rangle]\notag
+%%\end{align}
+%%where in the last line we have simply used the fundamental theorem of calculus. Making the identification $X_t = x_k$ and $X_{t+\delta} = x_{k+1}$, we obtain the following identity,
+%%\begin{subequations}
+%%\begin{align}
+%%D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) &= h(x_k) + \langle \nabla h(x_k), x^\ast - x_k\rangle - h(x_{k+1}) - \langle \nabla h(x_{k+1}), x^\ast - x_{k+1}\rangle \notag \\
+%%& = - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k).\label{Eq:DiscTool}
+%%\end{align}
+%%\end{subequations}
+%%%The representation of the Bregman distance between   
+%%%First, notice
+%%This identity~\eqref{Eq:DiscTool} has been the fundamental tool analyzing all discretizations of the mirror descent dynamic~\eqref{Eq:MirrorTime} so far. 
+%%\paragraph{Proof Sketch} In what follows, we analyze the behavior of an arbitrary approximation of the integral for the time-dilated dynamic,
+%%\begin{align}\label{Eq:AnyApprox}
+%% \nabla h(x_{k+1})  -\nabla h(x_k) = -\int_t^{t+\delta}\frac{d}{ds}\left\{e^{\beta_s}\right\} \nabla f(X_s)ds  \approx -\alpha_k \nabla f(y_{k}) = -(A_{k+1} - A_{k})  \nabla f(y_{k}),
+%% \end{align}
+%% where $A_{k+1} = \sum_{i=1}^{k+1} \alpha_i $ and $y_k$ is a random element in $\X$. 
+%%%and try to analyze its behavior. 
+%%%\paragraph{Discrete-time Proof Structure}
+%%%
+%%Plugging~\eqref{Eq:AnyApprox} in into \eqref{Eq:DiscTool}, we obtain the following, 
+%% \begin{align*}
+%% D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) & = - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k)\\
+%% & =(A_{k+1} - A_{k}) \langle \nabla f(y_{k}) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k)
+%% \end{align*}
+%% Using the Lyapunov analysis~\eqref{Eq:Disc} as a guideline,~\eqref{Eq:AnyApprox} can be considered an approximation to the integral
+%% \begin{equation}
+%%\int_t^{t+\delta} \frac{d}{ds} D_h(x^\ast,X_s)d =  \int_t^{t+\delta}\frac{d}{dt}\left\{e^{\beta_t}\right\}\langle \nabla f(X_t), x^\ast - X_t\rangle \approx \alpha_k\langle \nabla f(y_{k}), x^\ast - y_{k}\rangle 
+%% \end{equation}
+%% with what we refer to as the {\em discretization error},
+%% \begin{equation} \label{Eq:DiscEr}
+%% \varepsilon_k\, = \,(A_{k+1} - A_k)  \langle \nabla f(y_k),y_k - x_{k+1}\rangle - D_h(x_{k+1}, x_k).
+%% \end{equation}
+%% Indeed, %if we can simply bound the error by some constant, we obtain a $O(1/\sum_{i=1}^k \alpha_k)$ rate on the averaged iterate, 
+%%we already have the bound
+%% \begin{align*}
+%% f(\hat  y_{k}) - f(x^\ast) \leq \frac{ D_h(x^\ast,x_0) + \sum_{i=1}^{k} \, \varepsilon_i}{A_{k}-A_0},
+%% \end{align*}
+%%where $\hat y_k = \sum_{i=1}^k \alpha_i y_{i}/(A_{k} - A_0) $, similar to our analysis in continuous-time. It remains to determine which  smoothness assumptions on $f$ and $h$  are necessary to guarantee $\sum_{i=1}^{k} \varepsilon_i/(A_{ k}- A_0)   < \infty$. 
+%%Notice that the error term is a function of the  step-size $\alpha_k$ whenever $y_k \neq x_{k+1}$.   We illustrate how this procedure works with the for the following algorithms:%
+%%
+%% \subsection{Proximal Minimization Method}
+%%  The proximal minimization method, introduced and analyzed by Chen and Teboulle~\cite{ChenTeboulle93}, is the result of applying the implicit-Euler method to~\eqref{Eq:MirrorTime},
+%%  \begin{equation}\label{Eq:Forward}
+%%  \nabla h(x_{k+1})  - \nabla h(x_k) = -(A_{k+1}- A_k) \nabla f(x_{k+1}),
+%%  \end{equation} 
+%% which can be written 
+%% \begin{equation}\label{Eq:ForwardReg}
+%% x_{k+1} = \arg\min_{x\in\X}\left\{f(x) + \frac{1}{(A_{k+1}- A_k)} D_h(x,x_{k})\right\}.
+%% \end{equation}
+%%Plugging in the algorithm~\eqref{Eq:Forward} into our so-called fundamental tool, our ``discretization error'' is already negative:
+%% \begin{subequations}\label{Eq:ForwardGradProof}
+%% \begin{align}
+%%D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) & = - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k)\notag\\
+%% & = (A_{k+1}- A_k)\langle \nabla f(x_{k+1}) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k) \notag\\
+%% &\leq -(A_{k+1}- A_k)( f(x_{k+1}) - f(x^\ast) )
+%% \end{align}
+%% \end{subequations}
+%%Telescoping ensures an $O(1/A_k)$ convergence rate on the averaged iterate $\hat x_k = \sum_{i=1}^k \alpha_i x_{i}/(A_{k} - A_0) $: 
+%%\begin{equation}
+%%f(\hat x_k) - f(x^\ast)\leq \frac{D_h(x^\ast, x_0)}{A_k - A_0}
+%%\end{equation}
+%%Using~\eqref{Eq:ForwardReg}, we can guarantee that $f(x_{k+1})$ is nonincreasing,
+%%\begin{equation}\label{Eq:Bound2}
+%%A_k f(x_{k+1}) + \frac{A_k}{(A_{k+1}- A_k)} D_h(x_{k+1}, x_k) \leq A_kf(x_k)+ \frac{A_k}{(A_{k+1}- A_k)} D_h(x_{k}, x_k) = A_kf(x_k).
+%%\end{equation}
+%%Therefore something analogous to~\eqref{Eq:Lem} holds,
+%%\begin{align*}
+%%A_{k+1} f(x_{k+1}) - A_k f(x_k) &= A_k (f(x_{k+1}) - f(x_k)) + (A_{k+1} - A_k) f(x_{k+1})\\
+%%&\overset{\eqref{Eq:Bound2}}{\leq} - \frac{A_k}{A_{k+1}- A_k} D_h(x_{k+1}, x_k)  + (A_{k+1} - A_k) f(x_{k+1})\\
+%%&\leq (A_{k+1} - A_k) f(x_{k+1}).
+%%\end{align*}
+%%This ensures that 
+%%\begin{equation}
+%%E_k = A_k(f(x_k) - f(x^\ast))+ D_h(x^\ast, x_k)
+%%\end{equation}
+%%is a Lyapunov function, as well as the convergence rate guarantee,
+%%\begin{equation}
+%%f(x_k) - f(x^\ast) \leq \frac{A_0 (f(x_0) - f(x^\ast)) + D_h(x^\ast, x_0)}{A_k}.
+%%\end{equation}
+%%
+%% \subsection{Mirror Descent}
+%% \label{App:MirrorDesc}
+%%The mirror descent algorithm introduced by Nemirovski and Yudin~\cite{NemYud83} is the backward-Euler method applied to~\eqref{Eq:MirrorTime}
+%%\begin{equation}\label{Eq:MirrorDesc}
+%%\nabla h(x_{k+1}) - \nabla h(x_k) = -\alpha_k \nabla f(x_k)
+%%\end{equation}
+%%which can be written 
+%% \begin{equation}\label{Eq:BackwardReg}
+%% x_{k+1} = \arg\min_{x\in\X}\left\{f(x_k) + \langle \nabla f(x_k), x - x_k\rangle  + \frac{1}{\alpha_{k}} D_h(x,x_{k})\right\}.
+%% \end{equation}
+%%\label{App:Gradient}
+%%Using the fundamental tool, we obtain the bound 
+%%\begin{subequations}\label{Eq:MirrorProof}
+%% \begin{align}
+%%D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) & = - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k)\notag\\
+%%& = \alpha_{k} \langle \nabla f(x_k), x^\ast - x_k\rangle + \alpha_k\langle \nabla f(x_k), x_k - x_{k+1}\rangle - D_h(x_{k+1}, x_k)\\
+%%&\leq -\alpha_{k} (f(x_k)- f(x^\ast))  + \alpha_k\langle \nabla f(x_k), x_k - x_{k+1}\rangle - D_h(x_{k+1}, x_k).
+%%\end{align}
+%%\end{subequations}
+%%Thus, we need to ensure the following bound 
+%%\begin{align}
+%% \frac{ \sum_{i=1}^k \alpha_i\langle \nabla f(x_i), x_i - x_{i+1}\rangle - D_h(x_{i+1}, x_i)}{A_k - A_0} \leq \infty
+%% \end{align}
+%%While we have not assumed anything yet about the smoothness on $f$ and $h$, reasonable assumptions are limited. 
+%% \paragraph{Subgradient Descent} Perhaps the first thing to notice is that if we have any upper-bound on the Bregman divergence of $h$ of the form
+%% \begin{equation}\label{Eq:SmoothAssump}
+%%D_h(x_{k+1}, x_k) \leq g(x_k - x_{k+1}),
+%% \end{equation}
+%% the  Fenchel-Young inequality helps determine how the error scales in the dual 
+%% \begin{align}
+%%  \frac{\sum_{i=1}^k\alpha_i\langle \nabla f(x_i), x_i - x_{i+1}\rangle - D_h(x_{i+1}, x_i)}{A_k- A_0} \leq \frac{ \sum_{i=1}^kg^\ast(\alpha_i \nabla f(x_i))}{A_k - A_0},
+%% \end{align}
+%% where $g^\ast$ is the Fenchel conjugate of $g$. The most natural assumption is to have $g = \frac{1}{p}\|\cdot\|^p$ be a $\ell_p$-norm. With this assumption,~\eqref{Eq:SmoothAssump} turns into a uniform convexity assumption on $h$ of order $p$. Thus, we simply need to ensure  $\frac{\sum_{i=1}^k \|\alpha_i\nabla f(x_i)\|^{\frac{p-1}{p}}}{ \sum_{i=1}^k \alpha_i}<\infty$. If we assume the gradient of the function is bounded in norm 
+%% \[\sup_{x \in \X} \|\nabla f(x)\| = G< \infty,\]
+%%  then we are free to optimize this bound over the step-size $\alpha_k$. Since we have required no other assumptions on $f$ other than convexity, this bound extends to the setting where we have bounded subgradients. As it turns out, $p=2$ (a strong convexity assumption on $h$)  provides the best scaling on the steps-size $\alpha_k$. In particular, we obtain the $O(1/\sqrt{k})$ lower bound on the class of functions with bounded subgradients by choosing $\alpha_k =\frac{D_h(x,x_0)}{G\sqrt{k+1}}.$
+%%
+%% \paragraph{Mirror Descent} If we assume $f$ is $\left(1/(A_{i+1} - A_i)\right)$-smooth $\forall i$ with respect to the Bregman divergence, 
+%% \begin{equation*}
+%% (A_{i+1} - A_i)\left(\langle \nabla f(x_i), x_i - x_{i+1}\rangle - \frac{1}{(A_{i+1} - A_i)}D_h(x_{i+1}, x_i)\right) \leq -(A_{i+1} - A_i)(f(x_{i+1}) - f(x_i))
+%% \end{equation*}
+%% then we obtain a nice upper bound 
+%% \begin{align*}
+%% D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) & \leq-(A_{k+1} - A_k)(f(x_k)- f(x^\ast))  - (A_{k+1} - A_k)(f(x_{k+1}) - f(x_k)).
+%% \end{align*}
+%%Summing over $k$ gives a $O(1/A_k)$ rate on the averaged iterate. However, this smoothness assumption is unrealistic for an increasing $A_{i+1} - A_i$. A more reasonable assumption -- the general smoothness assumption in convex optimization -- is that the step-size is a constant $A_{i+1} - A_i = \epsilon(i+1) - \epsilon i = \epsilon$. The necessary smoothness assumption then becomes 
+%%\begin{equation}
+%%\epsilon \left(\langle \nabla f(x_k), x_k - x_{k+1}\rangle - \frac{1}{\epsilon}D_h(x_{k+1}, x_k)\right) \leq -\epsilon (f(x_{k+1}) - f(x_k))
+%%\end{equation}
+%%which gives a $O(1/A_k) = O(1/\epsilon k)$ rate of convergence on the average iterate. Notice, if we assume $h$ is $\sigma$-strongly convex and that $f$ is $(1/\epsilon)$-smooth we obtain a similar bound. In particular, taking $\delta = \epsilon\sigma$ gives the bound
+%%\begin{equation}
+%%\epsilon \sigma \left( \langle \nabla f(x_k), x_k - x_{k+1}\rangle - \frac{1}{2\epsilon}\|x_{k+1} -x_k\|^2 \right)\leq - \epsilon \sigma (f(x_{k+1}) - f(x_k))
+%%\end{equation} 
+%%and therefore a $O(1/\epsilon \sigma k)$ convergence rate on the averaged iterate. 
+%%\begin{remark} 
+%%In the Euclidean setting $h= \frac{1}{2}\|\cdot\|^2$, the primal and dual spaces are the same. Thus, we can obtain a stronger bound for~\eqref{Eq:MirrorDesc}. In particular, note that 
+%%\begin{align*}
+%%A_{k+1} f(x_{k+1}) - A_k f(x_k) &= A_k (f(x_{k+1}) - f(x_k)) + (A_{k+1} - A_k) f(x_{k+1})\\
+%%& \leq A_k \langle \nabla f(x_{k}), x_{k+1} - x_k\rangle + (A_{k+1} - A_k) f(x_{k+1})\\
+%%& = - A_k (A_{k+1} - A_k)\|\nabla f(x_k)\|^2 + (A_{k+1} - A_k) f(x_{k+1})\\
+%%&\leq (A_{k+1} - A_k) f(x_{k+1})
+%%\end{align*}
+%%Combining this with the smoothness assumption above, we obtain the following Lyapunov function 
+%%\begin{equation}
+%%E_k = k\epsilon (f(x_k) - f(x^\ast)) + \frac{1}{2}\|x^\ast - x_k \|^2 
+%%\end{equation}
+%%for gradient descent in the setting where $f$ is $(1/\epsilon)$-smooth and a $O(1/\epsilon k)$ convergence rate on the iterate. 
+%%\end{remark}
+%%
+%% \subsection{Universal Gradient}
+%% \label{App:UnivGrad}
+%% The universal gradient method~\cite{Nesterov14} was introduced by Nesterov in 2014 for the class of functions with Holder-continuous gradients ($L_\nu <\infty$)
+%% \begin{equation}\label{Eq:Holder}
+%% \|\nabla f(x) - \nabla f(y) \|_\ast \leq L_{\nu}\|x - y\|^\nu
+%% \end{equation}
+%% The difficulty for this setting is that the uniform convexity condition on $h$ is not well-defined for $p\leq 2$, and therefore we cannot use the standard trick with regard to a matching  the uniform convexity assumption we have on $h$ to the smoothness assumption on $f$. However, it was shown in \cite[Lem 2]{Nesterov14} that for any $\delta >0$ and 
+%% \begin{equation}
+%% L \geq \left(\frac{1- \nu}{1+\nu} \cdot \frac{1}{\delta}\right)^{\frac{1-\nu}{1+\nu}} L_\nu^{\frac{2}{1+\nu}}
+%% \end{equation} 
+%% the Holder condition \eqref{Eq:Holder} is equivalent to a standard smoothness condition with the addition of an error term,
+%% \begin{equation}
+%% f(y)\leq f(x) + \langle \nabla f(x),y-x\rangle + \frac{L}{2}  \|y - x\|^2 + \frac{\delta}{2}
+%% \end{equation}
+%% Therefore, if we simply need a strong convexity assumption on $h$ to obtain a convergence rate up to error tolerance $\delta$. Indeed, using  our standard tool we have ($A_{k+1} - A_k = \alpha_k$)
+%% \begin{align*}
+%% D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) & = - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k)\notag\\
+%%& = (A_{k+1} - A_k) \langle \nabla f(x_k), x^\ast - x_k\rangle + \alpha_k\langle \nabla f(x_k), x_k - x_{k+1}\rangle - D_h(x_{k+1}, x_k)\\
+%%&\leq -\alpha_k (f(x_k)- f(x^\ast))  + \alpha_k \left(f(x_{k}) - f(x_{k+1}) + \frac{L}{2}\|x_{k+1} - x_k\|^2 + \frac{\delta}{2}\right)\\
+%%&\quad - \frac{\sigma}{2}\|x_{k+1} - x_k\|.
+%% \end{align*}
+%% choosing $A_{k+1} - A_k =  (k+1)\frac{\sigma}{L} - k\frac{\sigma}{L}= \frac{\sigma}{L}$ gives a $O(1/A_k) = O(L/\sigma k)$ convergence rate on the averaged iterate to within error tolerance $\frac{\sigma}{L}\delta$. In \cite[Eq (2.17)]{Nesterov14}, Nesterov analyzes a more sophisticated scheme -- one equipped with a backtracking line search procedure with ``restore.'' Nevertheless the same convergence rate guarantee is obtained.
+%%  \subsection{Mirror Prox}
+%%  The Mirror Prox method algorithm \cite{Nemirovski05} developed by Nemirovski in 2005 is an algorithm with the following optimality conditions, \begin{subequations}
+%%  \begin{align}
+%%  \nabla h(x_{k+1}) - \nabla h(x_k) &= -\alpha_k \nabla f(y_{k+1}),\\
+%%  \nabla h(y_{k+1}) - \nabla h(x_k) &= -\alpha_k \nabla f(x_k).
+%%  \end{align}
+%%  \end{subequations}
+%%  Thus we start with two identities,
+%%  \begin{align*}
+%%  D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) & = - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - x_{k+1}\rangle - D_h(x_{k+1}, x_k),\notag
+%%\end{align*}
+%%and 
+%%  \begin{align*}
+%%  D_h(x_{k+1}, y_{k+1}) - D_h(x_{k+1}, x_{k}) & = - \langle \nabla h(y_{k+1}) - \nabla h(x_k) , x_{k+1} - y_{k+1}\rangle - D_h(y_{k+1}, x_k).\notag
+%%\end{align*}
+%%Adding them together, we obtain 
+%%\begin{align}
+%%  D_h(x^\ast, x_{k+1}) - D_h(x^\ast, x_{k}) & = - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - x_{k+1}\rangle - \langle \nabla h(y_{k+1}) - \nabla h(x_k) , x_{k+1} - y_{k+1}\rangle\notag \\
+%%  & \quad - D_h(y_{k+1}, x_k) - D_h(x_{k+1}, y_{k+1})\notag\\
+%%  & =  - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - y_{k+1}\rangle + \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x_{k+1} - y_{k+1}\rangle \notag\\
+%%  &\quad  - \langle \nabla h(y_{k+1}) - \nabla h(x_k) , x_{k+1} - y_{k+1}\rangle - D_h(y_{k+1}, x_k) - D_h(x_{k+1}, y_{k+1})\notag\\
+%%  &= - \langle \nabla h(x_{k+1}) - \nabla h(x_k) , x^\ast - y_{k+1}\rangle  - \langle \nabla h(y_{k+1}) - \nabla h(x_{k+1}) , x_{k+1} - y_{k+1}\rangle \notag\\
+%%  &\quad- D_h(y_{k+1}, x_k) - D_h(x_{k+1}, y_{k+1})\notag\\
+%%  & = \alpha_k\langle \nabla f(y_{k+1}) , x^\ast - y_{k+1}\rangle -\alpha_k \langle \nabla f(y_{k+1}) - \nabla f(x_{k}) , x_{k+1} - y_{k+1}\rangle \notag\\
+%%  &\quad- D_h(y_{k+1}, x_k) - D_h(x_{k+1}, y_{k+1})\notag\\
+%%  &\leq -\alpha_k(f(y_{k+1})-f(x^\ast)) + \varepsilon_k,
+%%\end{align}
+%%where a strong convexity assumption on $h$ and a smoothness assumption on $f$ ensures that the error $\varepsilon_k$ vanishes simply by picking $\alpha_k = \epsilon \sigma$
+%%\begin{align*}
+%%\varepsilon_k &= \alpha_k \langle \nabla f(y_{k+1}) - \nabla f(x_{k}) , x_{k+1} - y_{k+1}\rangle- D_h(y_{k+1}, x_k) - D_h(x_{k+1}, y_{k+1})\\
+%%& \leq \alpha_k\left( \frac{1}{2\epsilon}\|y_{k+1}-x_{k}\|^2  + \frac{1}{2\epsilon}\|x_{k+1} - y_{k+1}\|^2\right)- \frac{\sigma}{2}\|y_{k+1} - x_k\|^2 - \frac{\sigma}{2}\| x_{k+1} - y_{k+1}\|^2\\
+%%&= 0.
+%%\end{align*}
+%%Therefore we obtain a $O(1/A_k)$ convergence rate on the average iterate, matching the bound for mirror descent ($\alpha_k := A_{k+1} - A_k = (k+1)\epsilon \sigma - k \epsilon \sigma = \epsilon\sigma$). 
+%%
+%%  \subsection{Dual Averaging}
+%%   \label{App:DualAvg}
+%%  The dual averaging algorithm~\cite{Nesterov09} was introduced by Nesterov in 2005 to address an issue with the subgradient algorithm analyzed above~\ref{App:MirrorDesc}: for the subgradient method, ``new gradients are included in the model with vanishing rates\dots This contradicts one of the basic principles of convergent iterative schemes, which tells us that during the process the importance and quality of new information should increase''~\cite{Nesterov15}. This observation led Nesterov to look at discretizations of the following dynamic ($\gamma_0 \geq 0, \dot\gamma_t \geq 0,\,\, \forall t$),
+%%  \begin{equation}\label{Eq:DualAvgDyn}
+%%  \frac{d}{dt} \left\{\gamma_t \nabla h(X_t) \right\}= - \frac{d}{dt}\{e^{\beta_t}\} \nabla f(X_t)
+%%  \end{equation}
+%%\paragraph{Dynamic Analysis}  First we provide a Lyapunov analysis of the dual averaging dynamic~\eqref{Eq:DualAvgDyn}.
+%%  \begin{align*}
+%%\int_0^t \frac{d}{ds} \left\{ \gamma_s D_h(x^\ast,X_s) \right\} \, ds
+%%&= \int_0^t \dot \gamma_s [h(x^\ast) - h(X_s)] - \frac{d}{ds} \left\{\gamma_s\right\} \langle\nabla h(X_s), x - X_s \rangle  -\gamma_s\left \langle \frac{d}{ds} \nabla h(X_s), x - X_s\right \rangle ds \\
+%%&= \int_0^t \dot \gamma_s [h(x^\ast) - h(X_s)] - \left \langle \frac{d}{ds} \left\{\gamma_s  \nabla h(X_s)\right\}, x^\ast - X_s \right\rangle ds\\
+%%&  \overset{\eqref{Eq:DualAvgDyn}}{=}  \int_0^t \dot \gamma_s [h(x^\ast) - h(X_s)]  - \int_0^t \dot \beta_s e^{\beta_s}\left \langle \nabla f(X_s), x^\ast - X_s \right\rangle ds\\
+%%&=\int_0^t  \dot \gamma_s (h(x^\ast) - h(X_s)) - \int_0^t \dot \beta_s e^{\beta_s}(f(X_s) - f(x^\ast)) ds\\
+%%& \leq  (\gamma_t - \gamma_0)( h(x^\ast) - h(\tilde{X_t})) -(e^{\beta_t}-  e^{\beta_0})(f(\hat X_t) - f(x^\ast)) ds
+%%\end{align*}
+%%where $\hat X_t  = \frac{\int_0^t \dot \beta_s e^{\beta_s} X_s ds}{\int_0^t e^{\beta_s} ds} = \frac{\int_0^t\dot  \beta_s e^{\beta_s} X_s ds}{e^{\beta_t}-  e^{\beta_0}}$ and $\tilde X_t = \frac{\int_0^t \dot \gamma_s X_s ds}{\gamma_t - \gamma_0}$. Note, the last line follows from an application of Jensen's inequality on both $f$ and $h$. 
+%%This gives a convergence rate
+%%\begin{equation}
+%%f(\hat X_t) - f(X_0) \leq \frac{\gamma_0 D_h(x^\ast,X_0) + (\gamma_0 - \gamma_t) (h(\tilde X_t) - h(x^\ast))}{e^{\beta_t} - e^{\beta_0}}
+%%\end{equation}
+%%However, we do not obtain a Lyapunov function for~\eqref{Eq:DualAvgDyn}, even in the Euclidean setting, since the scaling parameter ruins the structure we used to show~\eqref{Eq:Lem}.
+%%\paragraph{Prox-Center}
+%%We define $X_0$ to be the ``prox-center,'' 
+%%\begin{align*}
+%%X_0 = \arg\min_{x \in \X} \,h(x)
+%%\end{align*}
+%%and without loss of generality, we choose $h(X_0) = 0$, so that $h(x) =D_h(x,X_0) \geq 0, \, \forall x \in \X$.
+%%This allows us to obtain the following convergence rate guarantee,
+%%\begin{equation}\label{Eq:DualAvgBound}
+%%f(\hat X_t) - f(X_0) \leq \frac{\gamma_t D_h(x^\ast,X_0)}{e^{\beta_t} - e^{\beta_0}}
+%%\end{equation}
+%%\paragraph{Algorithm Analysis} The dual averaging algorithm is based on the following integral approximation
+%%\begin{equation}
+%%\int_{t}^{t+\delta} \frac{d}{dt} \left\{\gamma_t \nabla h(X_t)\right\} = \gamma_{t+\delta} \nabla h(X_{t+\delta}) - \gamma_t \nabla h(X_t) =- \int_t^{t+\delta} \frac{d}{dt} \{e^{\beta_t}\} \nabla f(X_t) \approx - (A_{k+1} - A_k )\nabla f(x_k)  \notag
+%%\end{equation}
+%%That is, the dual averaging algorithm satisfies the following optimality condition ($\alpha_k := A_{k+1} - A_k$),
+%%\begin{equation}\label{Eq:DualAverage}
+%%\gamma_{k+1} \nabla h(x_{k+1}) - \gamma_k \nabla h(x_k) = -\alpha_k \nabla f(x_k)
+%%\end{equation}
+%%and can also be written,
+%%\begin{equation*}
+%%x_{k+1} = \arg \min_{x\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla f(x_i), x\rangle + \gamma_{k+1}D_h(x, x_0)\right\} \label{Eq:XSeqQuasi3}.
+%%\end{equation*}
+%%To obtain an analysis for this algorithm, we use the fundamental theorem of calculus, 
+%%\begin{subequations}
+%%\begin{align*}
+%% \int_t^{t+\delta} \frac{d}{ds} \left\{ \gamma_s D_h(x,X_s)\right\} ds
+%% & = \int_t^{t+\delta} \frac{d}{ds} \left\{\gamma_s[h(x) - h(X_s) - \langle \nabla h(X_s), x - X_s\rangle] \right\} ds \\
+%% & =  \gamma_{t}[-h(x) + h(X_{t}) + \langle\nabla  h(X_{t}), x - X_{t}\rangle ] \\
+%% &\quad- \gamma_{t+\delta}[ - h(x) + h(X_{t+\delta}) + \langle \nabla  h(X_{t+\delta}), x - X_{t+\delta}\rangle ] 
+%%\end{align*}
+%%\end{subequations}
+%%Therefore,
+%%\begin{align*}
+%%\gamma_{k+1} D_h(x^\ast,x_{k+1}) - \gamma_{k} D_h(x^\ast, x_k) &= \gamma_k h(x_k) - \gamma_{k+1}h(x_{k+1}) - \gamma_{k+1}\langle \nabla h(x_{k+1}), x^\ast - x_{k+1}\rangle \\
+%%%& =  \langle \gamma_{k+1} \nabla h(x_{k+1}) - \gamma_k \nabla h(x_k), x - x_{k+1}\rangle - \gamma_k D_h(x_{k+1}, x_k)\\
+%%&\quad + \gamma_k \langle \nabla h(x_k), x^\ast - x_k \rangle+(\gamma_{k+1} - \gamma_{k})h(x^\ast)\\
+%%&= -  \langle \gamma_{k+1} \nabla h(x_{k+1}) - \gamma_{k} \nabla h(x_k),  x^\ast - x_{k+1} \rangle - \gamma_{k} D_h(x_{k+1}, x_k)   \notag \\&\quad + (\gamma_{k+1} - \gamma_{k})(h(x^\ast) - h(x_{k+1})).
+%%\end{align*}
+%%The notion of prox-center $h(x) = D_h(x,x_0), \,\forall x \in \X$ allows us to obtain the following bound,
+%%\begin{align*}
+%%\gamma_{k+1} D_h(x^\ast,x_{k+1}) - \gamma_{k} D_h(x^\ast, x_k) &\leq -  \langle \gamma_{k+1} \nabla h(x_{k+1}) - \gamma_{k} \nabla h(x_k), x^\ast - x_{k+1}\rangle - \gamma_{k} D_h(x_{k+1}, x_k)   \notag \\
+%%&\quad + (\gamma_{k+1} - \gamma_{k}) D_h(x^\ast,x_0).
+%%\end{align*}
+%%%\paragraph{Discrete-time proof of DA}
+%%Using this tool, we can analyze the dual averaging algorithm~\eqref{Eq:DualAverage}. Denoting $D_{\gamma_{k+1}, \gamma_k} = \gamma_{k+1} D_h(x^\ast,x_{k+1}) - \gamma_{k} D_h(x^\ast, x_k) $ we have, 
+%%\begin{align*}
+%%D_{\gamma_{k+1}, \gamma_k} &\leq-  \langle \gamma_{k+1} \nabla h(x_{k+1}) - \gamma_{k} \nabla h(x_k),  x^\ast -x_{k+1}\rangle - \gamma_{k} D_h(x_{k+1}, x_k)   + (\gamma_{k+1} - \gamma_{k}) D_h(x^\ast,x_0)\\
+%%& \overset{\eqref{Eq:DualAverage}}{=} \alpha_{k} \langle \nabla f(x_k),  x^\ast - x_{k+1}  \rangle - \gamma_{k} D_h(x_{k+1}, x_k) + (\gamma_{k+1} - \gamma_{k}) D_h(x,x_0)  \notag \\
+%%& =  \alpha_{k}\langle  \nabla f(x_k),  x^\ast - x_k\rangle+  \alpha_{k}\langle \nabla f(x_k), x_{k+1} - x_k \rangle - \gamma_{k} D_h(x_{k+1}, x_k) + (\gamma_{k+1} - \gamma_{k}) D_h(x^\ast,x_0)  \notag \\
+%%& =  -\alpha_{k}(f(x_k)-f(x^\ast))+  \alpha_{k}\langle \nabla f(x_k),  x_k -  x_{k+1} \rangle - \gamma_{k} D_h(x_{k+1}, x_k) + (\gamma_{k+1} - \gamma_{k}) D_h(x^\ast,x_0)  \notag \\
+%%& =  -\alpha_{k}(f(x_k)-f(x^\ast))+  \alpha_{k}\langle \nabla f(x_k),  x_k -  x_{k+1} \rangle - \frac{\gamma_{k} }{2}\|x_k - x_{k+1}\|^2 + (\gamma_{k+1} - \gamma_{k}) D_h(x^\ast,x_0)  \notag \\
+%%&\leq -\alpha_{k}(f(x_k)-f(x^\ast)) + \frac{\alpha_{k}^2}{2\gamma_k}\|\nabla f(x_k)\|_\ast^2 +  (\gamma_{k+1} - \gamma_k) D_h(x^\ast,x_0)
+%%\end{align*}
+%%where the last line follows form an application of Holder's inequality. Summing over $k$ gives a convergence rate on the averaged iterate $\hat x_k = \sum_{i=1}^k \alpha_i x_i/(A_k - A_0)$: 
+%%\begin{align*}
+%%f(\hat x_k) - f(x^\ast) \leq \frac{\gamma_{k+1}D_h(x^\ast,x_0) + \frac{1}{2}\sum_{i=1}^k \frac{\alpha_{i}^2}{2\gamma_{i}}\|\nabla f(x_i)\|_\ast^2}{A_k - A_0}.
+%%\end{align*}
+%%As an aside, if we consider a implicit Euler discretizaiton of the dynamic~\eqref{Eq:DualAvgDyn} we obtain the optimality condition,
+%%\begin{equation}
+%% \gamma_{k+1} \nabla h(x_{k+1}) - \gamma_k \nabla h(x_k) = -\alpha_k \nabla f(x_{k+1}),
+%% \end{equation}
+%% which can also be written, 
+%% \begin{equation*}
+%%x_{k} = \arg \min_{x\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla f(x_i), x\rangle + \gamma_{k+1}D_h(x, x_0)\right\} \label{Eq:XSeqQuasi3}.
+%%\end{equation*}
+%% Using a similar analysis to that above, one can show the convergence rate,
+%% \begin{equation}
+%% f(\hat x_k) - f(x^\ast) \leq \frac{\gamma_{k+1}D_h(x^\ast,x_0)}{A_k - A_0}
+%% \end{equation}
+%% similar to the bound~\eqref{Eq:DualAvgBound}.
+%%
+%
+%\subsection{Strong Convexity}
+%\label{App:StrongConvGrad}
+%We begin by showing that~\eqref{Eq:Lyap} is a Lyapunov function for the gradient flow dynamic when $f$ is $\mu$-strongly convex. A quick calculation shows 
+%\begin{align*}
+%\frac{d}{dt} (f(X_t) - f(x^\ast)) = \langle \nabla f(X_t), \dot X_t \rangle = -\|\nabla f(X_t)\|^2 \leq -\mu(f(X_t) - f(x^\ast)).
+%\end{align*} 
+%Integrating shows~\eqref{Eq:Lyap} is a Lyapunov function. Next, we show how to derive a Lyapunov function~\eqref{Eq:LyapGrad} for gradient flow dynamic $\dot X_t = -\nabla f(X_t)$ using the metric. We have:
+%\begin{align*}
+%\frac{d}{dt} \left\{ e^{\mu t} \frac{\mu}{2} \|x - X_t\|^2 \right\} ds &= \mu e^{\mu t} \frac{\mu}{2} \|x - X_t \|^2 - e^{\mu t} \mu \langle \dot X_t, x - X_t \rangle \\
+%&=  \mu e^{\mu t} \frac{\mu}{2} \|x - X_t \|^2 + e^{\mu t} \mu \langle \nabla f(X_t), x - X_t \rangle \\
+%&=  - \mu e^{\mu t} \left(f(X_t) - f(x) + \frac{\mu}{2} \| x - X_t\|^2 \right) + \mu e^{\mu t} \frac{\mu}{2}\|x - X_t\|^2  dt\\
+%& = - \mu e^{\mu t} \left(f(X_t) - f(x) \right)\\
+%& \leq - \frac{d}{dt} \{e^{\mu t}\left(f(X_t) - f(x) \right)\},
+%\end{align*}
+%where for the last step we have used the fact that $f$ is a descent method ($\beta_t = \mu t$):
+%\begin{align*}
+%\frac{d}{dt}\{e^{\beta_t} f(X_t)\} = \dot \beta_t e^{\beta_s} f(X_t) + e^{\beta_t} \langle  \nabla f(X_t), \dot X_t\rangle \leq  \dot \beta_t e^{\beta_s} f(X_t) - e^{\beta_t} \|\nabla f(X_t)\|^2 
+%\end{align*}
+%Integrating shows~\eqref{Eq:LyapGrad} is a Lyapunov function for the gradient flow dynamic $\dot X_t = -\nabla f(X_t)$ when $f$ is $\mu$-strongly convex.
+%
+%\paragraph{Corresponding Discrete-time proof}
+%We show that gradient descent obtains a linear convergence rate using the following Lyapunov function 
+%\begin{align*}
+%E_k = f(x_k) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - x_k\|^2 
+%\end{align*}
+%\begin{proof}
+%\begin{align*}
+%E_{k+1} - E_k &= f(x_{k+1}) - f(x_k) +  \frac{\mu}{2}\|x^\ast - x_{k+1}\|^2 - \frac{\mu}{2}\|x^\ast - x_k\|^2 \\
+%&= f(x_{k+1}) - f(x_k) -  \mu\langle x_{k+1} - x_k, x^\ast - x_{k+1} \rangle  - \frac{\mu}{2}\|x_{k+1} - x_k\|^2 \\
+%&= f(x_{k+1}) - f(x_k) +  \frac{\mu}{L}\langle \nabla f(x_k), x^\ast - x_{k+1} \rangle  - \frac{\mu}{2}\|x_{k+1} - x_k\|^2 \\
+%&= f(x_{k+1}) - f(x_k) +  \frac{\mu}{L}\langle \nabla f(x_k), x^\ast - x_{k} \rangle   +  \frac{\mu}{L}\langle \nabla f(x_k), x_{k} - x_{k+1} \rangle - \frac{\mu}{2}\|x_{k+1} - x_k\|^2 \\
+%&\leq   -\frac{\mu}{L} \left( f(x_k) - f(x^\ast) + \frac{\mu}{2} \|x^\ast - x_k\|^2\right)  + \frac{\mu}{L}\left(f(x_k) - f(x_{k+1}) + \frac{L}{2}\|x_{k+1} - x_k\|^2\right)\\
+%& \quad +  f(x_{k+1}) - f(x_k) - \frac{\mu}{2}\|x_{k+1} - x_k\|^2\\
+%& \leq -\frac{\mu}{L} \left( f(x_{k+1}) - f(x^\ast) + \frac{\mu}{2} \|x^\ast - x_k\|^2\right) -  \frac{1}{2L}\|\nabla f(x_k)\|^2 \\
+%& \leq - \kappa E_{k+1}.
+%\end{align*}
+%Therefore we have,
+%\begin{align*}
+%E_{k+1} - E_k \leq -\kappa E_{k+1}.
+%\end{align*}
+%\end{proof}
+%\noindent Note, we also have the following bound (see \cite[Thm H.1]{Acceleration} for proof)
+%\begin{equation}
+%E_{k+1} - E_k \leq -\kappa E_{k+1}
+%\end{equation}
+%for the other Lyapunov function~\eqref{Eq:Lyap}:
+%\begin{equation}
+%E_k = f(x_k) - f(x^\ast)
+%\end{equation}
+%
+%\subsection{Existence and Uniqueness of Solutions}
+%
+  %%%%%%%%%%%%%%%%%
+    \section{Momentum Algorithms}
+        \label{App:Momentum}
+\subsection{Proof of Theorem~\ref{Thm:Quasi}}
+\label{App:ProofQuasi}
+We show how to used the Lyapunov function 
+\begin{equation*}
+E_k = A_k (f(x_k) - f(x^\ast)) + D_h(x^\ast, z_k)
+\end{equation*}
+to obtain a convergence guarantee for the quasi-monotone subgradient method~\eqref{Eq:QuasiSub}.
+Denoting $D^\ast_{k+1, k} = D_h(x^\ast,z_{k+1})- D_h(x^\ast,z_{k})$, observe that
+%\label{App:ProofQuasi}
+%\begin{small}
+\begin{subequations}
+\begin{align}
+D^\ast_{k+1, k}  &= -D_h(z_{k+1}, z_k) +  \langle \nabla h(z_{k+1}) - \nabla h(z_k), z_{k+1} - x^\ast\rangle \label{Eq:Mirror}\\
+&\overset{\eqref{Eq:XSeqQuasi}}{\leq} -\frac{1}{2}\|z_k - z_{k+1}\|^2 -(A_{k+1} -A_{k}) \langle \nabla f(x_{k+1}), z_{k+1} - x^\ast\rangle \label{Eq:StrongConvAssump1} \\
+&= -\frac{1}{2}\|z_k - z_{k+1}\|^2 - (A_{k+1} -A_{k}) \langle \nabla f(x_{k+1}), z_{k+1} - z_k\rangle -(A_{k+1} -A_{k}) \langle \nabla f(x_{k+1}), z_k - x^\ast\rangle \notag\\
+&\leq\frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 - (A_{k+1} -A_{k}) \langle \nabla f(x_{k+1}), z_k - x^\ast\rangle \label{Eq:HoldBound1}\\
+& \overset{\eqref{Eq:ZSeqQuasi}}{=}\frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 - (A_{k+1} - A_k) \left\langle \nabla f(x_{k+1}), \frac{A_{k+1}}{(A_{k+1} -A_{k})}(x_{k+1} - x_k) + x_k - x^\ast\right\rangle \notag \\
+& =\frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2- A_{k+1} \left\langle \nabla f(x_{k+1}), x_{k+1} - x_k\right\rangle - (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x^\ast\rangle \notag\\
+&\quad + (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x_k \rangle \notag\\
+& = \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2- A_{k} \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle  - (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x^\ast\rangle. \notag\\
+&\leq -A_k(f(x_{k+1}) - f(x_k)) - (A_{k+1} -A_{k})(f(x_{k+1}) - f(x^\ast)) + \frac{\alpha_{k+1}^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 \notag\\
+& = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 \notag
+\end{align}
+\end{subequations}
+%\end{small}
+where \eqref{Eq:StrongConvAssump1} follows from the strong convexity assumption on $h$, and \eqref{Eq:HoldBound1} uses the Fenchel-Young inequality. Thus, we obtain the following bound,
+\begin{subequations}
+\begin{align*}
+E_{k+1} - E_k &\leq  \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2. 
+\end{align*}
+\end{subequations}
+Choosing $\sum_{i=0}^k (A_{i+1} -A_{i})^2  < \infty$ gives the convergence rate
+%\begin{align*}
+%E_{k} \leq E_0 + \frac{1}{2}\sum_{i=0}^{k} (A_{i+1} -A_{i})^2 \|\nabla f(x_{i})\|_\ast^2,
+%\end{align*}
+%which we can write as
+\begin{align}\label{Eq:ConvQuasi}
+f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast , x_0) +A_0 (f(x_0) - f(x^\ast)) + \frac{1}{2}\sum_{i=0}^{k} (A_{i+1} -A_{i})^2\|\nabla f(x_{i})\|_\ast^2}{A_k}.
+\end{align}
+
+
+%%%%%%%%%%%%%%%%
+\subsection{Proof of General Quasi-Monotone Method}
+\label{App:ProofQuasiGen}
+In \ref{App:ProofQuasi} we have set  the dual averaging term $\gamma_k \equiv 1$  for simplicity.
+%\noindent The proof of Theorem~\ref{Thm:Quasi} can be found in Appendix.
+%Notice, we have set the dual averaging term $\gamma_k \equiv 1$. This is for simplicity of the presentation. 
+In its more general form~\eqref{Eq:XSeqQuasi1} can be written as, 
+\begin{equation*}
+z_k = \arg \min_{z\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla f(x_i), z\rangle + \gamma_kD_h(z, z_0)\right\} \label{Eq:XSeqQuasi2},
+\end{equation*}
+which satisfies the optimality condition,
+\begin{align}\label{Eq:DualAvgX}
+\gamma_{k+1} \nabla h(x_{k+1})  - \gamma_k \nabla h(x_k)  =-(A_{k+1} - A_{k}) \nabla f(x_{k+1}).
+\end{align}
+For this method, the notion of a ``prox-center'' is essential. We provide an analysis of  this algorithm using the Lyapunov function 
+\begin{equation}\label{Eq:Lyap3}
+E_k = A_k(f(x_k) - f(x^\ast)) + \gamma_k (D_h(x^\ast, z_k) -D_h(x^\ast, x_0)),
+\end{equation}
+however first, we analyze the dynamic to understand how one could obtain the Lyapunov function \eqref{Eq:Lyap3} for the dual-averaged algorithm.
+ 
+ \paragraph{The Dynamic} We analyze the momentum dynamic \eqref{Eq:ELBreg} with an additional increasing weighting term $\gamma_0\geq 0$, $\forall t\in \R$ (where $\dot \gamma_t \geq 0$):
+ \begin{subequations}\label{Eq:DualAvgDyn}
+\begin{align}
+\frac{d}{dt}\{\gamma_t \nabla h(Z_t)\} &= \frac{d}{dt}\{e^{\beta_t}\}\nabla f(X_t)\\
+Z_t &= X_t + \frac{1}{\beta_t} \dot X_t 
+\end{align}
+\end{subequations}
+With this additional weighting term we obtain the following bound, 
+\begin{subequations}\label{Eq:Last}
+  \begin{align}
+ \frac{d}{dt} \left\{ \gamma_t D_h(x^\ast,Z_t) \right\} \, dt
+&=\dot \gamma_t [h(x^\ast) - h(Z_t)] - \frac{d}{dt} \left\{\gamma_t\right\} \langle\nabla h(Z_t), x - Z_t \rangle-\gamma_t\left \langle \frac{d}{dt} \nabla h(Z_t), x - Z_t\right \rangle \notag\\
+&= \dot \gamma_t [h(x^\ast) - h(Z_t)] - \left \langle \frac{d}{dt} \left\{\gamma_t  \nabla h(Z_t)\right\}, x^\ast - Z_t \right\rangle \notag\\
+&  \overset{\eqref{Eq:DualAvgDyn}}{=}  \gamma_t [h(x^\ast) - h(Z_t)]  +  \frac{d}{dt}\left\{e^{\beta_t}\right\} \left\langle \nabla f(X_t), x^\ast - X_t - \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} \dot X_t\right\rangle \notag\\
+& \overset{\eqref{Eq:LyapAnal}}{\leq} \dot \gamma_t [h(x^\ast) - h(Z_t)]   - \frac{d}{dt}\left\{ e^{\beta_t}\left(f(X_t) - f(x^\ast)\right)\right\} 
+%& \leq  \int_0^t \dot \gamma_s D_h(x^\ast, Z_0)  -\int_0^t \frac{d}{ds}\left\{ e^{\beta_s}\left(f(X_s) - f(x^\ast)\right)\right\} ds,
+\end{align}
+\end{subequations}
+\paragraph{Prox-Center} Here, we relax the assumption $\X = \R^d$ and now take it to be some bounded and compact set. 
+We define $X_0$ to be the ``prox-center,'' of $\X$:
+\begin{align*}
+X_0 = \arg\min_{x \in \X} \,h(x)
+\end{align*}
+and without loss of generality, we choose $h(X_0) = 0$, so that $h(x) =D_h(x,X_0) \geq 0, \, \forall x \in \X$.
+Using this definition, from~\eqref{Eq:Last} we obtain the following bound:
+% \begin{align*}
+%\int_0^t \frac{d}{ds} \left\{ \gamma_s D_h(x^\ast,Z_s) \right\} \, ds \leq  \int_0^t \frac{d}{ds}\left\{\gamma_s D_h(x^\ast, X_0)\right\}  -\int_0^t \frac{d}{ds}\left\{ e^{\beta_s}\left(f(X_s) - f(x^\ast)\right)\right\} ds
+%\end{align*}
+%
+\begin{align*}
+ \frac{d}{dt}\left\{ e^{\beta_t}\left(f(X_t) - f(x^\ast)\right)\right\} \,\leq  \frac{d}{dt} \left\{ -\gamma_t D_h(x^\ast,Z_t) + \gamma_t D_h(x^\ast, Z_0) \right\} ,
+\end{align*}
+from which we can conclude that the following function, 
+\begin{equation}
+\E_t = e^{\beta_t}( f(X_t) - f(x^\ast)) + \gamma_t (D_h(x^\ast, Z_t) - D_h(x^\ast, Z_0)),
+\end{equation}
+is a Lyapunov function. We also obtain the following convergence rate guarantee, 
+\begin{equation}\label{Eq:DualAvgBound}
+f(X_t) - f(X_0) \leq \frac{\gamma_t D_h(x^\ast,Z_0)}{e^{\beta_t}}.
+\end{equation}
+
+\paragraph{The Algorithm} 
+Using the following equality, 
+\begin{align}\label{InEq:DualAvgBound}
+\gamma_{k+1} D_h(x^\ast, z_{k+1}) - \gamma_{k} D_h(x^\ast, z_k)& =\gamma_{k+1} D_h(z_{k+1}, z_k)  +  \langle \gamma_{k+1} \nabla h(z_{k+1}) - \gamma_{k} \nabla h(z_k), z_{k+1} - x^\ast \rangle \notag \\&\quad + (\gamma_{k+1} - \gamma_{k})(h(x^\ast) - h(z_{k+1})),
+\end{align}
+%
+%
+ we can analyze what happens when we add an additional weighting term $\gamma_t$. We define $x_0 \in \X$ to be the {\em prox-center} over the set that is being optimized over. This amounts to the condition that $h(x) \geq D_h(x ,x_0)^2 \geq  \frac{\sigma}{2}\|x_0 - x\|^2, \forall x \in \X$, where we used the $\sigma$-strong convexity assumption on $h$ in the last inequality. For simplicity, we rescale $h$ so that $\sigma =1$. That is, we choose $h(x_0)= 0 $ and $x_0$ to be the minimizer of $h$ ($\nabla h(x_0) = 0$). By defining the prox-center of the set, notice that $h(z_{k+1}) \geq \frac{1}{2}\|x_0 - z_{k+1}\|^2$. Therefore, from \eqref{InEq:DualAvgBound}, we obtain the bound
+\begin{align}\label{Eq:DualAvgBound3}
+\gamma_{k+1} D_h(x^\ast, z_{k+1}) - \gamma_k D_h(x^\ast, z_k)& \leq \gamma_k D_h(z_{k+1}, z_k)  +  \langle \gamma_{k+1} \nabla h(z_{k+1}) - \gamma_k \nabla h(z_k), z_{k+1} - x^\ast  \rangle\notag \\&\quad + (\gamma_{k+1} - \gamma_{k})h(x^\ast).
+\end{align}
+%
+%
+With this inequality in hand, the proof of convergence is essentially equivalent to the proof of Theorem~\ref{Thm:Quasi}. In particular,  denoting $D^\ast_{\gamma_{k+1}, \gamma_k} = \gamma_{k+1} D_h(x^\ast, z_{k+1}) - \gamma_{k} D_h(x^\ast, z_k)$, we obtain the following upper bound, 
+%\begin{small}
+\begin{subequations}
+\begin{align}
+D^\ast_{\gamma_{k+1}, \gamma_k}& \overset{\eqref{Eq:DualAvgBound3}}{\leq} \gamma_{k} D_h(z_{k+1}, z_k) + \langle \gamma_{k+1} \nabla h(z_{k+1}) - \gamma_k \nabla h(z_k), z_{k+1} - x^\ast\rangle +  (\gamma_{k+1} - \gamma_{k})h(x^\ast) \notag\\ 
+&\overset{\eqref{Eq:DualAvgX}}{\leq} -\frac{\gamma_{k}}{2}\|z_k - z_{k+1}\|^2 - (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_{k+1} - x^\ast\rangle + (\gamma_{k+1} - \gamma_{k})h(x^\ast)  \notag\\
+&= -\frac{\gamma_{k}}{2}\|z_k - z_{k+1}\|^2 - (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_{k+1} - z_k\rangle - (A_{k+1} - A_k)\langle \nabla f(x_{k+1}), z_k - x^\ast\rangle\notag\\
+&\quad   +(\gamma_{k+1} - \gamma_{k})h(x^\ast) \notag \\
+&\leq\frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2 - (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_k - x^\ast\rangle + (\gamma_{k+1} - \gamma_{k})h(x^\ast)  \notag\\
+& \overset{\eqref{Eq:ZSeqQuasi}}{=}\frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2- (A_{k+1} - A_k)\langle \nabla f(x_{k+1}), \frac{A_{k+1}}{(A_{k+1} - A_k)}(x_{k+1} - x_k) + x_k - x^\ast\rangle\notag\\
+&\quad +(\gamma_{k+1} - \gamma_{k})h(x^\ast)  \notag \\
+& =\frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2 - (A_{k+1} - A_k)\langle \nabla f(x_{k+1}), x_{k+1} - x^\ast\rangle \notag \\
+&\quad + (A_{k+1} - A_k)\langle \nabla f(x_{k+1}), x_{k+1} - x_k \rangle- A_{k+1} \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle  +(\gamma_{k+1} - \gamma_{k})h(x^\ast)  \notag\\
+& = \frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2  - (A_{k+1} - A_k)\langle \nabla f(x_{k+1}), x_{k+1} - x^\ast\rangle - A_{k} \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle\notag \\
+&\quad + (\gamma_{k+1} - \gamma_{k})h(x^\ast)  \notag \\
+& = -A_k(f(x_{k+1}) - f(x_k)) - (A_{k+1} - A_k)(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2\notag\\
+&\quad + (\gamma_{k+1} - \gamma_{k})h(x^\ast)\notag\\
+& = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2\notag\\
+&\quad+ (\gamma_{k+1} - \gamma_{k})D_h(x^\ast, x_0).\notag
+\end{align}
+\end{subequations}
+%\end{small}
+Therefore,
+\begin{align*}
+E_{k+1} - E_k & \leq \frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2\leq   \frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} G^2,
+\end{align*}
+where $h(x^\ast) = D_h(x^\ast, x_0)$ follows from the definition of the prox-center. Taking $\gamma_{-1} = \gamma_0 = 1$ and choosing $\sum_{i=1}^k \frac{(A_{i+1} - A_i)^2}{\gamma_{i-1}}  < \infty$, we obtain the convergence rate 
+% \begin{align*}
+%E_{k} \leq E_0 + \frac{1}{2}\sum_{i=0}^{k}\frac{(A_{i+1} - A_i)^2}{\gamma_{i-1}} G^2 + (\gamma_k - \gamma_{-1})D_h(x^\ast, x_0),
+%\end{align*}
+%which we can write as,
+\begin{align*}
+f(x_k) - f(x^\ast) \leq \frac{A_0(f(x_0) - f(x^\ast)) +  \gamma_k D_h(x^\ast , x_0) +\frac{1}{2}\sum_{i=0}^{k}\frac{(A_{i+1} - A_i)^2}{\gamma_{i-1}}G^2}{A_k}.
+\end{align*}
+This matches the bound Nesterov obtained in \cite{Nesterov15}. Note, that a very similar analysis can be presented for Nesterov's dual averaging algorithm~\cite{Nesterov09}.
+
+%%%%%%%%%%%%%%%%%%%%FRANK WOLFE PROOF %%%%%%%%%%%%%
+\subsection{Proof of Discretizations}
+\label{App:OtherDiscret}
+\paragraph{Method 1} We analyze~\eqref{Eq:QuasiSub2} using the Lyapunov function~\eqref{Eq:DiscLyapFunc1}. 
+\begin{subequations}
+\begin{align*}
+E_{k+1} - E_k %&= A_{k+1}(f(x_{k+1}) -f(x^\ast)) - A_k(f(x_k) - f(x^\ast)) + D_h(x^\ast, z_{k+1}) - D_h(x^\ast, z_k) \notag\\
+&= A_{k+1}(f(x_{k+1}) -f(x_k)) + \alpha_k(f(x_k) - f(x^\ast)) - \langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1} \rangle\notag\\
+&\quad- D_h(z_{k+1}, z_k) \notag\\
+ &\overset{\substack{\eqref{Eq:XSeqOther1}\\\eqref{Eq:ZSeqOther1}}}{=} A_{k+1}(f(x_{k+1}) -f(x_k)) + \alpha_k(f(x_k) - f(x^\ast)) + (A_{k+1} - A_k)\langle \nabla f(x_k), x^\ast - x_{k+1}\rangle  \notag\\
+ &\quad -A_{k} \langle \nabla f(x_k), x_{k+1} - x_k\rangle - D_h(z_{k+1}, z_k)\\
+ &= A_{k+1}(f(x_{k+1}) -f(x_k)) + \alpha_k(f(x_k) - f(x^\ast)) + (A_{k+1} - A_k)\langle \nabla f(x_k), x^\ast - x_{k}\rangle \notag\\
+ &\quad  + (A_{k+1} - A_k)\langle \nabla f(x_k), x_{k}- x_{k+1}\rangle -A_{k} \langle \nabla f(x_k), x_{k+1} - x_k\rangle - D_h(z_{k+1}, z_k)\\
+  &= A_{k+1}(f(x_{k+1}) -f(x_k) - \langle \nabla f(x_k), x_{k+1} - x_k\rangle) + \alpha_k(f(x_k) - f(x^\ast)+\langle \nabla f(x_k), x^\ast - x_{k}\rangle)  \notag \\ &\quad- D_h(z_{k+1}, z_k)\\
+ & \leq A_{k+1} \frac{1}{2}\| x_{k+1} - x_{k}\|^2\\
+% & =\frac{1}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2} \|x_{k+1} - z_{k+1}\|^ 2\\
+& \leq  \frac{1}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2}diam(\X)^2
+\end{align*}
+\end{subequations}
+%\end{small}
+Therefore, we obtain the following upper bound, 
+\begin{align*}
+f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast, x_0) + A_0(f(x_0)- f(x^\ast)) +  \frac{1}{2}\sum_{i=1}^k \frac{A_{i+1}(A_{i+1} - A_{i})^2}{A_{i}^2}diam(\X)^2 }{A_k}.
+\end{align*}
+Choosing $A_k = \frac{k(k+1)}{2}$ gives a $O(1/k)$ convergence rate. 
+
+\paragraph{ Method 2} We analyze ~\eqref{Eq:QuasiSub3} using the Lyapunov function~\eqref{Eq:DiscLyapFunc1}. 
+%\begin{small}
+\begin{subequations}%\label{Eq:LyapDiscArg}
+\begin{align}
+%{\color{red} \frac{d}{dt}D_h(x, X_{t} + e^{-\alpha_{t}} \dot X_{t})}\,  
+%& =  \int_{t_0}^{t_1} \frac{d}{ds}D_h(x, X_{s} + e^{-\alpha_{s}} \dot X_{s})\, ds +D_h(x, X_{t_0} + e^{-\alpha_{t_0}} \dot X_{t_0})\\
+%& {\color{red} =  - \left\langle \frac{d}{dt} \nabla h(X_t+ e^{-\alpha_t}\dot X_t), x - X_t - e^{-\alpha_t} \dot X_t\right\rangle} \,  \notag\\
+D_h(x^\ast,z_{k+1}) - D_h(x^\ast, z_k) &= -\langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1}\rangle - D_h(z_{k+1}, z_k)\notag\\
+%&{\color{red} \overset{\eqref{Eq:ELBreg}}{=}e^{\alpha_t + \beta_t} \langle \nabla f(X_t), x - X_t \rangle\, - e^{ \beta_t} \langle \nabla f(X_t), \dot X\rangle}\, \notag   \\
+& \overset{\eqref{Eq:XSeqMethod2}}{=} (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - z_{k}\rangle  + (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_{k} - z_{k+1}\rangle \notag\\
+&\quad- D_h(z_{k+1}, z_k)\notag\\
+& \overset{\eqref{Eq:ZSeqMethod2}}{=}(A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle\notag \\&\quad+ (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_{k} - z_{k+1}\rangle- D_h(z_{k+1}, z_k)\notag\\
+& \leq(A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle+\notag\\
+&\quad \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag\\
+%
+&\leq (A_{k+1} - A_k)(f(x^\ast) - f(x_{k+1})) + A_k (f(x_k) - f(x_{k+1}))\notag\\
+&\quad  + \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag\\
+%& {\color{red}= - \frac{d}{dt}\left\{ e^{\beta_t}\left(f(X_t) - f(x)\right)\right\}\label{Eq:cond1}}\\
+& = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast))  + \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag.
+\end{align}
+\end{subequations}
+Therefore, 
+\begin{align*}
+E_{k+1} - E_k \leq  \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \leq  \frac{(A_{k+1} - A_k)^2}{2} G^2
+\end{align*}
+and we have the following convergence rate guarantee
+\begin{align*}
+f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast, x_0) + A_0(f(x_0)- f(x^\ast))+ \sum_{i=1}^k\frac{(A_{i+1} - A_i)^2}{2} G^2}{A_k}
+\end{align*}
+which is the same convergence rate as the quasi-monotone subgradient method~\eqref{Eq:ConvQuasi}. A dual averaging term can also be added to this algorithm as well. 
+
+%%%%%%%%%%%%%%%%%%%%FRANK WOLFE PROOF %%%%%%%%%%%%%
+\subsection{Proof of Conditional Gradient Method}
+\label{App:CondMethod}
+We use the Lyapunov function~\eqref{Eq:FrankWolfeLyap} to analyze conditional gradient method~\eqref{Eq:Fank-Wolfe}
+\label{App:ProofAccGrad}
+\begin{subequations}
+\begin{align*}
+E_{k+1} - E_k &= A_{k+1}(f(x_{k+1}) -f(x^\ast)) - A_k(f(x_k) - f(x^\ast)) \notag\\
+& = A_{k+1}(f(x_{k+1}) -f(x_k)) - \alpha_k(f(x_k) - f(x^\ast))\notag\\
+&  \leq A_{k+1}(\langle \nabla f(x_k), x_{k+1} - x_k \rangle + \frac{1}{2}\|x_{k+1} - x_k\|^2) - \alpha_{k+1} (f(x_k) - f(x^\ast)) \\
+& = A_{k+1}(\tau_k\langle \nabla f(x_k), z_k- x_k \rangle + \frac{\tau_k^2}{2}\|z_k - x_k\|^2) - \alpha_{k+1} (f(x_k) - f(x^\ast)) \\
+&= \alpha_{k+1} \langle \nabla f(x_k), z_k- x_k \rangle + \frac{1}{2}\frac{\alpha_{k+1}^2}{A_{k+1}}\|z_k - x_k\|^2 - \alpha_{k+1} (f(x_k) - f(x^\ast))\\
+& \leq \alpha_{k+1} ( f(x^\ast) - f(x_k) + \langle \nabla f(x_k), x^\ast -  x_k \rangle) + \frac{1}{2}\frac{\alpha_{k+1}^2}{A_{k+1}}\|z_k - x_k\|^2  \\
+& \leq \frac{1}{2}\frac{\alpha_{k+1}^2}{A_{k+1}}diam(\X)^2
+\end{align*}
+\end{subequations}
+This recovers the bounds shown by Freund and Grigas~\cite{Freund14} , Bach~\cite{Bach15} and Nesterov~\cite{NesterovCond15}. 
+\begin{align*}
+E_k \leq E_0 + \frac{1}{2} diam(\X)^2\sum_{i=1}^k \frac{\alpha_i^2}{A_{k}},
+\end{align*}
+Choosing $A_{k+1} = \frac{k(k+1)}{2}$ gives the coupling term $\tau_k = \frac{2}{k+2}$ and $O(1/k)$ convergence rate. 
+
+\paragraph{Proof of Extension}
+Notice that our variational condition~\eqref{Eq:Var2Cond} (taking $y = (1- \tau_k)x_k + \tau_k x^\ast$, where as usual, $\tau_k = \frac{\alpha_k}{A_{k+1}}$, and $\alpha_k = A_{k+1} - A_k$) gives the inequality 
+\begin{align}\label{Eq:In1}
+-\alpha_k\langle \nabla f(x_k), x^\ast - x_k\rangle &\leq - A_{k+1}\langle \nabla^2f(x_k)(x_{k+1} - x_k), x_{k+1} - x_k\rangle + \alpha_k \langle \nabla^2f(x_k)(x_{k+1} - x_k), x^\ast - x_k\rangle\notag\\
+&\quad  + A_k \langle \nabla f(x_k), x_k - x_{k+1}\rangle
+\end{align}
+Noting this, we have 
+\begin{subequations}
+\begin{align*}
+E_{k+1} - E_k %&= A_{k+1}(f(x_{k+1}) -f(x^\ast)) - A_k(f(x_k) - f(x^\ast)) \notag\\
+& = A_{k+1}(f(x_{k+1}) -f(x_k)) - \alpha_k(f(x_k) - f(x^\ast))\notag\\
+&\leq A_{k+1}(f(x_{k+1}) -f(x_k)) - \alpha_k\langle \nabla f(x_k), x^\ast - x_k\rangle\\
+&\overset{\eqref{Eq:In1}}{\leq} A_{k+1}(f(x_{k+1}) -f(x_k)) - A_{k+1}\langle \nabla f(x_k), x_{k+1}- x_k\rangle\\
+&\quad  - A_{k+1} \langle \nabla^2 f(x_k)(x_{k+1} - x_k), x_{k+1} - x_k \rangle  + \alpha_k \langle \nabla^2f(x_k)(x_{k+1} - x_k), x^\ast - x_k\rangle\\
+%&\leq A_{k+1}(f(x_{k+1}) -f(x_k)) - A_{k+1}\langle \nabla f(x_k), x_{k+1}- x_k\rangle - A_{k+1} \langle \nabla^2 f(x_k)(x_{k+1} - x_k), x_{k+1} - x_k \rangle \\
+%&\quad + \alpha_k \langle \nabla^2f(x_k)(x_{k+1} - x_k), z_k - x_k\rangle\\
+&\leq A_{k+1}(f(x_{k+1}) -f(x_k)) - A_{k+1}\langle \nabla f(x_k), x_{k+1}- x_k\rangle \\
+&\quad  - A_{k+1} \langle \nabla^2 f(x_k)(x_{k+1} - x_k), x_{k+1} - x_k \rangle+ \frac{\alpha_k^2}{A_k} \langle \nabla^2f(x_k)(z_k - x_k), z_k - x_k\rangle\\
+&\leq A_{k+1}(f(x_{k+1}) -f(x_k) - \langle \nabla f(x_k), x_{k+1}- x_k\rangle - \frac{1}{2}\langle \nabla^2 f(x_k)(x_{k+1} - x_k), x_{k+1} - x_k \rangle)\\
+&\quad+\frac{\alpha_k^2}{A_k} LD^2\\
+&\leq A_{k+1}\frac{L}{6} \|x_{k+1} - x_k\|^3 +\frac{\alpha_k^2}{A_k} LD^2\leq\frac{\alpha_k^3}{A_k^2}\frac{L}{6} D^3 +\frac{\alpha_k^2}{A_k} LD^2
+\end{align*}
+\end{subequations}
+Recovering the bound shown by Nesterov~\cite[(5.4)]{NesterovCond15}. The following proof can be extended to incorporate the setting where $f$ has  Holder-continuous Hessians as in~\cite{NesterovCond15}.
+
+
+
+
+
+%%%%%%%%%%%%%%PROOF OF ACCELERATED
+\subsection{Proof of Accelerated Gradient Methods}
+\label{App:ProofAccGrad}
+%\subsection{Accelerated Gradient Descent}
+%\label{Sec:AccGrad}
+The generalized accelerated gradient descent algorithm~\cite{Baes09,Acceleration} first outlined by Michel Baes (for the weakly convex setting), can be written as the following iterations:
+\begin{algorithm}[H]
+\begin{subequations}\label{Eq:AcceleratedGrad}
+\caption{Accelerated Gradient Descent (Weakly Convex Setting)}
+{\bf Assumptions:} $f, h$ are convex and differentiable.$h$ satisfies smoothness condition $ \frac{1}{p}\|x - y\|^p \leq D_h(x,y)$ and $f$ satisfies smoothness condition $\|\nabla^{p} f\|\leq L$\\
+Choose $A_0 = 1$, $M>0$, $\tilde A_{k+1} = L^{-1} A_{k+1}$,  $\tau_k = \frac{\tilde A_{k+1}- \tilde A_k}{\tilde A_{k+1}}:= \frac{\alpha_k}{\tilde A_{k+1}}$ and $x_0 = z_0 = y_0$. Define recursively, 
+\begin{align}
+x_{k+1} &= \tau_k z_k + (1- \tau_k)  y_k\label{Eq:ZSeqAcc1}\\
+z_k &= \arg \min_{z\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla f(y_i), z\rangle + D_h(z, z_0)\right\}\label{Eq:XSeqAcc1}
+\end{align}
+$y_{k}$ is a gradient update 
+\begin{align}
+G_{p,\epsilon,N}(x_k) = \arg \min_y \left\{ f_{p-1}(y;x_k) + \frac{LN}{p}\|y-x_k\|^p\right\}
+\end{align}
+\end{subequations}
+where 
+\begin{equation*}
+f_{p-1}(y;x) = \sum_{i=0}^{p-1} \frac{1}{i!} \nabla^i f(x)(y-x)^i = f(x) + \langle \nabla f(x), y-x\rangle + \cdots + \frac{1}{(p-1)!} \nabla^{p-1} f(x)(y-x)^{p-1}
+\end{equation*}
+%\begin{align}
+%\quad M \|\nabla\tilde f(y_{k})\|_\ast^{\frac{p}{p-1}} &\leq \langle\nabla \tilde f(y_{k}), x_{k} - y_{k}\rangle \label{Eq:YSeqAcc}
+%\end{align}
+
+\end{algorithm}
+\noindent This algorithm satisfies the following optimality conditions, 
+
+\begin{subequations}
+\begin{align}
+z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_k),\label{Eq:ZSeqAcc}\\
+\nabla h(z_{k+1}) - \nabla h(z_{k}) &= -(\tilde A_{k+1} -  \tilde A_{k})  \nabla f(y_{k+1})\label{Eq:XSeqAcc}\\
+\quad M \|L^{-1}\nabla f(y_{k})\|_\ast^{\frac{p}{p-1}} &\leq L^{-1}\langle\nabla f(y_{k}), x_{k} - y_{k}\rangle \label{Eq:YSeqAcc}
+\end{align}
+\end{subequations}
+where $M = \frac{(N^2 - 1)^{\frac{p-2}{2p-2}}}{2N}$. Denoting $D^\ast_{k+1, k} = D_h(x^\ast,z_{k+1})- D_h(x^\ast,z_{k})$, we obtain the following bound 
+%\label{App:ProofQuasi}
+%\begin{}
+\begin{subequations}
+\begin{align}
+D^\ast_{k+1, k} &= -D_h(z_{k+1}, z_k) +  \langle \nabla h(z_{k+1}) - \nabla h(z_k), z_{k+1} - x^\ast\rangle\notag \\
+&\overset{\eqref{Eq:XSeqAcc}}{\leq} -\frac{1}{p}\|z_k - z_{k+1}\|^p -(\tilde A_{k+1} -\tilde A_{k}) \langle  \nabla f(y_{k+1}), z_{k+1} - x^\ast\rangle \label{Eq:StrongConvAssump} \\
+&= -\frac{1}{p}\|z_k - z_{k+1}\|^p - (\tilde A_{k+1} -\tilde A_{k}) \langle \nabla f(y_{k+1}), z_{k+1} - z_k\rangle -(\tilde A_{k+1} -\tilde A_{k}) \langle  \nabla   f(y_{k+1}), z_k - x^\ast\rangle \notag\\
+&\leq\frac{p-1}{p}(\tilde A_{k+1} -\tilde A_{k})^{\frac{p}{p-1}} \|\nabla  f(y_{k+1})\|_\ast^{\frac{p}{p-1}} - (\tilde A_{k+1} -\tilde A_{k}) \langle\nabla  f(y_{k+1}), z_k - x^\ast\rangle \label{Eq:HoldBound}\\
+& \overset{\eqref{Eq:ZSeqAcc}}{=}\frac{p-1}{p}(\tilde A_{k+1} -\tilde A_{k})^{\frac{p}{p-1}} \|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}}
+ - (\tilde A_{k+1} - \tilde A_k) \langle\nabla  f(y_{k+1}), \frac{\tilde A_{k+1}}{(\tilde A_{k+1} -\tilde A_{k})} x_{k+1} - y_k\rangle\notag \\
+& \quad -(\tilde A_{k+1} - \tilde A_k) \langle\nabla  f(y_{k+1}),  y_k - x^\ast\rangle \notag\\
+ %
+&=\frac{p-1}{p}(\tilde A_{k+1} -\tilde A_{k})^{\frac{p}{p-1}} \|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}}- \tilde A_{k+1} \langle\nabla  f(y_{k+1}), x_{k+1} - y_k\rangle  \notag\\
+&\quad- (\tilde A_{k+1} -\tilde A_{k})\langle\nabla  f(y_{k+1}), y_{k+1} - x^\ast\rangle + (\tilde A_{k+1} -\tilde A_{k})\langle \nabla f(y_{k+1}), y_{k+1} - y_k \rangle \notag\\
+%
+& =\frac{p-1}{p}(\tilde A_{k+1} -\tilde A_{k})^{\frac{p}{p-1}} \|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}}- \tilde A_{k+1} \langle\nabla f(y_{k+1}), x_{k+1} - y_{k+1}\rangle\notag \\
+ &- (\tilde A_{k+1} -\tilde A_{k})\langle\nabla  f(y_{k+1}), y_{k+1} - x^\ast\rangle + (\tilde A_{k+1} -\tilde A_{k})\langle \nabla   f(y_{k+1}), y_{k+1} - y_k \rangle \\
+ &\quad- \tilde A_{k+1} \langle\nabla   f(y_{k+1}), y_{k+1} - y_{k}\rangle \notag\\
+& =\frac{p-1}{p}(\tilde A_{k+1} -\tilde A_{k})^{\frac{p}{p-1}} \|\nabla  f(y_{k+1})\|_\ast^{\frac{p}{p-1}}-\tilde  A_{k+1} \langle\nabla f(y_{k+1}), x_{k+1} - y_{k+1}\rangle \notag\\
+ &\quad + (A_{k+1} -A_{k})\langle\nabla \tilde  f(y_{k+1}),  x^\ast - y_{k+1}\rangle
+ -\tilde A_{k}\langle \nabla f(y_{k+1}), y_{k+1} - y_k \rangle \notag\\
+& \overset{\eqref{Eq:YSeqAcc}}{\leq}\frac{p-1}{p}(\tilde A_{k+1} -\tilde A_{k})^{\frac{p}{p-1}} \|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}} - \tilde A_{k+1}L^{-\frac{1}{p-1}}M \|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}}   \notag\\
+&\quad  + (\tilde A_{k+1} -\tilde A_{k})\langle\nabla   f(y_{k+1}),  x^\ast - y_{k+1}\rangle-\tilde A_{k}\langle \nabla  f(y_{k+1}), y_{k+1} - y_k \rangle \notag\\
+& \leq -\tilde A_k( f(y_{k+1}) -f(y_k)) - (\tilde A_{k+1} -\tilde A_{k})(f(y_{k+1}) - f(x^\ast)) \notag\\
+&\quad+  \frac{p-1}{p}(\tilde A_{k+1} -\tilde A_{k})^{\frac{p}{p-1}} \|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}}  - \tilde A_{k+1}L^{-\frac{1}{p-1}} M \|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}}  \notag \\
+& = \tilde  A_k (f(y_k) - f(x)) -  \tilde A_{k+1}( f(y_{k+1}) -  f(x^\ast)) \notag \\
+&\quad+\left(\frac{p-1}{p}(A_{k+1} -A_{k})^{\frac{p}{p-1}} - A_{k+1}M\right) L^{-\frac{p}{p-1}}\|\nabla f(y_{k+1})\|_\ast^{\frac{p}{p-1}} \notag,
+\end{align}
+\end{subequations}
+where in \eqref{Eq:StrongConvAssump} we have used the uniform convexity assumption and in \eqref{Eq:HoldBound} we have used Holder's inequality. Therefore, for the general accelerated gradient methods we have the following bound 
+\begin{align*}
+E_{k+1} - E_k \leq \varepsilon_k
+\end{align*}
+where the error scales in the following way
+\begin{equation*}
+\varepsilon_k =\left(\frac{p-1}{p}(A_{k+1} -A_{k})^{\frac{p}{p-1}} - A_{k+1}M\right) L^{-\frac{p}{p-1}}\|\nabla  f(y_{k+1})\|_\ast^{\frac{p}{p-1}}.
+\end{equation*}
+Choosing the error to be non-positive mean that $A_k$ can be at most a polynomial of degree $p$. 
+
+\subsection{Accelerated Gradient Descent: Version 2}
+We now analyze the second version of the accelerated gradient descent algorithm using the same energy functional~\eqref{Eq:LyapAccGrad}:
+\begin{align*}
+E_{k+1} - E_k &= \tilde A_{k+1}(f(y_{k+1}) - f(x^\ast)) - \tilde A_{k}(f(y_{k}) - f(x^\ast)) + D_h(x^\ast, z_{k+1}) - D_h(x^\ast, z_{k}) \\
+& = \tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
+&\quad - \langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1}\rangle + D_h(z_{k+1}, z_k)\\
+& \overset{\eqref{Eq:XSeqAcc4}}{\leq} \tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
+&\quad + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}), x^\ast - z_{k+1}\rangle - \frac{1}{2}\|z_{k+1} - z_k\|^2\\
+& = \tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
+&\quad  + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}), x^\ast - z_{k}\rangle + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}),  z_{k} - z_{k+1}\rangle- \frac{1}{2}\|z_{k+1} - z_k\|^2\\
+& \leq \tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
+&\quad  + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}), x^\ast - z_{k}\rangle + \frac{(\tilde A_{k+1} - \tilde A_k)^2}{2}\|f(x_{k+1})\|^2 \\
+& \overset{\eqref{Eq:ZSeqAcc4}}{=}\tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
+&\quad  + \tilde A_{k+1} \langle \nabla f(x_{k+1}),  y_k - x_{k+1}\rangle + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}), x^\ast - y_k\rangle + \frac{(\tilde A_{k+1} - \tilde A_k)^2}{2}\|f(x_{k+1})\|^2 \\
+& =\tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
+&\quad  + \tilde A_{k} \langle \nabla f(x_{k+1}),  y_k - x_{k+1}\rangle + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + \frac{(\tilde A_{k+1} - \tilde A_k)^2}{2}\|f(x_{k+1})\|^2 \\
+& \overset{\eqref{Eq:YSeqAcc4}}{\leq}\frac{\tilde A_{k+1}}{2L}\|\nabla f(x_{k+1})\|^2 + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
+&\quad  + \tilde A_{k} \langle \nabla f(x_{k+1}),  y_k - x_{k+1}\rangle + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + \frac{(\tilde A_{k+1} - \tilde A_k)^2}{2}\|f(x_{k+1})\|^2 \\
+& \leq \frac{1}{2L^2}\left((A_{k+1} -  A_k)^2 - A_{k+1} \right) \|\nabla f(x_{k+1})\|^2
+\end{align*}
+Therefore we have shown 
+\begin{align*}
+E_{k+1} - E_k \leq \varepsilon_k 
+\end{align*}
+where 
+\begin{align*}
+\varepsilon_k = \frac{1}{2L^2}\left[(A_{k+1} -  A_k)^2 - A_{k+1} \right] \|\nabla f(x_{k+1})\|^2
+\end{align*}
+To ensure our error $\varepsilon_k$ is non-positive, $A_k$ can be at most a polynomial of degree 2. %Note, this matches the bound for our theorem with $M = \frac{1}{2}$ (or, $N = 1$) 
+
+\section{Strong Convexity}
+\label{App:StrongConvexity}
+\subsection{Proof of Accelerated Gradient \eqref{Eq:StrongConv1}}
+%\begin{proof}
+\begin{align*}
+E_{k+1} - E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&= f(y_{k+1}) - f(x_{k+1}) + f(x_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&= f(y_{k+1})- f(x_{k+1}) + \langle \nabla f(x_{k+1}), x_{k+1} - y_k\rangle - \frac{\mu}{2}\|x_{k+1} - y_k\|^2 \\
+&\quad + \tau_k \langle \nabla f(x_{k+1}) - \mu(x_{k+1} - z_k), x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&\overset{\eqref{Eq:ZSeq2}}{=} f(y_{k+1}) - f(x_{k+1}) + \langle \nabla f(x_{k+1}), x_{k+1} - y_k\rangle - \frac{\mu}{2}\|x_{k+1} - y_k\|^2  + \tau_k \langle \nabla f(x_{k+1}), x^\ast - x_{k+1} \rangle \\
+&\quad - \tau_k\mu\langle x_{k+1} - z_k, x^\ast - z_{k}\rangle +\tau_k \langle\nabla f(x_{k+1}), x_{k+1} - z_{k}\rangle  + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+%
+&\leq -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - x_{k+1}\|^2 \right) + f(y_{k+1}) - f(x_{k+1})   - \tau_k\mu\langle x_{k+1} - z_k, x^\ast - z_{k}\rangle\\
+&\quad +\tau_k \langle\nabla f(x_{k+1}), x_{k+1} - z_{k}\rangle  + \frac{\mu}{2}\|z_{k+1} - z_k\|^2 + \langle \nabla f(x_{k+1}), x_{k+1} - y_k\rangle - \frac{\mu}{2}\|x_{k+1} - y_k\|^2\\
+&= -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k+1})  +\tau_k \langle\nabla f(x_{k+1}), x_{k+1} - z_{k}\rangle\\
+&\quad   + \frac{\mu}{2}\|z_{k+1} - z_k\|^2 - \frac{\mu\tau_k}{2}\|z_k - x_{k+1}\|^2 + \langle \nabla f(x_{k+1}), x_{k+1} - y_k\rangle - \frac{\mu}{2} \|x_{k+1} - y_{k}\|^2 \\
+&\overset{\eqref{Eq:Coupling2}}{=} -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k+1}) - \frac{\mu}{2\tau_k}\|y_k - x_{k+1}\|^2  \\
+&\quad   + \frac{\mu}{2}\|z_{k+1} - z_k\|^2  - \frac{\mu}{2} \|x_{k+1} - y_{k}\|^2\\\
+&\overset{\eqref{Eq:ZSeq2}}{=} -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k+1})   - \frac{\mu}{2\tau_k}\|y_k - x_{k+1}\|^2  \\
+&\quad   + \frac{\mu}{2}\|\tau_k(x_{k+1} - z_k)\|^2 + \tau_k \langle \nabla f(x_{k+1}), \tau_k(x_{k+1} - z_k)\rangle + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k+1})\|^2  - \frac{\mu}{2} \|x_{k+1} - y_{k}\|^2 \\
+&\leq -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k+1})   - \frac{\mu}{2\tau_k}\|y_k - x_{k+1}\|^2      \\
+&\quad  + \tau_k \langle \nabla f(x_{k+1}), y_k - x_{k+1}\rangle + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k+1})\|^2  \\
+&\leq -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right)  -\tau_k( f(y_k) - f(x_{k+1})) + \left( \frac{L\tau_k}{2}- \frac{\mu}{2\tau_k}\right)\|x_{k+1} - y_k\|^2  \\
+&\quad + \left(\frac{\tau_k^2}{2\mu}-\frac{1}{2L}\right)\|\nabla f(x_{k+1})\|^2   \\
+&=-\tau_k\left( f(y_k) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + \left( \frac{L\tau_k}{2}- \frac{\mu}{2\tau_k}\right)\|x_{k+1} - y_k\|^2  + \left(\frac{\tau_k^2}{2\mu}-\frac{1}{2L}\right)\|\nabla f(x_{k+1})\|^2.   
+%&\quad + \tau_k \langle \nabla f(y_k), x_{k+1} - y_k\rangle - \frac{\mu \tau_k}{2} \|y_k - x_{k+1}\|^2  - \frac{\mu}{2\tau_k}\|y_k - x_{k+1}\|^2\\
+%&= -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k+1})  + \langle\nabla f(x_{k+1}), y_k - x_{k+1}\rangle\\
+%&\quad   + \frac{\mu}{2}\|y_k - x_{k+1}\|^2 + \tau_k \langle \nabla f(x_{k+1}),y_k - x_{k+1}\rangle + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k+1})\|^2 \\
+%&\quad + \tau_k \langle \nabla f(y_k), x_{k+1} - y_k\rangle - \frac{\mu}{2} \|x_{k+1} - y_{k}\|^2  - \frac{\mu}{2\tau_k}\|y_k - x_{k+1}\|^2\\
+%&\leq -\tau_k\left( f(x_{k+1} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k+1}) \\
+%&\quad + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k+1})\|^2 - \tau_k \langle \nabla f(y_k) - \nabla f(x_{k+1}), y_k - x_{k+1} \rangle - \frac{\mu \tau_k}{2} \|y_k - x_{k+1}\|^2\\
+%&\leq -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k+1})+ \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k+1})\|^2\\
+%&\overset{\eqref{Eq:Grad2}}{\leq} -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + \left( \frac{\tau_k^2}{2\mu} - \frac{L}{2}\right)\|\nabla f(x_{k+1})\|^2\\
+\end{align*}
+Thus, we have shown
+\begin{equation}
+E_{k+1} - E_k \leq -\tau_k E_k + \varepsilon_k 
+\end{equation}
+where 
+\begin{equation}
+ \varepsilon_k  = \left( \frac{L\tau_k}{2}- \frac{\mu}{2\tau_k}\right)\|x_{k+1} - y_k\|^2  + \left(\frac{\tau_k^2}{2\mu}-\frac{1}{2L}\right)\|\nabla f(x_{k+1})\|^2   
+\end{equation}
+Choosing $\tau_k \leq 1/\sqrt{\kappa}$ ensures that $\varepsilon_k \leq 0$ 
+%\end{proof}
+
+
+\subsection{Proof of Accelerated Gradient \eqref{Eq:StrongConv2}}
+%\begin{proof}
+\begin{align*}
+E_{k+1} - E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&= f(y_{k+1}) - f(x_k) + f(x_k) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&= f(y_{k+1}) - f(x_k) + \langle \nabla f(x_k), x_k - y_k\rangle - \frac{\mu}{2}\|x_k - y_k\|^2 - \mu \langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&= f(y_{k+1}) - f(x_k) + \langle \nabla f(x_k), x_k - y_k\rangle - \frac{\mu}{2}\|x_k - y_k\|^2 + \tau_k \langle \nabla f(x_{k}) - \mu(x_{k} - z_k), x^\ast - z_{k}\rangle \\
+&\quad + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&\overset{\eqref{Eq:ZSeq1}\eqref{Eq:Coupling1}}{=} f(y_{k+1})- f(x_k) + \langle \nabla f(x_k), x_k - y_k\rangle - \frac{\mu}{2}\|x_k - y_k\|^2 + \tau_k \langle \nabla f(x_{k}), x^\ast - x_{k} \rangle\\
+&\quad   - \tau_k\mu\langle x_{k} - z_k, x^\ast - z_{k}\rangle + \langle\nabla f(x_{k}), y_{k} - x_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+%
+&\leq -\tau_k\left( f(x_{k} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - x_{k}\|^2 \right) + f(y_{k+1}) - f(x_k)  - \frac{\mu}{2}\|x_k - y_k\|^2   \\
+&\quad - \tau_k\mu\langle x_{k} - z_k, x^\ast - z_{k}\rangle  + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+&= -\tau_k\left( f(x_{k} ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_k)  - \frac{\mu}{2}\|x_k - y_k\|^2  \\
+&\quad   + \frac{\mu}{2}\|z_{k+1} - z_k\|^2 -\frac{\tau_k\mu}{2}\|x_k - z_k\|^2\\
+&\overset{\eqref{Eq:ZSeq1}}{=} -\tau_k\left( f(x_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_k)- \frac{\mu}{2}\|x_k - y_k\|^2\\
+&\quad    + \frac{\mu}{2}\|\tau_k(x_{k} - z_k)\|^2 - \tau_k \langle \nabla f(x_{k}), \tau_k(x_{k} - z_k)\rangle + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2-\frac{\mu}{2\tau_k}\|x_k - y_k\|^2\\
+&\overset{\eqref{Eq:Coupling1}}{=} -\tau_k\left( f(x_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_k)  \\
+&\quad    - \tau_k \langle \nabla f(x_{k}), y_k - x_k\rangle + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2 -\frac{\mu}{2\tau_k}\|x_k - y_k\|^2\\
+&\leq -\tau_k\left( f(x_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_k) - \tau_k(f(y_k) - f(x_k))+ \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2 \\
+&\quad + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2\\
+&= -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_k) + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2 \\
+&\quad+ \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2\\
+&\leq -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + \left(\frac{\tau_k^2}{2\mu}-\frac{1}{2L}\right)\|\nabla f(x_k)\|^2 + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2
+%&\quad + \tau_k \langle \nabla f(y_k), x_{k} - y_k\rangle - \frac{\mu \tau_k}{2} \|y_k - x_{k}\|^2\\
+%&= -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(y_k)  + \langle\nabla f(x_{k}), y_k - x_{k}\rangle\\
+%&\quad   + \frac{\mu}{2}\|y_k - x_{k}\|^2 + \tau_k \langle \nabla f(x_{k}),y_k - x_{k}\rangle + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2 \\
+%&\quad + \tau_k \langle \nabla f(y_k), x_{k} - y_k\rangle - \frac{\mu \tau_k}{2} \|y_k - x_{k}\|^2\\
+%&\leq -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k}) \\
+%&\quad + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2 - \tau_k \langle \nabla f(y_k) - \nabla f(x_{k}), y_k - x_{k} \rangle - \frac{\mu \tau_k}{2} \|y_k - x_{k}\|^2\\
+%&\leq -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_{k})+ \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2\\
+%&\overset{\eqref{Eq:Grad1}}{\leq} -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + \left( \frac{\tau_k^2}{2\mu} - \frac{L}{2}\right)\|\nabla f(x_{k})\|^2\\
+\end{align*}
+If we choose $\tau_k \leq 1/\sqrt{\kappa}$ then we have shown 
+\begin{equation}
+E_{k+1} - E_k \leq -\tau_k E_k
+\end{equation}
+\section{Estimate Sequences}
+\label{App:EstSeq}
+\subsection{The Quasi-Montone Subgradient Method}
+\paragraph{Equivalence in Discrete time}
+The discrete-time estimate sequence~\eqref{Eq:Est} for quasi-monotone subgradient method can be written:
+\begin{align*}
+\phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} &:= f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}\\
+& \overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \left(\phi_k(x) - \frac{\tilde \varepsilon_k}{A_k}\right) + \tau_k f_k(x) \\
+&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+\end{align*}
+Multiplying through by $A_{k+1}$, we have
+\begin{align*}
+A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) - \frac{\tilde \varepsilon_k}{A_k}\right)\\
+&\quad  + (A_{k+1} - A_k) f_k(x)\\
+&=  A_k \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) - \frac{\tilde \varepsilon_k}{A_k}\right) + (A_{k+1} - A_k) f_k(x)\\
+& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k) - \tilde \varepsilon_k + (A_{k+1} - A_k) f(x)\
+\end{align*}
+Rearranging, we obtain our Lyapunov argument $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for~\eqref{Eq:DiscLyapFunc1}:
+\begin{align*}
+A_{k+1}(f(x_{k+1}) - f(x)) + D_h(x, z_{k+1}) &\leq A_k (f(x_k) - f(x)) + D_h(x, z_k) + \varepsilon_{k+1}
+\end{align*}
+%also written $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for \eqref{Eq:DiscLyapFunc1}, 
+where $\varepsilon_{k+1} = \tilde \varepsilon_{k+1} - \tilde \varepsilon_k = \frac{A_{k+1} -A_k}{2}\|\nabla f(x_{k+1})\|^2$.
+
+Going the other direction, from our Lyapunov analysis we can derive the following bound:
+%\begin{align*}
+%0 &\geq E_{k+1} - E_k - \varepsilon_k  \\
+%& = A_{k+1}(f(x_{k+1}) - f(x)) + D_h(x, z_{k+1})  - A_k (f(x_k) - f(x)) - D_h(x, z_k)  -  \varepsilon_{k}\\
+%& =  A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}} D_h(x, z_{k+1})\right) - A_k \left(f(x_k) +  \frac{1}{A_{k}} D_h(x, z_{k})\right) - (A_{k+1} - A_k)f(x) - \tilde \varepsilon_{k+1} - \tilde \varepsilon_k
+%\end{align*}
+\begin{subequations}\label{Eq:EstSeqErr}
+\begin{align}
+E_k &\leq E_0 + \tilde \varepsilon_{k+1}\\
+A_{k}(f(x_{k}) - f(x)) + D_h(x, z_{k}) &\leq A_0 (f(x_0) - f(x)) + D_h(x, z_0) + \tilde \varepsilon_{k+1}\notag\\
+A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + \left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) + \tilde \varepsilon_{k+1}\notag \\
+A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) + \tilde \varepsilon_{k+1}\label{Eq:EstSeq}
+\end{align}
+\end{subequations}
+Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$) with an additional error term:
+\begin{subequations}
+\begin{align}
+\phi_k(x) &\leq \Big(1 -\frac{A_0}{A_k}\Big) f(x) + \frac{A_0}{A_k} \phi_0(x) + \tilde \varepsilon_{k+1}\\
+&\leq \Big(1 - \frac{1}{A_k}\Big)f(x) + \frac{1}{A_k}\phi_0(x)+ \tilde \varepsilon_{k+1}.
+\end{align}
+\end{subequations}
+Note, given accelerated gradient method and quasi-monotone subgradient method have the same continuous-time limit, the equivalence between the Lyapunov argument and method estimate sequences holds for this setting.% Note, the error term $\tilde \varepsilon_{k=1} \equiv 0$ for the accelerated gradient descent method, allowing us to recover the standard estimate sequence~\eqref{Eq:Ineq1}. 
+%\paragraph{Equivalence in Continuous time}
+%From the derivation of the Lyapunov function \eqref{Eq:LyapAnal}, we have the following equality:
+%\begin{align*}
+%\frac{d}{ds}D_h\left(x, Z_s\right)  &= \frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left\{ e^{ \beta_s}  f(X_s)\right\}\,.
+%\end{align*}
+%If we integrate and assume we start from rest $\dot X_0 = 0$, we can write this as,
+%\begin{align}\label{Eq:Ineq2}
+% D_h(x, Z_t) \leq \int_0^t\frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle]ds  -  e^{ \beta_t}  f(X_t) + e^{\beta_0} f(X_0) + D_h(x, X_0).
+%\end{align}
+%Now, by pattern matching, we can use this inequality to extract a continuous time estimate sequence. 
+%%Notice, since $A_0 = 1$, we can write \eqref{Eq:Ineq1} as,
+%%\begin{align*}
+%%\phi_k(x) \leq \Big(1 - \frac{A_0}{A_k}\Big)f(x) + \frac{A_0}{A_k}\phi_0(x).
+%%\end{align*}
+%%which rearranging becomes,
+%%\begin{align}\label{Eq:EstSeqInv}
+%%A_k \phi_k(x) \leq \Big(A_k - A_0\Big)f(x) + A_0\phi_0(x).
+%%\end{align}
+%From~\eqref{Eq:Ineq2} we have the inequality,
+%\begin{align*}
+%e^{\beta_t}f(X_t) + D_h(x, Z_t) &\leq \int_0^t\frac{d}{ds}\left\{e^{\beta_s}\right\}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle]ds + e^{\beta_0}f(X_0)+  D_h(x,Z_0)\\
+%&\leq \int_0^t \frac{d}{ds}\{e^{\beta_t}\}f(x) + e^{\beta_0}f(X_0)+  D_h(x,Z_0)\\
+% &= (e^{\beta_t} - e^{\beta_0}) f(x) + e^{\beta_0}f(X_0)+  D_h(x,Z_0).
+%\end{align*}
+%Comparing this to~\eqref{Eq:EstSeq}, and ignoring the discretization error $\tilde \varepsilon_{k+1}$, if we define
+%\begin{align*}
+%\phi_t(x)=f(X_t) + e^{-\beta_t}D_h(x, Z_t)
+%\end{align*}
+%then the above discussion shows that $\{\phi_t(x), e^{\beta_t}\}$ is a continuous-time estimate sequence.
+\subsection{The Conditional Gradient Method}
+\paragraph{Equivalence in Discrete time}
+The discrete-time estimate sequence~\eqref{Eq:Est} for conditional gradient method can be written:
+\begin{align*}
+\phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} := f(x_{k+1})  - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}&\overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \left(\phi_k(x) - \frac{\tilde \varepsilon_k}{A_k}\right) + \tau_k f_k(x) \\
+&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+\end{align*}
+Multiplying through by $A_{k+1}$, we have
+\begin{align*}
+A_{k+1} \left(f(x_{k+1}) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) - \frac{\tilde \varepsilon_k}{A_k}\right) + (A_{k+1} - A_k) f_k(x)\\
+&=  A_k \left(f(x_k) - \frac{\tilde \varepsilon_k}{A_k}\right) + (A_{k+1} - A_k) f_k(x)\\
+& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k)  - \tilde \varepsilon_k + (A_{k+1} - A_k) f(x)\
+\end{align*}
+Rearranging, we obtain our Lyapunov argument $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for~\eqref{Eq:FrankWolfeLyap}:
+\begin{align*}
+A_{k+1}(f(x_{k+1}) - f(x))  &\leq A_k (f(x_k) - f(x)) + \varepsilon_{k+1}
+\end{align*}
+%also written $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for \eqref{Eq:DiscLyapFunc1}, 
+where $\varepsilon_{k+1} = \tilde \varepsilon_{k+1} - \tilde \varepsilon_k = \frac{1}{2}\frac {(A_{k+1} - A_k)^2}{A_{k+1}} diam(\X)^2$.
+Going the other direction, from our Lyapunov analysis we can derive the following bound:
+%\begin{align*}
+%0 &\geq E_{k+1} - E_k - \varepsilon_k  \\
+%& = A_{k+1}(f(x_{k+1}) - f(x)) + D_h(x, z_{k+1})  - A_k (f(x_k) - f(x)) - D_h(x, z_k)  -  \varepsilon_{k}\\
+%& =  A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}} D_h(x, z_{k+1})\right) - A_k \left(f(x_k) +  \frac{1}{A_{k}} D_h(x, z_{k})\right) - (A_{k+1} - A_k)f(x) - \tilde \varepsilon_{k+1} - \tilde \varepsilon_k
+%\end{align*}
+\begin{subequations}
+\begin{align*}
+E_k &\leq E_0 + \tilde \varepsilon_{k+1}\\
+A_{k}(f(x_{k}) - f(x)) &\leq A_0 (f(x_0) - f(x)) + \tilde \varepsilon_{k+1}\notag\\
+A_{k}f(x_{k}) &\leq (A_k -  A_0) f(x) + A_0f(x_0) + \tilde \varepsilon_{k+1}\notag \\
+A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) + \tilde \varepsilon_{k+1}\label{Eq:EstSeq}
+\end{align*}
+\end{subequations}
+Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$) with an additional error term:
+\begin{subequations}
+\begin{align}
+\phi_k(x) &\leq \Big(1 -\frac{A_0}{A_k}\Big) f(x) + \frac{A_0}{A_k} \phi_0(x) + \tilde \varepsilon_{k+1}\\
+&\leq \Big(1 - \frac{1}{A_k}\Big)f(x) + \frac{1}{A_k}\phi_0(x)+ \tilde \varepsilon_{k+1}.
+\end{align}
+\end{subequations}
+\subsection{Accelerated Gradient Descent (Strong Convexity)}
+The discrete-time estimate sequence~\eqref{Eq:Est} for accelerated gradient descent can be written:
+\begin{align*}
+\phi_{k+1}(x) &:= f(x_{k+1}) + \frac{\mu}{2}\|x -  z_{k+1}\|^2 \\
+& \overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \phi_k(x)  + \tau_k f_k(x) \\
+&\overset{\eqref{Eq:Under}}{\leq}(1 - \tau_k) \phi_k(x)  + \tau_k f(x)
+%&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k)\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+\end{align*}
+Therefore, we obtain the inequality $E_{k+1} - E_k \leq -\tau_k E_k$ for our Lyapunov function~\eqref{Eq:LyapStrong}:
+%Multiplying through by $A_{k+1}$, we have
+\begin{align*}
+\phi_{k+1}(x) - \phi_k(x) &\leq - \tau_k(\phi_k(x)  - \tau_k f(x))\\
+f(x_{k+1}) -f(x) + \frac{\mu}{2}\|x - z_{k+1}\|^2 - \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right) &\leq - \tau_k \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right) 
+%A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1})\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k)\right) + (A_{k+1} - A_k) f_k(x)\\
+%&=  A_k \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) \right) + (A_{k+1} - A_k) f_k(x)\\
+%& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k)+ (A_{k+1} - A_k) f(x)\
+\end{align*}
+%Rearranging, we obtain the inequality $E_{k+1} \leq E_k$ for our Lyapunov function~\eqref{Eq:LyapStrong}. 
+Going the other direction, we have 
+\begin{align*}
+E_{k+1} - E_k &\leq -\tau_k E_k\\
+\phi_{k+1} &\leq (1 - \tau_k) \phi_k(x)  + \tau_k f(x)\\
+A_{k+1} \phi_{k+1} \leq A_k \phi_k + (A_{k+1} - A_k) f(x)\\
+\end{align*}
+Summing over the righthand side, we obtain the estimate sequence~\eqref{Eq:Ineq1} 
+\begin{align*}
+\phi_{k} &\leq \Big(1 -\frac{A_0}{A_k}\Big) f(x) + \frac{A_0}{A_k} \phi_0(x)\\
+& =  \Big(1 -\frac{1}{A_k}\Big) f(x) + \frac{1}{A_k} \phi_0(x)\\
+\end{align*}
+
+
+\end{document}
+
+
