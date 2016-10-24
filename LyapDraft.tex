@@ -96,7 +96,7 @@
 \author{Ashia C. Wilson \and Benjamin Recht \and Michael I. Jordan}
 \maketitle
 \begin{abstract}
-Momentum methods play a central role in convex optimization. Several momentum methods are provably optimal and all use a technique called {\em estimate sequences} to analyze their behavior.  The technique of estimate sequences has long been considered difficult to understand. In the following paper, we show there is an equivalence between the technique of estimate sequences and a family of Lyapunov functions in both continuous and discrete time. This framework allows us to develop a simplified and unified analysis of several existing algorithms, introduce a couple of interesting new algorithms. Furthermore, it strengthens the connection between algorithms and continuous time dynamical systems . 
+Momentum methods play a central role in convex optimization. Several momentum methods are provably optimal and all use a technique called {\em estimate sequences} to analyze their behavior.  The technique of estimate sequences has long been considered difficult to understand. In the following paper, we show there is an equivalence between the technique of estimate sequences and a family of Lyapunov functions in both continuous and discrete time. This framework allows us to develop a simplified and unified analysis of several existing algorithms and introduce a couple of new algorithms. Furthermore, it provides insights into the art of algorithm design by strengthening the connection between algorithms and continuous time dynamical systems. 
 \end{abstract}
 
 \section{Introduction}
@@ -1642,44 +1642,41 @@ This matches the bound Nesterov obtained in \cite{Nesterov15}. Note, that a very
 \label{App:OtherDiscret}
 \paragraph{Method 1} We analyze~\eqref{Eq:QuasiSub2} using the Lyapunov function~\eqref{Eq:DiscLyapFunc1}. 
 \begin{subequations}
-\begin{align*}
+\begin{align}
 E_{k+1} - E_k %&= A_{k+1}(f(x_{k+1}) -f(x^\ast)) - A_k(f(x_k) - f(x^\ast)) + D_h(x^\ast, z_{k+1}) - D_h(x^\ast, z_k) \notag\\
 &= A_{k+1}(f(x_{k+1}) -f(x_k)) + \alpha_k(f(x_k) - f(x^\ast)) - \langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1} \rangle\notag\\
 &\quad- D_h(z_{k+1}, z_k) \notag\\
- &\overset{\substack{\eqref{Eq:XSeqOther1}\\\eqref{Eq:ZSeqOther1}}}{=} A_{k+1}(f(x_{k+1}) -f(x_k)) + \alpha_k(f(x_k) - f(x^\ast)) + (A_{k+1} - A_k)\langle \nabla f(x_k), x^\ast - x_{k+1}\rangle  \notag\\
- &\quad -A_{k} \langle \nabla f(x_k), x_{k+1} - x_k\rangle - D_h(z_{k+1}, z_k)\\
+ &= A_{k+1}(f(x_{k+1}) -f(x_k)) + \alpha_k(f(x_k) - f(x^\ast)) + (A_{k+1} - A_k)\langle \nabla f(x_k), x^\ast - x_{k+1}\rangle \notag\\
+ &\quad -A_{k} \langle \nabla f(x_k), x_{k+1} - x_k\rangle - D_h(z_{k+1}, z_k) \label{Eq:Stuff}\\
  &= A_{k+1}(f(x_{k+1}) -f(x_k)) + \alpha_k(f(x_k) - f(x^\ast)) + (A_{k+1} - A_k)\langle \nabla f(x_k), x^\ast - x_{k}\rangle \notag\\
- &\quad  + (A_{k+1} - A_k)\langle \nabla f(x_k), x_{k}- x_{k+1}\rangle -A_{k} \langle \nabla f(x_k), x_{k+1} - x_k\rangle - D_h(z_{k+1}, z_k)\\
-  &= A_{k+1}(f(x_{k+1}) -f(x_k) - \langle \nabla f(x_k), x_{k+1} - x_k\rangle) + \alpha_k(f(x_k) - f(x^\ast)+\langle \nabla f(x_k), x^\ast - x_{k}\rangle)  \notag \\ &\quad- D_h(z_{k+1}, z_k)\\
- & \leq A_{k+1} \frac{1}{2}\| x_{k+1} - x_{k}\|^2\\
+ &\quad  + (A_{k+1} - A_k)\langle \nabla f(x_k), x_{k}- x_{k+1}\rangle -A_{k} \langle \nabla f(x_k), x_{k+1} - x_k\rangle - D_h(z_{k+1}, z_k)\notag\\
+  &= A_{k+1}(f(x_{k+1}) -f(x_k) - \langle \nabla f(x_k), x_{k+1} - x_k\rangle) + \alpha_k(f(x_k) - f(x^\ast)+\langle \nabla f(x_k), x^\ast - x_{k}\rangle)  \notag \\ &\quad- D_h(z_{k+1}, z_k) \notag\\
+ & \leq A_{k+1} \frac{1}{2}\| x_{k+1} - x_{k}\|^2 \notag\\
 % & =\frac{1}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2} \|x_{k+1} - z_{k+1}\|^ 2\\
-& \leq  \frac{1}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2}diam(\X)^2
-\end{align*}
+& \overset{\eqref{Eq:XSeqOther1}}{\leq}  \frac{1}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2}diam(\X)^2
+\end{align}
 \end{subequations}
 %\end{small}
-Therefore, we obtain the following upper bound, 
+where in~\eqref{Eq:Stuff} we used~\eqref{Eq:XSeqOther1} and~\eqref{Eq:ZSeqOther1}. Therefore, we obtain the following upper bound, 
 \begin{align*}
 f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast, x_0) + A_0(f(x_0)- f(x^\ast)) +  \frac{1}{2}\sum_{i=1}^k \frac{A_{i+1}(A_{i+1} - A_{i})^2}{A_{i}^2}diam(\X)^2 }{A_k}.
 \end{align*}
 Choosing $A_k = \frac{k(k+1)}{2}$ gives a $O(1/k)$ convergence rate. 
 
-\paragraph{ Method 2} We analyze ~\eqref{Eq:QuasiSub3} using the Lyapunov function~\eqref{Eq:DiscLyapFunc1}. 
+\paragraph{ Method 2} We analyze ~\eqref{Eq:QuasiSub3} using the Lyapunov function~\eqref{Eq:DiscLyapFunc1}. Denoting $D^\ast_{k+1, k} = D_h(x^\ast,z_{k+1})- D_h(x^\ast,z_{k})$, observe that
 %\begin{small}
 \begin{subequations}%\label{Eq:LyapDiscArg}
 \begin{align}
 %{\color{red} \frac{d}{dt}D_h(x, X_{t} + e^{-\alpha_{t}} \dot X_{t})}\,  
 %& =  \int_{t_0}^{t_1} \frac{d}{ds}D_h(x, X_{s} + e^{-\alpha_{s}} \dot X_{s})\, ds +D_h(x, X_{t_0} + e^{-\alpha_{t_0}} \dot X_{t_0})\\
 %& {\color{red} =  - \left\langle \frac{d}{dt} \nabla h(X_t+ e^{-\alpha_t}\dot X_t), x - X_t - e^{-\alpha_t} \dot X_t\right\rangle} \,  \notag\\
-D_h(x^\ast,z_{k+1}) - D_h(x^\ast, z_k) &= -\langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1}\rangle - D_h(z_{k+1}, z_k)\notag\\
+D^\ast_{k+1, k} &= -\langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1}\rangle - D_h(z_{k+1}, z_k)\notag\\
 %&{\color{red} \overset{\eqref{Eq:ELBreg}}{=}e^{\alpha_t + \beta_t} \langle \nabla f(X_t), x - X_t \rangle\, - e^{ \beta_t} \langle \nabla f(X_t), \dot X\rangle}\, \notag   \\
-& \overset{\eqref{Eq:XSeqMethod2}}{=} (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - z_{k}\rangle  + (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_{k} - z_{k+1}\rangle \notag\\
-&\quad- D_h(z_{k+1}, z_k)\notag\\
-& \overset{\eqref{Eq:ZSeqMethod2}}{=}(A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle\notag \\&\quad+ (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_{k} - z_{k+1}\rangle- D_h(z_{k+1}, z_k)\notag\\
-& \leq(A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle+\notag\\
-&\quad \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag\\
+& \overset{\eqref{Eq:XSeqMethod2}}{=} (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - z_{k}\rangle  + (A_{k+1} - A_k) \langle \nabla f(x_{k+1}), z_{k} - z_{k+1}\rangle - D_h(z_{k+1}, z_k)\notag\\
+& \overset{\eqref{Eq:ZSeqMethod2}}{=}(A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle\notag \\&\quad- D_h(z_{k+1}, z_k)\notag\\
+& \leq(A_{k+1} - A_k) \langle \nabla f(x_{k+1}), x^\ast - x_{k+1}\rangle + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle+ \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag\\
 %
-&\leq (A_{k+1} - A_k)(f(x^\ast) - f(x_{k+1})) + A_k (f(x_k) - f(x_{k+1}))\notag\\
-&\quad  + \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag\\
+&\leq (A_{k+1} - A_k)(f(x^\ast) - f(x_{k+1})) + A_k (f(x_k) - f(x_{k+1}))  + \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag\\
 %& {\color{red}= - \frac{d}{dt}\left\{ e^{\beta_t}\left(f(X_t) - f(x)\right)\right\}\label{Eq:cond1}}\\
 & = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast))  + \frac{(A_{k+1} - A_k)^2}{2} \|\nabla f(x_{k+1})\|^2 \notag.
 \end{align}
@@ -1775,7 +1772,6 @@ f_{p-1}(y;x) = \sum_{i=0}^{p-1} \frac{1}{i!} \nabla^i f(x)(y-x)^i = f(x) + \lang
 
 \end{algorithm}
 \noindent This algorithm satisfies the following optimality conditions, 
-
 \begin{subequations}
 \begin{align}
 z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_k),\label{Eq:ZSeqAcc}\\
