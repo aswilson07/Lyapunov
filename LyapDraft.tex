@@ -627,7 +627,7 @@ then \eqref{Eq:StrongLyap} is a Lyapunov function. To that end, we have the foll
 & \leq - \dot \beta_t \left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - X_t\|^2\right)+   \mu \left\langle  \dot X_t, x^\ast - X_t- \frac{1}{\dot \beta_t}  \dot X_t\right\rangle\label{Eq:StrongContStrong}\\
 & =  - \dot \beta_t \left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\left\|x^\ast - X_t - \frac{1}{\dot \beta_t} \dot X_t\right\|^2\right) -\mu\left\langle \dot X_t, x^\ast - X_t - \frac{1}{\dot \beta_t} \dot X_t\right\rangle- \frac{\mu}{2\dot \beta_t}\|\dot X_t\|^2\notag \\
 &\quad + \mu \left\langle \dot X_t,x^\ast - X_t- \frac{1}{\dot \beta_t}  \dot X_t\right\rangle\notag\\
-& \leq   - \dot \beta_t \left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\left\|x^\ast - Z_t\right\|^2\right) \notag.
+& \leq   - \dot \beta_t \left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\left\|x^\ast - Z_t\right\|^2\right) \notag,
 \end{align}
 \end{subequations}
 where \eqref{Eq:StrongContStrong} uses our strong convexity assumption. In the following subsections, we demonstrate how to discretize the dynamic~\eqref{Eq:StrongDyn}, and how this discretization can be analyzed using a Lyapunov argument analogous to \eqref{Eq:StrongContProof}.
@@ -2016,17 +2016,17 @@ Note, given accelerated gradient method and quasi-monotone subgradient method ha
 The discrete-time estimate sequence~\eqref{Eq:Est} for conditional gradient method can be written:
 \begin{align*}
 \phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} := f(x_{k+1})  - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}&\overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \left(\phi_k(x) - \frac{\tilde \varepsilon_k}{A_k}\right) + \tau_k f_k(x) \\
-&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x).
 \end{align*}
 Multiplying through by $A_{k+1}$, we have
 \begin{align*}
 A_{k+1} \left(f(x_{k+1}) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) - \frac{\tilde \varepsilon_k}{A_k}\right) + (A_{k+1} - A_k) f_k(x)\\
 &=  A_k \left(f(x_k) - \frac{\tilde \varepsilon_k}{A_k}\right) + (A_{k+1} - A_k) f_k(x)\\
-& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k)  - \tilde \varepsilon_k + (A_{k+1} - A_k) f(x)\
+& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k)  - \tilde \varepsilon_k + (A_{k+1} - A_k) f(x).\
 \end{align*}
 Rearranging, we obtain our Lyapunov argument $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for~\eqref{Eq:FrankWolfeLyap}:
 \begin{align*}
-A_{k+1}(f(x_{k+1}) - f(x))  &\leq A_k (f(x_k) - f(x)) + \varepsilon_{k+1}
+A_{k+1}(f(x_{k+1}) - f(x))  &\leq A_k (f(x_k) - f(x)) + \varepsilon_{k+1},
 \end{align*}
 %also written $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for \eqref{Eq:DiscLyapFunc1}, 
 where $\varepsilon_{k+1} = \tilde \varepsilon_{k+1} - \tilde \varepsilon_k = \frac{1}{2}\frac {(A_{k+1} - A_k)^2}{A_{k+1}} diam(\X)^2$.
@@ -2041,7 +2041,7 @@ Going the other direction, from our Lyapunov analysis we can derive the followin
 E_k &\leq E_0 + \tilde \varepsilon_{k+1}\\
 A_{k}(f(x_{k}) - f(x)) &\leq A_0 (f(x_0) - f(x)) + \tilde \varepsilon_{k+1}\notag\\
 A_{k}f(x_{k}) &\leq (A_k -  A_0) f(x) + A_0f(x_0) + \tilde \varepsilon_{k+1}\notag \\
-A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) + \tilde \varepsilon_{k+1}\label{Eq:EstSeq}
+A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) + \tilde \varepsilon_{k+1}\label{Eq:EstSeq}.
 \end{align*}
 \end{subequations}
 Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$) with an additional error term:
@@ -2056,29 +2056,29 @@ The discrete-time estimate sequence~\eqref{Eq:Est} for accelerated gradient desc
 \begin{align*}
 \phi_{k+1}(x) &:= f(x_{k+1}) + \frac{\mu}{2}\|x -  z_{k+1}\|^2 \\
 & \overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \phi_k(x)  + \tau_k f_k(x) \\
-&\overset{\eqref{Eq:Under}}{\leq}(1 - \tau_k) \phi_k(x)  + \tau_k f(x)
+&\overset{\eqref{Eq:Under}}{\leq}(1 - \tau_k) \phi_k(x)  + \tau_k f(x).
 %&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k)\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
 \end{align*}
 Therefore, we obtain the inequality $E_{k+1} - E_k \leq -\tau_k E_k$ for our Lyapunov function~\eqref{Eq:LyapStrong}:
 %Multiplying through by $A_{k+1}$, we have
 \begin{align*}
 \phi_{k+1}(x) - \phi_k(x) &\leq - \tau_k(\phi_k(x)  - \tau_k f(x))\\
-f(x_{k+1}) -f(x) + \frac{\mu}{2}\|x - z_{k+1}\|^2 - \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right) &\leq - \tau_k \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right) 
+f(x_{k+1}) -f(x) + \frac{\mu}{2}\|x - z_{k+1}\|^2 - \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right) &\leq - \tau_k \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right). 
 %A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1})\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k)\right) + (A_{k+1} - A_k) f_k(x)\\
 %&=  A_k \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) \right) + (A_{k+1} - A_k) f_k(x)\\
 %& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k)+ (A_{k+1} - A_k) f(x)\
 \end{align*}
 %Rearranging, we obtain the inequality $E_{k+1} \leq E_k$ for our Lyapunov function~\eqref{Eq:LyapStrong}. 
-Going the other direction, we have 
+Going the other direction, we have, 
 \begin{align*}
 E_{k+1} - E_k &\leq -\tau_k E_k\\
 \phi_{k+1} &\leq (1 - \tau_k) \phi_k(x)  + \tau_k f(x)\\
-A_{k+1} \phi_{k+1} &\leq A_k \phi_k + (A_{k+1} - A_k) f(x)
+A_{k+1} \phi_{k+1} &\leq A_k \phi_k + (A_{k+1} - A_k) f(x).
 \end{align*}
-Summing over the righthand side, we obtain the estimate sequence~\eqref{Eq:Ineq1} 
+Summing over the righthand side, we obtain the estimate sequence~\eqref{Eq:Ineq1}: 
 \begin{align*}
 \phi_{k+1} &\leq \Big(1 -\frac{A_0}{A_{k+1}}\Big) f(x) + \frac{A_0}{A_{k+1}} \phi_0(x)\\
-& =  \Big(1 -\frac{1}{A_{k+1}}\Big) f(x) + \frac{1}{A_{k+1}} \phi_0(x)\\
+& =  \Big(1 -\frac{1}{A_{k+1}}\Big) f(x) + \frac{1}{A_{k+1}} \phi_0(x).\\
 \end{align*}
 
 
