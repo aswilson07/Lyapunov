@@ -1,0 +1,181 @@
+\begin{thebibliography}{10}
+
+\bibitem{Zeyuan16}
+Zeyuan {Allen-Zhu}, Peter Richt\'arik, Zheng Qu, and Yang Yuan.
+\newblock Even faster accelerated coordinate descent using non-uniform
+  sampling.
+\newblock In {\em Proceedings of the 33rd International Conference on Machine
+  Learning}, ICML~'16, 2016.
+
+\bibitem{Bach15}
+Francis~R. Bach.
+\newblock Duality between subgradient and conditional gradient methods.
+\newblock {\em SIAM Journal on Optimization}, 1(25):115--129, 2015.
+
+\bibitem{Baes09}
+Michel Baes.
+\newblock Estimate sequence methods: Extensions and approximations.
+\newblock Manuscript, available at
+  \url{http://www.optimization-online.org/DB_FILE/2009/08/2372.pdf}, August
+  2009.
+
+\bibitem{BubeckLeeSingh15}
+S{\'{e}}bastien Bubeck, Yin~Tat Lee, and Mohit Singh.
+\newblock A geometric alternative to {N}esterov's accelerated gradient descent.
+\newblock {\em ArXiv preprint arXiv:1506.08187}, 2015.
+
+\bibitem{Butcher20001}
+J.C. Butcher.
+\newblock Numerical methods for ordinary differential equations in the 20th
+  century.
+\newblock {\em Journal of Computational and Applied Mathematics}, 125(1--2):1
+  -- 29, 2000.
+\newblock Numerical Analysis 2000. Vol. VI: Ordinary Differential Equations and
+  Integral Equations.
+
+\bibitem{Chebyshev}
+P.~L Chebyshev.
+\newblock Th{\'{e}}orie des m{\'{e}}canismes connus sous le nom de
+  parall{\'{e}}logrammes.
+\newblock {\em M{\'{e}}moires pr{\'{e}}sent{\'{e}}s {\'{a}} l'Acad{\'{e}}mie
+  Imp{\'{e}}riale des Sciences de St-P{\'{e}}tersbourg}, VII(539-568), 1854.
+
+\bibitem{ChenTeboulle93}
+Gong Chen and Marc Teboulle.
+\newblock Convergence analysis of a proximal-like minimization algorithm using
+  bregman functions.
+\newblock {\em SIAM Journal on Optimization}, 3(3):538--543, 1993.
+
+\bibitem{CLR}
+Thomas~H. Cormen, Clifford Stein, Ronald~L. Rivest, and Charles~E. Leiserson.
+\newblock {\em Introduction to Algorithms}.
+\newblock McGraw-Hill Higher Education, 2nd edition, 2001.
+
+\bibitem{DroriTeboulle13}
+Y.~Drori and M.~Teboulle.
+\newblock Performance of first-order methods for smooth convex minimization: a
+  novel approach.
+\newblock {\em Mathematical Programming}, pages 1--32, 2013.
+
+\bibitem{Fazel}
+Dmitry Drusvyatskiy, Maryam Fazel, and Scott Roy.
+\newblock An optimal first order method based on optimal quadratic averaging an
+  optimal first order method based on optimal quadratic averaging.
+\newblock {\em ArXiv preprint arXiv:1604.06543}, 2016.
+
+\bibitem{FrankWolfe}
+M~Frank and P.~Wolfe.
+\newblock An algorithm for quadratic programming.
+\newblock {\em Naval Res. Logis. Quart}, 3:95--110, 1956.
+
+\bibitem{Freund14}
+Robert~M. Freund and Paul Grigas.
+\newblock New analysis and results for the franke-wolfe method.
+\newblock Arxiv preprint arXiv, 2014.
+
+\bibitem{Kim2016}
+Donghwan Kim and Jeffrey~A. Fessler.
+\newblock Optimized first-order methods for smooth convex minimization.
+\newblock {\em Mathematical Programming}, 159(1):81--107, 2016.
+
+\bibitem{Krichene15}
+Walid Krichene, Alexandre Bayen, and Peter Bartlett.
+\newblock Accelerated mirror descent in continuous and discrete time.
+\newblock In {\em Advances in Neural Information Processing Systems (NIPS) 29},
+  2015.
+
+\bibitem{Lessard14}
+Laurent Lessard, Benjamin Recht, and Andrew Packard.
+\newblock Analysis and design of optimization algorithms via integral quadratic
+  constraints.
+\newblock {\em SIAM Journal on Optimization}, 26(1):57--95, 2016.
+
+\bibitem{Lyapunov}
+A.~M. Lyapunov and A.~T. Fuller.
+\newblock General problem of the stability of motion, 1992.
+
+\bibitem{NemirovskiiYudin}
+Arkadi Nemirovskii and David Yudin.
+\newblock {\em Problem {C}omplexity and {M}ethod {E}fficiency in
+  {O}ptimization}.
+\newblock John Wiley \& Sons, 1983.
+
+\bibitem{Nesterov04}
+Yurii Nesterov.
+\newblock {\em Introductory Lectures on Convex Optimization: A Basic Course}.
+\newblock Applied Optimization. Kluwer, Boston, 2004.
+
+\bibitem{Nesterov05}
+Yurii Nesterov.
+\newblock Smooth minimization of non-smooth functions.
+\newblock {\em Mathematical Programming}, 103(1):127--152, 2005.
+
+\bibitem{Nesterov08}
+Yurii Nesterov.
+\newblock Accelerating the cubic regularization of {N}ewton's method on convex
+  problems.
+\newblock {\em Mathematical Programming}, 112(1):159--181, 2008.
+
+\bibitem{Nesterov09}
+Yurii Nesterov.
+\newblock Primal-dual subgradient methods for convex problems.
+\newblock {\em Mathematical Programming}, 120(1):221--259, 2009.
+
+\bibitem{NesterovCond15}
+Yurii Nesterov.
+\newblock Complexity bounds for primal-dual methods minimizing the model of
+  objective function.
+\newblock Technical report, Universit{\'e} catholique de Louvain, Center for
+  Operations Research and Econometrics (CORE), 2015.
+
+\bibitem{Nesterov15}
+Yurii Nesterov and Vladimir Shikhman.
+\newblock Quasi-monotone subgradient methods for nonsmooth convex minimization.
+\newblock {\em J. Optimization Theory and Applications}, 165(3):917--940, 2015.
+
+\bibitem{ODonoghue15}
+Brendan O'Donoghue and Emmanuel Cand\`{e}s.
+\newblock Adaptive restart for accelerated gradient schemes.
+\newblock {\em Foundations of Computational Mathematics}, 15(3):715--732, 2015.
+
+\bibitem{Polyak1964}
+Boris~T. Polyak.
+\newblock Some methods of speeding up the convergence of iteration methods.
+\newblock {\em {USSR} Computational Mathematics and Mathematical Physics},
+  4(5):1--17, 1964.
+
+\bibitem{Rumelhardt}
+David~E. Rumelhart, Geoffrey~E. Hinton, and Ronald~J. Williams.
+\newblock Learning representations by back-propagating errors.
+\newblock {\em Nature}, 323(6088):533--536, 10 1986.
+
+\bibitem{SuBoydCandes14}
+Weijie Su, Stephen Boyd, and Emmanuel~J. Cand\`{e}s.
+\newblock A differential equation for modeling {N}esterov's accelerated
+  gradient method: Theory and insights.
+\newblock In {\em Advances in Neural Information Processing Systems (NIPS) 27},
+  2014.
+
+\bibitem{SuBoydCandes15}
+Weijie {Su}, Stephen {Boyd}, and Emmanuel~J. {Cand\`{e}s}.
+\newblock {A Differential Equation for Modeling Nesterov's Accelerated Gradient
+  Method: Theory and Insights}.
+\newblock {\em ArXiv e-prints ar{X}iv:1503.01243}, 2015.
+
+\bibitem{Taylor2016}
+Adrien~B. Taylor, Julien~M. Hendrickx, and Fran{\c{c}}ois Glineur.
+\newblock Smooth strongly convex interpolation and exact worst-case performance
+  of first-order methods.
+\newblock {\em Mathematical Programming}, pages 1--39, 2016.
+
+\bibitem{Acceleration2}
+Andre {Wibisono} and Ashia~C. {Wilson}.
+\newblock {On Accelerated Methods in Optimization}.
+\newblock {\em ArXiv e-prints ar{X}iv:1509.03616}, September 2015.
+
+\bibitem{Acceleration}
+Andre {Wibisono}, Ashia~C. {Wilson}, and Michael~I. Jordan.
+\newblock A variational perspective on accelerated methods in optimization.
+\newblock {\em ArXiv e-prints ar{X}iv:1509.03616}, September 2015.
+
+\end{thebibliography}
