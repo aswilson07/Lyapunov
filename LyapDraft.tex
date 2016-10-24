@@ -96,7 +96,7 @@
 \author{Ashia C. Wilson \and Benjamin Recht \and Michael I. Jordan}
 \maketitle
 \begin{abstract}
-Momentum methods play a central role in convex optimization. Several momentum methods are provably optimal and all use a technique called {\em estimate sequences} to analyze their behavior.  The technique of estimate sequences has long been considered difficult to understand. In the following paper, we show there is an equivalence between the technique of estimate sequences and a family of Lyapunov functions in both continuous and discrete-time. This framework allows us to develop a simplified and unified analysis of several existing algorithms, introduce a couple of interesting new methods, and deepens the connection between algorithms and differential equations. 
+Momentum methods play a central role in convex optimization. Several momentum methods are provably optimal and all use a technique called {\em estimate sequences} to analyze their behavior.  The technique of estimate sequences has long been considered difficult to understand. In the following paper, we show there is an equivalence between the technique of estimate sequences and a family of Lyapunov functions in both continuous and discrete time. This framework allows us to develop a simplified and unified analysis of several existing algorithms, introduce a couple of interesting new algorithms. Furthermore, it strengthens the connection between algorithms and continuous time dynamical systems . 
 \end{abstract}
 
 \section{Introduction}
@@ -275,7 +275,7 @@ For first-order dynamics, applying these methods to obtain an algorithm is strai
  \begin{subequations}\label{Eq:DynaBeta}
  \begin{align}
  Z_t &= X_t + \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} \dot X_t, \label{Eq:Z}\\
- \frac{d}{dt} \nabla h(Z_t) &= -\left(\frac{d}{dt}e^{\beta_t}\right) \nabla f(X_t). \label{Eq:X}
+ \frac{d}{dt} \nabla h(Z_t) &= -\frac{d}{dt}\left(e^{\beta_t}\right) \nabla f(X_t). \label{Eq:X}
  \end{align}
  \end{subequations}
  Taking $e^{\beta_t} = A_k$ and $\frac{d}{dt}e^{\beta_t} =\frac{A_{k+1} - A_k}{\delta}$, the implicit-Euler method applied to \eqref{Eq:Z} results in the following sequence:
@@ -2073,12 +2073,12 @@ Going the other direction, we have
 \begin{align*}
 E_{k+1} - E_k &\leq -\tau_k E_k\\
 \phi_{k+1} &\leq (1 - \tau_k) \phi_k(x)  + \tau_k f(x)\\
-A_{k+1} \phi_{k+1} \leq A_k \phi_k + (A_{k+1} - A_k) f(x)\\
+A_{k+1} \phi_{k+1} &\leq A_k \phi_k + (A_{k+1} - A_k) f(x)
 \end{align*}
 Summing over the righthand side, we obtain the estimate sequence~\eqref{Eq:Ineq1} 
 \begin{align*}
-\phi_{k} &\leq \Big(1 -\frac{A_0}{A_k}\Big) f(x) + \frac{A_0}{A_k} \phi_0(x)\\
-& =  \Big(1 -\frac{1}{A_k}\Big) f(x) + \frac{1}{A_k} \phi_0(x)\\
+\phi_{k+1} &\leq \Big(1 -\frac{A_0}{A_{k+1}}\Big) f(x) + \frac{A_0}{A_{k+1}} \phi_0(x)\\
+& =  \Big(1 -\frac{1}{A_{k+1}}\Big) f(x) + \frac{1}{A_{k+1}} \phi_0(x)\\
 \end{align*}
 
 
