@@ -3,44 +3,44 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: LyapDraft.aux
 The style file: plain.bst
 Database file #1: refs.bib.bib
-You've used 31 entries,
+You've used 30 entries,
             2118 wiz_defined-function locations,
-            698 strings with 9220 characters,
-and the built_in function-call counts, 8997 in all, are:
-= -- 875
-> -- 408
+            694 strings with 9114 characters,
+and the built_in function-call counts, 8755 in all, are:
+= -- 852
+> -- 395
 < -- 2
-+ -- 166
-- -- 130
-* -- 591
-:= -- 1554
-add.period$ -- 94
-call.type$ -- 31
-change.case$ -- 157
++ -- 161
+- -- 126
+* -- 577
+:= -- 1509
+add.period$ -- 91
+call.type$ -- 30
+change.case$ -- 152
 chr.to.int$ -- 0
-cite$ -- 31
-duplicate$ -- 342
-empty$ -- 731
-format.name$ -- 130
-if$ -- 1859
+cite$ -- 30
+duplicate$ -- 332
+empty$ -- 714
+format.name$ -- 126
+if$ -- 1811
 int.to.chr$ -- 0
-int.to.str$ -- 31
-missing$ -- 30
-newline$ -- 158
-num.names$ -- 62
-pop$ -- 159
+int.to.str$ -- 30
+missing$ -- 29
+newline$ -- 153
+num.names$ -- 60
+pop$ -- 154
 preamble$ -- 1
-purify$ -- 127
+purify$ -- 123
 quote$ -- 0
-skip$ -- 236
+skip$ -- 228
 stack$ -- 0
-substring$ -- 475
-swap$ -- 43
+substring$ -- 470
+swap$ -- 42
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 118
+type$ -- 114
 warning$ -- 0
-while$ -- 88
-width$ -- 33
-write$ -- 333
+while$ -- 86
+width$ -- 32
+write$ -- 323

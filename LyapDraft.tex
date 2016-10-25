@@ -207,7 +207,10 @@ In Section~\ref{Sec:MomLyap},
  is a Lyapunov function for a family of momentum dynamics when $f$ is $\mu$-strongly convex ($D_f(y,x) \geq \mu D_h(y,x)$) and $e^{\alpha_t} = \dot \beta_t$. 
 In this paper, we only focus on the setting where $h = \frac{1}{2}\|\cdot\|^2$ is Euclidean. In Section~\ref{Sec:StrongConv}, we show how to derive the Lyapunov function and how it can be used to demonstrate a linear rate of convergence for the family of accelerated gradient descent dynamics.  We also show how a particular discretization of the family of dynamics provides an algorithm for which a commensurate discretization of~\eqref{eq:general-sc-lyap} is a Lyapunov function.
 
-We briefly mention the appearance of the $e^{-\alpha_t}$ term in~\eqref{Eq:E} and~\eqref{eq:general-sc-lyap}. In~\cite{Acceleration2}, this scaling was studied at length. In particular, it was shown that the family of Lagrangian functionals which generates~\eqref{Eq:EL} is invariant under the action of time reparameterization, which explain the appearance of the $e^{-\alpha_t}$ in front of $\dot X_t$. By contrast, the mirror descent dynamic, which is a gradient flow, is not invariant under time-reparameterization. This invariance property might suggest why momentum family is more natural for the purposes of optimization (that is, it might help us understand why the discrete-time implementations of the family of momentum dynamics achieves systematically better rates of convergence than the family of gradient flows). 
+We briefly mention the appearance of the $e^{-\alpha_t}$ term in~\eqref{Eq:E} and~\eqref{eq:general-sc-lyap}. This unusual given most Lyapunov functions are time-invariant. In~\cite{Acceleration}, this scaling was studied at length. In particular, it was shown that the family of Lagrangian functionals which generates~\eqref{Eq:EL} is invariant under the action of time reparameterization. By contrast, the mirror descent dynamic, which is a gradient flow, is not invariant under time-reparameterization. %Under the ideal scaling \eqref{Eq:IdeSca}, time reparameterization 
+This invariance property explains why the Lyapunov function remains valid for the momentum dynamic~\eqref{Eq:E} which parameterized by $\alpha_t$ and $\beta_t$. 
+%in these reparameterizations of time, however, you always have a valid lyapunov function
+%This invariance property might suggest why momentum family is more natural for the purposes of optimization (that is, it might help us understand why the discrete-time implementations of the family of momentum dynamics achieves systematically better rates of convergence than the family of gradient flows). 
 
 
 Note that in both the strongly convex and weakly convex setting, the structure of the Lyapunov function allows to conclude a rate of convergence for the optimality gap $f(X_t) - f(x^\ast)$. In particular, the Lyapunov property $\E_t \leq \E_0$ allows to conclude 
@@ -807,7 +810,8 @@ f(x_{k+1}) - f(x^\ast) \leq \frac{1}{A_{k+1}}\left(A_0\phi_0(x^\ast)  + \tilde \
 \end{align*}
 we see that we simply need to choose our sequence $\{A_k\}_{k=1}^\infty$ to ensure $\tilde \varepsilon_{k+1}/ A_{k+1} \rightarrow 0$. The following table illustrates the choices of $\phi_k(x)$ and $\tilde \varepsilon_k$ for the four methods analyzed using estimate sequences: 
 \begin{center}
-\begin{tabular}{|c|c|c|c|}
+\begin{table}
+\begin{tabular}{|c|c|c|c|}%\label{Eq:Table}
 \hline 
 Algorithm & $f_i(x)$ &  $\phi_k(x)$ & $\tilde \varepsilon_k$ \\ \hline
 $\substack{\text{Quasi-Monotone} \\\text{Subgradient}\\\text{ Method}}$ & linear & $\frac{1}{A_k}D_h(x, z_k) + f(x_k)$ & $\frac{1}{2}\sum_{i=0}^{k} \frac{(A_i - A_{i-1})^2}{2}\|\nabla f(x_i)\|^2$  \\ \hline
@@ -816,6 +820,9 @@ $\substack{\text{Accelerated  } \\\text{Method Gradient}\\\text{ (Strongly Conve
 $\substack{\text{Frank-Wolfe}\\\text{ Algorithm }}$ & linear  & $f(x_k)$ & $ \frac{1}{2}\sum_{i=0}^{k}\frac {(A_{i+1} - A_i)^2}{A_{i+1}} diam(\X)^2$\\
 \hline
 \end{tabular}
+\caption{How the Estimate Sequence is defined for the various algorithms}
+\label{table:Table}
+\end{table}
 \end{center}
 where linear is defined as 
 \begin{equation}
@@ -829,13 +836,16 @@ f_i(x) = f(x_i) + \langle \nabla f(x_i), x - x_i\rangle + \frac{\mu}{2}\|x - x_i
 %\subsection{Connection to Framework}
 %If we ignore the the error term $B_k$, the accelerated gradient method and quasi-monotone gradient method maintains the invariant 
 %\subsection{Accelerated Gradient and Quasi-Monotone Subgradient}
-\subsection{Accelerated Gradient Descent}
+\subsection{Equivalence between Estimate Sequences and Lyapunov Functions}
+In this section, we show how one can show that estimate sequences are equivalent to our Lyapunov framework in both continuous and discrete time. 
+The continuous time view shows that the errors in both the Lyapunov function and estimate sequences are due to discretization errors. We provide a sketch for how this works for most of these methods leaving some of the details for Appendix~\ref{App:EstSeq}.
+\subsubsection{Accelerated Gradient Descent}
 \paragraph{Equivalence in Discrete time}
 The discrete-time estimate sequence~\eqref{Eq:Est} for accelerated gradient descent can be written:
 \begin{align*}
 \phi_{k+1}(x) &:= f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) \\
 & \overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \phi_k(x)  + \tau_k f_k(x) \\
-&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k)\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+&\overset{\text{Tab}~\ref{table:Table}}{=} \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k)\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
 \end{align*}
 Multiplying through by $A_{k+1}$, we have
 \begin{align*}
@@ -897,7 +907,7 @@ then the above discussion shows that $\{\phi_t(x), e^{\beta_t}\}$ is a continuou
 %
 %
 %
-\subsection{Conditional Gradient Method} 
+\subsubsection{Conditional Gradient Method} 
 \paragraph{Continuous time Estimate Sequence}
 For the conditional gradient method, the algorithm simply needed to ensure,
 \begin{align}\label{Eq:InEq4}
@@ -966,10 +976,9 @@ the Lyapunov analysis introduced in this paper can be extended other settings, s
 \subsection{Searching for invariants}
 Earlier work by Drori and Teboulle~\cite{DroriTeboulle13}, Kim and Fessler~\cite{Kim2016}, Taylor \emph{et al}~\cite{Taylor2016}, and Lessard~\emph{et al}~\cite{Lessard14} have shown that optimization algorithms could be analyzed by solving convex programming problems.  In particular, Lessard~\emph{et al} show that Lyapunov-like potential functions called \emph{integral quadratic constraints} can be found by solving a constant-sized semidefinite programming problem. It would be interesting to see if these results can be adapted to directly search for Lyapunov functions like those studied in this paper.  This would provide a method to automate the analysis of new techniques, possibly moving beyond momentum methods to novel families of optimization techniques.
 
-  \clearpage
 \bibliographystyle{plain}
 \bibliography{refs.bib}
-\clearpage
+
 
 \appendix
  \section{Mirror Descent Dynamic}
