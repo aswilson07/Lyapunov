@@ -96,7 +96,7 @@
 \author{Ashia C. Wilson \and Benjamin Recht \and Michael I. Jordan}
 \maketitle
 \begin{abstract}
-Momentum methods play a central role in convex optimization. Several momentum methods are provably optimal and all use a technique called {\em estimate sequences} to analyze their behavior.  The technique of estimate sequences has long been considered difficult to understand. In the following paper, we show there is an equivalence between the technique of estimate sequences and a family of Lyapunov functions in both continuous and discrete time. This framework allows us to develop a simplified and unified analysis of several existing algorithms, introduce a couple of new algorithms, and strengthen the connection between algorithms and continuous time dynamical systems. 
+Momentum methods play a central role in convex optimization. Several momentum methods are provably optimal and all use a technique called {\em estimate sequences} to analyze their behavior.  The technique of estimate sequences has long been considered difficult to understand. In this paper we show there is an equivalence between the technique of estimate sequences and a family of Lyapunov functions in both continuous and discrete time. This framework allows us to develop a simple and unified analysis of several existing algorithms, introduce a couple of new algorithms, and strengthen the connection between algorithms and continuous time dynamical systems. 
 \end{abstract}
 
 \section{Introduction}
@@ -108,13 +108,11 @@ Indeed, when applied to positive definite quadratic cost functions, Polyak's Hea
 
 In order to make momentum methods rigorous, a different approach was required.  In celebrated work, Nesterov devised a general scheme to accelerate convex optimization methods, which achieve optimal running times for a myriad of oracle models in convex programming~\cite{Nesterov04}. However, to achieve such rigorous general applicability, Nesterov's proof techniques abandoned the physical intuition of Polyak~\cite{Nesterov04}.  In lieu of differential equations and potential functions, Nesterov devised the method of \emph{estimate sequences} to verify the correctness of these momentum-based methods.  Researchers have struggled with understanding the intuition and underpinnings of the estimate sequence methodology since Nesterov's initial papers.  Nesterov himself often refers to the associated proof techniques as an ``algebraic trick.''  
 
-To overcome the lack of intuition for the estimate sequences technique, several authors have recently proposed schemes to achieve acceleration without appealing to estimate sequences~\cite{Fazel, BubeckLeeSingh15, Lessard14}.  Orthogonally, another set of authors have taken a different approach by analyzing the continuous-time limit of accelerated methods and showing that the stability of the resulting ODEs can be verified by analyzing a simple Lyapunov function~\cite{SuBoydCandes14,Krichene15,Acceleration}.  Unfortunately, none of these works provide a clear path of obtaining a discrete time optimization algorithm from a continuous time ODE.  There are a vast number of ways to discretize ODEs, but not all of them give rise to convergent methods.  Indeed, for unconstrained optimization on Euclidean space, Polyak's Heavy Ball method and Nesterov's accelerated gradient descent in the setting where the objective is strongly convex have the same continuous time limit.
+To overcome the lack of intuition for the estimate sequences technique, several authors have recently proposed schemes to achieve acceleration without appealing to estimate sequences~\cite{Fazel, BubeckLeeSingh15, Lessard14}.  Orthogonally, another set of authors have taken a different approach by analyzing the continuous-time limit of accelerated methods and showing that the stability of the resulting ODEs can be verified by analyzing a simple Lyapunov function~\cite{SuBoydCandes14,Krichene15,Acceleration}.  Unfortunately, none of this previous work provides a clear path of obtaining a discrete time optimization algorithm from a continuous time ODE.  There are a vast number of ways to discretize ODEs, but not all of them give rise to convergent methods.  Indeed, for unconstrained optimization on Euclidean space, Polyak's Heavy Ball method and Nesterov's accelerated gradient descent in the setting where the objective is strongly convex have the same continuous time limit.
 
-In this paper, we propose a bridge between the continuous time limits and discrete time algorithms.  Our method takes as its primary object, a general Lyapunov function for momentum methods in continuous time.  Through a diverse set of examples, we demonstrate how the proofs of momentum methods can be understood as bounding discretization errors of the Lyapunov function when moving to discrete time.  In particular, we show how the discretization of the associated continuous time ODE needs to be performed in such a way that the Lyapunov function remains valid when transitioning to discrete time.
-
+In this paper, we propose a bridge between the continuous time limits and discrete time algorithms.  Our method takes, as its primary object, a general Lyapunov function for momentum methods in continuous time.  Through a diverse set of examples, we demonstrate how the proofs of momentum methods can be understood as bounding discretization errors of the Lyapunov function when moving to discrete time.  In particular, we show how the discretization of the associated continuous time ODE needs to be performed in such a way that the Lyapunov function remains valid when transitioning to discrete time.
 Using this technique, we provide a clean, direct proof of the convergence of Nesterov's method for strongly convex functions in Euclidean spaces.  We explore how only particular parameterizations of the continuous ODEs lead to discrete time methods.  In doing so, we explain the need for the extragradient step inside Nesterov's method which does not appear in Polyak's method.  
-
-Finally, we show there is an equivalence between estimate sequences and Lyapunov functions.  In continuous time and discrete time, estimate sequences can be derived directly from the Lyapunov function and vice versa.  We show that the associated continuous time estimate sequence can also be directly discretized to give standard estimate-sequence based proofs of momentum methods.  This clarifies how Nesterov's ``algebraic trick'' is closely related to invariant reduction proofs that are more common in algorithm analysis.
+Finally, we show there is an equivalence between estimate sequences and Lyapunov functions.  In continuous and discrete time, estimate sequences can be derived directly from the Lyapunov function and vice versa.  We show that the associated continuous time estimate sequence can also be directly discretized to give standard estimate-sequence based proofs of momentum methods.  This clarifies how Nesterov's ``algebraic trick'' is closely related to invariant reduction proofs that are more common in algorithm analysis.
 
 The paper proceeds as follows.  We first describe the related work in viewing optimization algorithms as discretizations of continuous dynamical systems.  We then introduce the notion of Lyapunov functions that we will use throughout the paper to demonstrate convergence of algorithms.  In particular, we will introduce time-varying Lyapunov functions that not only prove algorithm convergence but additionally verify a \emph{convergence rate}.  
 %We review how such Lyapunov analysis has been used to analyze mirror decent, reviewing the concepts of Bregman divergence and mirror maps in the process. 
@@ -122,7 +120,7 @@ The paper proceeds as follows.  We first describe the related work in viewing op
 
 \section{The dynamical view of momentum methods}
 
-
+\paragraph{Problem Setting}
 This paper is concerned with the class of constrained optimization problems
 \begin{align}\label{eq:main-problem}
 \min_{x \in \X} \; f(x),
@@ -131,21 +129,22 @@ where $\X \subseteq \R^d$ is a closed convex set and $f \colon \X \to \R$ is a c
 % We primarily focus on the case $\X = \R^d$ unless explicitly noted otherwise. 
 %We also assume $f$ has a unique minimizer, $x^* \in \X$, satisfying the optimality condition $\nabla f(x^*) = 0$. 
 We use the standard Euclidean norm $\|x\| = \langle x,x \rangle^{1/2}$ throughout.
-
-We denote a discrete-time sequence in lower case, e.g., $x_k$ with $k \ge 0$ an integer. We denote a continuous-time curve in upper case, e.g., $X_t$ with $t \in \R$. An over-dot means derivative with respect to time, i.e., $\dot X_t = \frac{d}{dt} X_t$.
-
-We consider the general non-Euclidean setting in which the space $\X$ is endowed with a distance-generating function $h \colon \X \to \R$ that is convex and essentially smooth (i.e., $h$ is continuously differentiable in $\X$, and $\|\nabla h(x)\|_* \to \infty$ as $\|x\| \to \infty$). The function $h$ can also be used to define an alternative measure of distance in $\X$ via its Bregman divergence:
+We consider the general non-Euclidean setting in which the space $\X$ is endowed with a distance-generating function $h \colon \X \to \R$ that is convex and essentially smooth (i.e. $h$ is continuously differentiable in $\X$, and $\|\nabla h(x)\|_* \to \infty$ as $\|x\| \to \infty$). The function $h$ can also be used to define an alternative measure of distance in $\X$ via its Bregman divergence:
 \begin{align*}
 D_h(y,x) = h(y) - h(x) - \langle \nabla h(x), y-x \rangle,
 \end{align*}
 which is nonnegative since $h$ is convex. 
 The \emph{Euclidean setting} is obtained when $h(x) = \frac{1}{2} \|x\|^2$.
 
+We denote a discrete-time sequence in lower case, e.g., $x_k$ with $k \ge 0$ an integer. We denote a continuous-time curve in upper case, e.g., $X_t$ with $t \in \R$. An over-dot means derivative with respect to time, i.e., $\dot X_t = \frac{d}{dt} X_t$.
+
+
+\paragraph{Momentum Methods}
 The intuition for solving problem~\eqref{eq:main-problem} with momentum methods comes from looking at optimization algorithms as discrete-time approximations to ODEs. In particular, the second order ODE:
  \begin{align}\label{eq:heavy-ball-ode}
  m \frac{d^2x}{dt^2}& = - \nabla f(x) - m \gamma \frac{dx}{dt}
  \end{align}
-corresponds to the equations of motion of an object with mass $m$ in the presence of  friction or viscosity as well as a potential $f$.  Note that the fixed points of such dynamics are those where the gradient of $f$ vanishes.   The trajectories of this dynamical systems will tend to continue to move in the direction they were moving before, analogous to how heavier objects move down hill faster than light objects in the presence of friction.  In the limit that the mass goes to zero, where $\gamma \propto 1/m$, we recover the continuous time limit of the gradient descent.  Thus, the mass term here serves to \emph{accelerate} the progress towards the bottom of the well. 
+corresponds to the equations of motion of an object with mass $m$ in the presence of  friction or viscosity as well as a potential $f$.  Note that the fixed points of such dynamics are those where the gradient of $f$ vanishes.   The trajectories of this dynamical systems will tend to continue to move in the direction they were moving before, analogous to how heavier objects move down hill faster than light objects in the presence of friction.  In the limit that the mass goes to zero, where $\gamma \propto 1/m$, we recover the gradient flow equation, which is the continuous time limit of gradient descent~\cite{Acceleration}.  Thus, the mass term here serves to \emph{accelerate} the progress towards the bottom of the well. 
 
 In seminal work, Polyak proposed the Heavy Ball method for optimization which amounted to applying the Euler method to the dynamical system~\eqref{eq:heavy-ball-ode}.  Polyak was able to show \emph{local convergence} of this method, but was unable to prove global convergence.  Moreover, Polyak's local convergence required the assumption that $f$ was strongly convex in the neighborhood of the associated stationary point.
 
@@ -180,13 +179,13 @@ Lyapunov's method~\cite{Lyapunov} is based on the idea of constructing a positiv
 \end{equation*}
 The existence of a Lyapunov function guarantees that the dynamical system converges: if the function is positive yet strictly decreasing along all trajectories, then the dynamical system must eventually approach a region where $\E(X)=0$.  If this region coincides with the stationary points of the dynamics, then all trajectories must converge to a stationary point.  The technique of Lyapunov -- of finding a function which decreases with each iteration -- is a ubiquitous tool in algorithm analysis~\cite{CLR}.   An additional advantage of exhibiting a Lyapunov function is that enables us to understand properties of entire trajectories of the dynamical system we are analyzing (e.g boundedness, stability, etc.).  
 
-In this paper, we are interested in obtaining Lyapunov functions for dynamical systems designed for optimization.  Specifically, we are  interested in the~\emph{rate of convergence} of a method, not simply convergence alone.  To facilitate such rate analysis, we will study time dependent Lyapunov functions.  We emphasize that Lyapunov analysis is the most standard technique to prove the convergence of optimization methods.   Standard proofs of gradient descent, mirror descent, subgradient descent, and Newton's method can all be analyzed by exhibiting some function which decreases at every iteration of the algorithm. The most common Lyapunov functions are the optimality gap $f(x)-f(x^\ast)$ or the distance to the optimal solution $D_h(x^\ast,x)$.  The main contribution of this paper is to demonstrate that most of the common momentum methods can be analyzed in a very similar framework.
+In this paper, we are interested in obtaining Lyapunov functions for dynamical systems designed for optimization.  Specifically, we are  interested in the~\emph{rate of convergence} of a method, not simply convergence alone.  To facilitate such rate analysis, we study time dependent Lyapunov functions.  We emphasize that Lyapunov analysis is the most standard technique to prove the convergence of optimization methods.   Standard proofs of gradient descent, mirror descent, subgradient descent, and Newton's method can all be analyzed by exhibiting some function which decreases at every iteration of the algorithm. The most common Lyapunov functions are the optimality gap $f(x)-f(x^\ast)$ or the distance to the optimal solution $D_h(x^\ast,x)$.  The main contribution of this paper is to demonstrate that most of the common momentum methods can be analyzed in a very similar framework.
  
  
  
 
 We now introduce a simple family of time varying Lyapunov functions that can verify the convergence of momentum flows.
-\paragraph{General Accelerated Mirror Descent} In~\cite{Acceleration}, the following Lyapunov function 
+\paragraph{General Accelerated Mirror Descent} In Wibisono {\em et al.}~\cite{Acceleration}, the following Lyapunov function 
 \begin{align}\label{Eq:E}
 \E_t \,=\, e^{\beta_t} (f(X_t)-f(x^*)) + D_h\left(x^*, \, X_t + e^{-\alpha_t} \dot X_t\right),
 \end{align}
@@ -202,9 +201,9 @@ In Section~\ref{Sec:MomLyap},
 %
 %ACCC GRAD STRONG
 \paragraph{Accelerated Gradient Descent (Strong Convexity)}
- The following function 
+In this paper, we show that the following function 
    \begin{equation}\label{eq:general-sc-lyap}
-  \E_t =  e^{\beta_t} \left(f(X_t) - f(x^\ast) + \mu D_h(x^\ast ,X_t + e^{-\alpha_t} \dot X_t)\right),
+  \E_t =  e^{\beta_t} \left(f(X_t) - f(x^\ast) + \mu D_h\Big(x^\ast ,X_t + e^{-\alpha_t} \dot X_t\Big)\right),
  \end{equation}
  is a Lyapunov function for a family of momentum dynamics when $f$ is $\mu$-strongly convex ($D_f(y,x) \geq \mu D_h(y,x)$) and $e^{\alpha_t} = \dot \beta_t$. 
 In this paper, we only focus on the setting where $h = \frac{1}{2}\|\cdot\|^2$ is Euclidean. In Section~\ref{Sec:StrongConv}, we show how to derive the Lyapunov function and how it can be used to demonstrate a linear rate of convergence for the family of accelerated gradient descent dynamics.  We also show how a particular discretization of the family of dynamics provides an algorithm for which a commensurate discretization of~\eqref{eq:general-sc-lyap} is a Lyapunov function.
@@ -228,8 +227,9 @@ for~\eqref{Eq:E} and \eqref{eq:general-sc-lyap} respectively. The typical conven
 
 \section{Momentum Methods}
 \label{Sec:MomLyap}
+In this section, we introduce two families of momentum dynamics, both which are generated by functionals defined on continuous time curves. We illustrate how to derive a Lyapunov analysis from these dynamics. Next, we show how these dynamics can be discretized to obtain algorithms. The same discrete time mappings can be applied to the Lyapunov function, resulting in a tool which can be used to analyze the discrete time algorithms. We provide examples for how this works for the quasi-monotone subgradient algorithm, accelerated gradient descent, the conditional gradient algorithm, and several other novel algorithms. 
  \subsection{Lyapunov Analysis}
-In this section, we study dynamics which are based on the Euler-Lagrange equation \eqref{Eq:ELBreg} in the setting where the ideal scaling~\eqref{Eq:IdeScaBet} holds with equality~$\dot \beta_t = e^{\alpha_t}$. Notice, now the entire Bregman Lagrangian is parameterized by $\beta_t$, which determines the convergence rate:
+We study dynamics which are based on the Euler-Lagrange equation \eqref{Eq:ELBreg} in the setting where the ideal scaling~\eqref{Eq:IdeScaBet} holds with equality~$\dot \beta_t = e^{\alpha_t}$. Notice, now the entire Bregman Lagrangian is parameterized by $\beta_t$, which determines the convergence rate:
  \begin{subequations}\label{Eq:EL}
  \begin{align}
  Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t \label{Eq:ELZ},\\
@@ -525,7 +525,7 @@ Integrating shows that the following function
 \begin{equation}\label{Eq:FrankE}
 \mathcal{E}_t = e^{\beta_t} (f(X_t) - f(x)).
 \end{equation} 
-is a Lyapunov function for any dynamic satisfying~\eqref{Eq:Frank1} and~\eqref{Eq:Frank2}.  The conditional gradient method maintains the following iterates: 
+is a Lyapunov function for any dynamic satisfying~\eqref{Eq:Frank1} and~\eqref{Eq:Frank2}.  We now turn our attention to the conditional gradient method, which maintains the following iterates: 
 \begin{algorithm}[H]
 \begin{subequations}\label{Eq:Fank-Wolfe}
 \caption{Conditional Gradient Method}
@@ -538,7 +538,7 @@ x_{k+1} &= \tau_k z_k + (1- \tau_k) x_k.\label{Eq:ZSeqFrank1}
 %\end{align}
 \end{subequations}
 \end{algorithm}
-\noindent The algorithm satisfies the variational inequalities
+\noindent In particular, the conditional gradient method satisfies the following variational inequalities:
 \begin{subequations}
 \begin{align}
 0 \leq \langle \nabla f(x_k), x - z_k\rangle \quad \forall x \in \X,\\
@@ -600,6 +600,7 @@ In Appendix~\ref{App:CondMethod} we show how to recover the bound shown by Neste
 %
 %%%%%%%%%%STRONG CONVEXITY
 \section{Strong Convexity}
+In this section, we introduce a new family of momentum dynamics which can be discretized to obtain the accelerated gradient descent algorithm in the setting where the objective function $f$ is strongly convex. In Appendix~\ref{App:StrongConvexity}, we show how to derive a Lyapunov function using the dynamic. Furthermore, we show how to discretize the dynamic to obtain a discrete-time algorithm which can be analyzed by performing an analogous discretization of the Lyapunov function. 
 \label{Sec:StrongConv}
 \subsection{Lyapunov Analysis}
 In this section, we study the Lyapunov function~\eqref{eq:general-sc-lyap},
@@ -617,7 +618,7 @@ We briefly remark that~\eqref{Eq:StrongDyn} is the Euler-Lagrange equation for t
 \begin{equation}\label{Eq:LagStrongConv}
 \mathcal{L}(x, \dot x, t) = \dot \beta_t e^{2\beta_t} \left(\frac{\mu}{2}\left\|\frac{\dot x}{\dot \beta_t}\right\|^2 - f(x)\right),
 \end{equation}
-and that this Lagrangian can further generalized; however, further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to show an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
+and that this Lagrangian can generalized to include non-Euclidean geometries; however, further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to show an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
 $\dot{\tilde{\E}}_t \leq - \dot \beta_t \tilde{\E}_t$
 for 
 \begin{equation}\label{Eq:StrongLyap2}
@@ -978,7 +979,7 @@ the Lyapunov analysis introduced in this paper can be extended other settings, s
 \subsection{Searching for invariants}
 Earlier work by Drori and Teboulle~\cite{DroriTeboulle13}, Kim and Fessler~\cite{Kim2016}, Taylor \emph{et al}~\cite{Taylor2016}, and Lessard~\emph{et al}~\cite{Lessard14} have shown that optimization algorithms could be analyzed by solving convex programming problems.  In particular, Lessard~\emph{et al} show that Lyapunov-like potential functions called \emph{integral quadratic constraints} can be found by solving a constant-sized semidefinite programming problem. It would be interesting to see if these results can be adapted to directly search for Lyapunov functions like those studied in this paper.  This would provide a method to automate the analysis of new techniques, possibly moving beyond momentum methods to novel families of optimization techniques.
 \section*{Acknowledgements}
-We would like to give special thanks to Andre Wibisono for the many helpful discussion involving this paper. We would also like to thank Orianna Demassi for several helpful suggestions and Stephen Tu who caught a small error in a previous version of this paper.
+We would like to give special thanks to Andre Wibisono for the many helpful discussion involving this paper. We would also like to thank Orianna Demassi for her very useful feedback and Stephen Tu who caught a small error in a previous version of this paper.
 \bibliographystyle{plain}
 \bibliography{refs.bib}
 
