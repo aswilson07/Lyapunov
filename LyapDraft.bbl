@@ -168,6 +168,11 @@ Adrien~B. Taylor, Julien~M. Hendrickx, and Fran{\c{c}}ois Glineur.
   of first-order methods.
 \newblock {\em Mathematical Programming}, pages 1--39, 2016.
 
+\bibitem{Acceleration2}
+Andre {Wibisono} and Ashia~C. {Wilson}.
+\newblock {On Accelerated Methods in Optimization}.
+\newblock {\em ArXiv e-prints ar{X}iv:1509.03616}, September 2015.
+
 \bibitem{Acceleration}
 Andre {Wibisono}, Ashia~C. {Wilson}, and Michael~I. Jordan.
 \newblock A variational perspective on accelerated methods in optimization.

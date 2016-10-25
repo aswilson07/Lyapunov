@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  24 OCT 2016 21:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  25 OCT 2016 10:10
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -945,29 +945,29 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
  [4]
 [5] [6] [7]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 305.
+put line 307.
  [8]
-Overfull \hbox (13.46329pt too wide) in paragraph at lines 344--344
+Overfull \hbox (13.46329pt too wide) in paragraph at lines 346--346
 [] 
  []
 
 [9] [10] [11]
 
-! LaTeX Error: \begin{subequations} on input line 474 ended by \end{subequation
+! LaTeX Error: \begin{subequations} on input line 476 ended by \end{subequation
 }.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.480 \end{subequation}
+l.482 \end{subequation}
                        
 ? 
 [12] [13]pdfTeX warning (ext4): destination with the same identifier (name{equa
 tion.4.10}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.528 \begin{subequations}
+l.530 \begin{subequations}
                           \label{Eq:Fank-Wolfe}
 
 ! Package amsmath Error: Multiple \label's: label 'Eq:XSeqFrank1' will be lost.
@@ -977,131 +977,133 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.535 \end{align*}
+l.537 \end{align*}
                   
 ? 
 pdfTeX warning (ext4): destination with the same identifier (name{equation.4.11
 }) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.540 \begin{subequations}
+l.542 \begin{subequations}
                           pdfTeX warning (ext4): destination with the same iden
 tifier (name{equation.4.11a}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.544 \end{align}
+l.546 \end{align}
                  pdfTeX warning (ext4): destination with the same identifier (n
 ame{equation.4.11b}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.544 \end{align}
+l.546 \end{align}
                  pdfTeX warning (ext4): destination with the same identifier (n
 ame{equation.4.12}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.549 \begin{equation}
+l.551 \begin{equation}
                       \label{Eq:FrankWolfeLyap}pdfTeX warning (ext4): destinati
 on with the same identifier (name{equation.4.12}) has been already used, duplic
 ate ignored
 <to be read again> 
                    \relax 
-l.549 \begin{equation}
+l.551 \begin{equation}
                       \label{Eq:FrankWolfeLyap}pdfTeX warning (ext4): destinati
 on with the same identifier (name{equation.4.12}) has been already used, duplic
 ate ignored
 <to be read again> 
                    \relax 
-l.549 \begin{equation}
+l.551 \begin{equation}
                       \label{Eq:FrankWolfeLyap}pdfTeX warning (ext4): destinati
 on with the same identifier (name{equation.4.12}) has been already used, duplic
 ate ignored
 <to be read again> 
                    \relax 
-l.549 \begin{equation}
+l.551 \begin{equation}
                       \label{Eq:FrankWolfeLyap}pdfTeX warning (ext4): destinati
 on with the same identifier (name{equation.4.13}) has been already used, duplic
 ate ignored
 <to be read again> 
                    \relax 
-l.553 \begin{equation}
+l.555 \begin{equation}
                       \label{Eq:CondGradBound}pdfTeX warning (ext4): destinatio
 n with the same identifier (name{equation.4.13}) has been already used, duplica
 te ignored
 <to be read again> 
                    \relax 
-l.553 \begin{equation}
+l.555 \begin{equation}
                       \label{Eq:CondGradBound}pdfTeX warning (ext4): destinatio
 n with the same identifier (name{equation.4.13}) has been already used, duplica
 te ignored
 <to be read again> 
                    \relax 
-l.553 \begin{equation}
+l.555 \begin{equation}
                       \label{Eq:CondGradBound}pdfTeX warning (ext4): destinatio
 n with the same identifier (name{equation.4.13}) has been already used, duplica
 te ignored
 <to be read again> 
                    \relax 
-l.553 \begin{equation}
+l.555 \begin{equation}
                       \label{Eq:CondGradBound}pdfTeX warning (ext4): destinatio
 n with the same identifier (name{equation.4.14}) has been already used, duplica
 te ignored
 <to be read again> 
                    \relax 
-l.566 \begin{subequations}
+l.568 \begin{subequations}
                           pdfTeX warning (ext4): destination with the same iden
 tifier (name{equation.4.15}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.576 \begin{subequations}
+l.578 \begin{subequations}
                           \label{Eq:Fank-Wolfe} [14]pdfTeX warning (ext4): dest
 ination with the same identifier (name{equation.4.16}) has been already used, d
 uplicate ignored
 <to be read again> 
                    \relax 
-l.588 \begin{subequations}
+l.590 \begin{subequations}
                           \label{Eq:FrankTrust}pdfTeX warning (ext4): destinati
 on with the same identifier (name{equation.4.16a}) has been already used, dupli
 cate ignored
 <to be read again> 
                    \relax 
-l.593 \end{align}
+l.595 \end{align}
                   [15] [16]
-Overfull \hbox (25.12206pt too wide) in paragraph at lines 683--683
+Overfull \hbox (25.12206pt too wide) in paragraph at lines 685--685
 [] 
  []
 
 [17] [18] [19]
-Overfull \hbox (24.16536pt too wide) in paragraph at lines 814--823
+Overfull \hbox (24.16536pt too wide) in paragraph at lines 816--825
 [][] 
  []
 
 [20]
-Overfull \hbox (41.08197pt too wide) in paragraph at lines 855--855
+Overfull \hbox (41.08197pt too wide) in paragraph at lines 857--857
 [] 
  []
 
 [21] [22]
-Overfull \hbox (10.5088pt too wide) in paragraph at lines 945--945
+Overfull \hbox (10.5088pt too wide) in paragraph at lines 947--947
 [] 
  []
 
-[23] (./LyapDraft.bbl [24] [25]) [26] [27] [28]
-Overfull \hbox (31.26837pt too wide) in paragraph at lines 1520--1520
+[23] [24] (./LyapDraft.bbl [25] [26]) [27] [28
+
+] [29]
+Overfull \hbox (31.26837pt too wide) in paragraph at lines 1523--1523
 [] 
  []
 
-[29] [30]
-Overfull \hbox (25.65717pt too wide) in paragraph at lines 1632--1632
-[] 
- []
-
-[31]
-Overfull \hbox (12.8775pt too wide) in paragraph at lines 1666--1666
+[30] [31]
+Overfull \hbox (25.65717pt too wide) in paragraph at lines 1635--1635
 [] 
  []
 
 [32]
-Overfull \hbox (0.70064pt too wide) in paragraph at lines 1675--1678
+Overfull \hbox (12.8775pt too wide) in paragraph at lines 1669--1669
+[] 
+ []
+
+[33]
+Overfull \hbox (0.70064pt too wide) in paragraph at lines 1678--1681
  [] \OT1/cmr/bx/n/10.95 Method 2[] \OT1/cmr/m/n/10.95 We an-a-lyze  [] us-ing t
 he Lya-punov func-tion []. De-not-ing $\OML/cmm/m/it/10.95 D[] \OT1/cmr/m/n/10.
 95 = \OML/cmm/m/it/10.95 D[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 x[]\OT1/cmr
@@ -1110,93 +1112,93 @@ he Lya-punov func-tion []. De-not-ing $\OML/cmm/m/it/10.95 D[] \OT1/cmr/m/n/10.
  []
 
 
-Overfull \hbox (18.58214pt too wide) in paragraph at lines 1691--1691
+Overfull \hbox (18.58214pt too wide) in paragraph at lines 1694--1694
 [] 
  []
 
-[33]
-Overfull \hbox (9.87473pt too wide) in paragraph at lines 1730--1730
+[34]
+Overfull \hbox (9.87473pt too wide) in paragraph at lines 1733--1733
 [] 
  []
 
-[34] [35]
-Overfull \hbox (2.67993pt too wide) in paragraph at lines 1819--1819
-[] 
- []
-
-[36]
-Overfull \hbox (36.92377pt too wide) in paragraph at lines 1850--1850
+[35] [36]
+Overfull \hbox (2.67993pt too wide) in paragraph at lines 1822--1822
 [] 
  []
 
 [37]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\hbox' on input line 1863.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\mathsurround' on input line 1863.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\z@' on input line 1863.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\unskip' on input line 1863.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\@@italiccorr' on input line 1863.
-
-
-Overfull \hbox (50.43042pt too wide) in paragraph at lines 1894--1894
+Overfull \hbox (36.92377pt too wide) in paragraph at lines 1853--1853
 [] 
  []
 
-[38] [39]
+[38]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\hbox' on input line 1907.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\mathsurround' on input line 1907.
+(hyperref)                removing `\hbox' on input line 1866.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\z@' on input line 1907.
+(hyperref)                removing `\mathsurround' on input line 1866.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\unskip' on input line 1907.
+(hyperref)                removing `\z@' on input line 1866.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\@@italiccorr' on input line 1907.
+(hyperref)                removing `\unskip' on input line 1866.
 
 
-Overfull \hbox (38.2805pt too wide) in paragraph at lines 1939--1939
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\@@italiccorr' on input line 1866.
+
+
+Overfull \hbox (50.43042pt too wide) in paragraph at lines 1897--1897
 [] 
  []
 
-[40]
-Overfull \hbox (17.9873pt too wide) in paragraph at lines 1960--1960
+[39] [40]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\hbox' on input line 1910.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\mathsurround' on input line 1910.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\z@' on input line 1910.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\unskip' on input line 1910.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\@@italiccorr' on input line 1910.
+
+
+Overfull \hbox (38.2805pt too wide) in paragraph at lines 1942--1942
 [] 
  []
 
 [41]
-Overfull \hbox (54.06784pt too wide) in paragraph at lines 2075--2075
+Overfull \hbox (17.9873pt too wide) in paragraph at lines 1963--1963
 [] 
  []
 
-[42] [43]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2090.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 2090.
+[42]
+Overfull \hbox (54.06784pt too wide) in paragraph at lines 2078--2078
+[] 
+ []
+
+[43] [44]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2093.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2093.
  (./LyapDraft.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2090.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2090.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2093.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2093.
 
 Package rerunfilecheck Info: File `LyapDraft.out' has not changed.
 (rerunfilecheck)             Checksum: CC5B575C32FF63E0410FC401BC806FED;3041.
@@ -1204,13 +1206,13 @@ Package rerunfilecheck Info: File `LyapDraft.out' has not changed.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 2090.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 2093.
  ) 
 Here is how much of TeX's memory you used:
- 21232 strings out of 493089
- 413319 string characters out of 6134842
- 489409 words of memory out of 5000000
- 23962 multiletter control sequences out of 15000+600000
+ 21236 strings out of 493089
+ 413370 string characters out of 6134842
+ 489445 words of memory out of 5000000
+ 23963 multiletter control sequences out of 15000+600000
  17784 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,19n,66p,1173b,725s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1237,10 +1239,10 @@ st/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist
 onts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fo
 nts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/texmf-dist/fon
 ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on LyapDraft.pdf (43 pages, 441002 bytes).
+Output written on LyapDraft.pdf (44 pages, 440905 bytes).
 PDF statistics:
- 1356 PDF objects out of 1440 (max. 8388607)
- 987 compressed objects within 10 object streams
- 335 named destinations out of 1000 (max. 500000)
+ 1365 PDF objects out of 1440 (max. 8388607)
+ 995 compressed objects within 10 object streams
+ 338 named destinations out of 1000 (max. 500000)
  341 words of extra memory for PDF output out of 10000 (max. 10000000)
 
