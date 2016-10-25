@@ -2021,7 +2021,7 @@ Note, given accelerated gradient method and quasi-monotone subgradient method ha
 The discrete-time estimate sequence~\eqref{Eq:Est} for conditional gradient method can be written:
 \begin{align*}
 \phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} := f(x_{k+1})  - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}&\overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \left(\phi_k(x) - \frac{\tilde \varepsilon_k}{A_k}\right) + \tau_k f_k(x) \\
-&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x).
+&\overset{\text{Tab}~\ref{table:Table}}{=} \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x).
 \end{align*}
 Multiplying through by $A_{k+1}$, we have
 \begin{align*}
@@ -2068,7 +2068,7 @@ Therefore, we obtain the inequality $E_{k+1} - E_k \leq -\tau_k E_k$ for our Lya
 %Multiplying through by $A_{k+1}$, we have
 \begin{align*}
 \phi_{k+1}(x) - \phi_k(x) &\leq - \tau_k(\phi_k(x)  - \tau_k f(x))\\
-f(x_{k+1}) -f(x) + \frac{\mu}{2}\|x - z_{k+1}\|^2 - \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right) &\leq - \tau_k \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right). 
+f(x_{k+1}) -f(x) + \frac{\mu}{2}\|x - z_{k+1}\|^2 - \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right) &\overset{\text{Tab}~\ref{table:Table}}{\leq} - \tau_k \left(f(x_k) - f(x)  + \frac{\mu}{2}\|x - z_{k+1}\|^2\right). 
 %A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1})\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k)\right) + (A_{k+1} - A_k) f_k(x)\\
 %&=  A_k \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) \right) + (A_{k+1} - A_k) f_k(x)\\
 %& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k)+ (A_{k+1} - A_k) f(x)\

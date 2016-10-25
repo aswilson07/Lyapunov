@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  24 OCT 2016 19:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  24 OCT 2016 21:20
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1187,7 +1187,7 @@ Overfull \hbox (17.9873pt too wide) in paragraph at lines 1960--1960
  []
 
 [41]
-Overfull \hbox (40.2815pt too wide) in paragraph at lines 2075--2075
+Overfull \hbox (54.06784pt too wide) in paragraph at lines 2075--2075
 [] 
  []
 
@@ -1237,10 +1237,10 @@ st/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist
 onts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fo
 nts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/texmf-dist/fon
 ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on LyapDraft.pdf (43 pages, 440954 bytes).
+Output written on LyapDraft.pdf (43 pages, 441002 bytes).
 PDF statistics:
- 1352 PDF objects out of 1440 (max. 8388607)
- 985 compressed objects within 10 object streams
+ 1356 PDF objects out of 1440 (max. 8388607)
+ 987 compressed objects within 10 object streams
  335 named destinations out of 1000 (max. 500000)
  341 words of extra memory for PDF output out of 10000 (max. 10000000)
 
