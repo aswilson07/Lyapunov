@@ -255,7 +255,9 @@ We study dynamics which are based on the Euler-Lagrange equation \eqref{Eq:ELBre
 \end{align}
 \end{subequations}
 %\end{small}
-Here~\eqref{eq:apply-dynamics} uses the momentum dynamics~\eqref{Eq:ELH} and~\eqref{Eq:ELZ}. The inequality~\eqref{eq:apply-convexity} follows from the convexity of $f$. Rearranging terms and taking $x = x^\ast$, we have show that the function~\eqref{Eq:E} has nonpositive derivative for all $t$ and is hence a Lyapunov function for the dynamical system~\eqref{Eq:EL}.
+Here~\eqref{eq:apply-dynamics} uses the momentum dynamics%~\eqref{Eq:EL}.
+~\eqref{Eq:ELH} and~\eqref{Eq:ELZ}. 
+The inequality~\eqref{eq:apply-convexity} follows from the convexity of $f$. Rearranging terms and taking $x = x^\ast$, we have show that the function~\eqref{Eq:E} has nonpositive derivative for all $t$ and is hence a Lyapunov function for the family of momentum dynamics~\eqref{Eq:EL}.
 
  The structure of this derivation provides a tool for us to analyze several discretizations of momentum dynamics~\eqref{Eq:ELBreg}.
  In the following subsections, we demonstrate how to analyze the quasi-monotone subgradient method~\cite{Nesterov15}, the class of accelerated gradient methods~\cite{Baes09,Acceleration}, and the general family of conditional gradient algorithms~\cite{NesterovCond15} using the Lyapunov argument above.
@@ -670,7 +672,7 @@ Using  the discrete-time Lyapunov function
 notice that a similar argument to~\eqref{Eq:StrongContProof} holds:
 \begin{subequations}
 \begin{align*}
-E_{k+1} - E_k & =  f(x_{k+1}) - f(x_k) - \mu\langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2} \|z_{k+1} - z_k\|^2 \\
+\tilde E_{k+1} -\tilde  E_k & =  f(x_{k+1}) - f(x_k) - \mu\langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2} \|z_{k+1} - z_k\|^2 \\
 %&= - \mu\langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2} \|z_{k+1} - z_k\|^2\\
 %&=f(y_k) - f(x_k) - \frac{1}{2\epsilon}\|\nabla f(y_k)\|^2 - \mu\langle z_{k+1} - z_k, x^\ast - x_k + \frac{1}{\tau_k}(x_{k+1} - x_k)\rangle - \frac{\mu}{2} \|z_{k+1} - z_k\|^2\\
 &\overset{\eqref{Eq:ZImpStrong}}{=}  f(x_{k+1}) - f(x_k)+  \tau_k \langle  \nabla f(x_{k+1}) -\mu(x_{k+1} - z_{k+1}), x^\ast - z_{k+1}\rangle  - \frac{\mu}{2} \|z_{k+1} - z_k\|^2\\
@@ -687,7 +689,7 @@ E_{k+1} - E_k & =  f(x_{k+1}) - f(x_k) - \mu\langle z_{k+1} - z_k, x^\ast - z_{k
 \end{subequations}
 Therefore,
 \begin{equation}
-E_{k+1} - E_k \leq - \tau_k \left( f(x_{k+1}) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_{k+1}\|^2\right) = -\tau_k E_{k+1}.
+\tilde E_{k+1} -\tilde  E_k \leq - \tau_k \left( f(x_{k+1}) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_{k+1}\|^2\right) = -\tau_k \tilde E_{k+1}.
 \end{equation}
 Choosing $\tau_k = \sqrt{\kappa}$ gives the $O(e^{-\sqrt{\kappa} k})$ convergence rate. However, there is no restriction on $\tau_k$;  we are free to scale it arbitrarily. Given the subproblems for this algorithm are difficult to solve, we consider other discretizations based on the explicit-Euler method. In particular, we utilize the same trick of introducing a new sequence $\{y_k\}_{k=1}^\infty$ in order to bound the error. We find that we can use a Lyapunov argument to analyze the following two sequences: 
 \begin{subequations}\label{Eq:StrongConv1}
@@ -1867,7 +1869,7 @@ To ensure our error $\varepsilon_k$ is non-positive, $A_k$ can be at most a poly
 \subsection{Proof of Accelerated Gradient \eqref{Eq:StrongConv1}}
 %\begin{proof}
 \begin{align*}
-E_{k+1} - E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+\tilde E_{k+1} - \tilde E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
 &= f(y_{k+1}) - f(x_{k+1}) + f(x_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
 &= f(y_{k+1})- f(x_{k+1}) + \langle \nabla f(x_{k+1}), x_{k+1} - y_k\rangle - \frac{\mu}{2}\|x_{k+1} - y_k\|^2 \\
 &\quad + \tau_k \langle \nabla f(x_{k+1}) - \mu(x_{k+1} - z_k), x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
@@ -1898,7 +1900,7 @@ E_{k+1} - E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+
 \end{align*}
 Thus, we have shown
 \begin{equation}
-E_{k+1} - E_k \leq -\tau_k E_k + \varepsilon_k 
+\tilde E_{k+1} -\tilde  E_k \leq -\tau_k \tilde E_k + \varepsilon_k 
 \end{equation}
 where 
 \begin{equation}
@@ -1911,7 +1913,7 @@ Choosing $\tau_k \leq 1/\sqrt{\kappa}$ ensures that $\varepsilon_k \leq 0$
 \subsection{Proof of Accelerated Gradient \eqref{Eq:StrongConv2}}
 %\begin{proof}
 \begin{align*}
-E_{k+1} - E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
+\tilde E_{k+1} -\tilde  E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+1}\rangle - \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
 &= f(y_{k+1}) - f(x_k) + f(x_k) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
 &= f(y_{k+1}) - f(x_k) + \langle \nabla f(x_k), x_k - y_k\rangle - \frac{\mu}{2}\|x_k - y_k\|^2 - \mu \langle z_{k+1} - z_k, x^\ast - z_{k}\rangle + \frac{\mu}{2}\|z_{k+1} - z_k\|^2\\
 &= f(y_{k+1}) - f(x_k) + \langle \nabla f(x_k), x_k - y_k\rangle - \frac{\mu}{2}\|x_k - y_k\|^2 + \tau_k \langle \nabla f(x_{k}) - \mu(x_{k} - z_k), x^\ast - z_{k}\rangle \\
@@ -1943,7 +1945,7 @@ E_{k+1} - E_k &= f(y_{k+1}) - f(y_k) - \mu \langle z_{k+1} - z_k, x^\ast - z_{k+
 \end{align*}
 If we choose $\tau_k \leq 1/\sqrt{\kappa}$ then we have shown 
 \begin{equation}
-E_{k+1} - E_k \leq -\tau_k E_k
+\tilde E_{k+1} - \tilde E_k \leq -\tau_k\tilde  E_k
 \end{equation}
 \section{Estimate Sequences}
 \label{App:EstSeq}
