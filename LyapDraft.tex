@@ -1839,7 +1839,7 @@ We now analyze the second version of the accelerated gradient descent algorithm 
 \begin{align*}
 E_{k+1} - E_k &= \tilde A_{k+1}(f(y_{k+1}) - f(x^\ast)) - \tilde A_{k}(f(y_{k}) - f(x^\ast)) + D_h(x^\ast, z_{k+1}) - D_h(x^\ast, z_{k}) \\
 & = \tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
-&\quad - \langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1}\rangle + D_h(z_{k+1}, z_k)\\
+&\quad - \langle \nabla h(z_{k+1}) - \nabla h(z_k), x^\ast - z_{k+1}\rangle - D_h(z_{k+1}, z_k)\\
 & \overset{\eqref{Eq:XSeqAcc4}}{\leq} \tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
 &\quad + (\tilde A_{k+1} - \tilde A_k)\langle \nabla f(x_{k+1}), x^\ast - z_{k+1}\rangle - \frac{1}{2}\|z_{k+1} - z_k\|^2\\
 & = \tilde A_{k+1}(f(y_{k+1}) - f(x_{k+1})) + \tilde A_{k}(f(x_{k+1}) - f(y_{k})) + (\tilde A_{k+1} - \tilde A_k)(f(x_{k+1}) - f(x^\ast)) \\
