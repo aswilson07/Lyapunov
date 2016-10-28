@@ -352,7 +352,9 @@ The subequations corresponding to~\eqref{Eq:AlgoForward1} may be difficult to so
 \begin{equation}
 x_{k+1} = \arg\min_{x\in\X} \left\{ f(x) + \frac{1}{A_{k+1} - A_k}D_h\left(x, x_k\right)\right\},
 \end{equation}
-involves applying the implicit-Euler method to the mirror descent dynamic, and both obtain a $O(1/A_k)$ convergence rate. Nevertheless, the proof structure which we demonstrated from this thought experiment serves as the backbone for analyzing many discretizations of \eqref{Eq:DynaBeta}, several of which constitute popular methods used throughout optimization.
+involves applying the implicit-Euler method to the mirror descent dynamic, and both yield a $O(1/A_k)$ convergence rate. 
+%MJ This sentence isn't clear, and I'm not sure it's worth including.
+%Nevertheless, the proof structure which we demonstrated from this thought experiment serves as the backbone for analyzing many discretizations of \eqref{Eq:DynaBeta}, several of which constitute popular methods used throughout optimization.
 
 \subsection{The Quasi-Monotone Subgradient Method}
 \label{Sec:QuasiMono}
