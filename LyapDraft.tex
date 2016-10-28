@@ -179,21 +179,19 @@ Lyapunov's method~\cite{Lyapunov} is based on the idea of constructing a positiv
 \end{equation*}
 The existence of such a \emph{Lyapunov function} guarantees that the dynamical system converges: if the function is positive yet strictly decreasing along all trajectories, then the dynamical system must eventually approach a region where $\E(X)$ is minimal.  If this region coincides with the stationary points of the dynamics, then all trajectories must converge to a stationary point.
 
-In this paper, we are interested in obtaining Lyapunov functions for dynamical systems designed for optimization.  In the optimization setting, we are typically interested in the~\emph{rate of convergence} of a method, not mere convergence.  To facilitate such rate analysis, we study time-dependent Lyapunov functions.  We emphasize that Lyapunov analysis is the most standard technique to prove the convergence of optimization methods.   Standard proofs of gradient descent, mirror descent, subgradient descent, and Newton's method can all be analyzed by exhibiting some function which decreases at every iteration of the algorithm. The most common Lyapunov functions are the optimality gap $f(x)-f(x^\ast)$ or the distance to the optimal solution $D_h(x^\ast,x)$.  The main contribution of this paper is to demonstrate that most of the common momentum methods can be analyzed in a very similar framework.
- 
+In this paper, we are interested in obtaining Lyapunov functions for dynamical systems designed for optimization.  In the optimization setting, we are typically interested in the~\emph{rate of convergence} of a method, not mere convergence.  To facilitate such rate analysis, we study time-dependent Lyapunov functions.  We begin by presenting time-varying Lyapunov functions that can verify the convergence rates of continuous-time momentum flows, and we then turn to the corresponding discrete-time analysis.
 
-We now introduce a simple family of time varying Lyapunov functions that can verify the convergence of momentum flows.
 \paragraph{General Accelerated Mirror Descent} In Wibisono {\em et al.}~\cite{Acceleration}, the following Lyapunov function 
 \begin{align}\label{Eq:E}
 \E_t \,=\, e^{\beta_t} (f(X_t)-f(x^*)) + D_h\left(x^*, \, X_t + e^{-\alpha_t} \dot X_t\right),
 \end{align}
- was introduced to analyze the dynamic which forms the basis for accelerated gradient descent (and it's non-Euclidean variants).
+was introduced to analyze the flow that forms the basis for accelerated gradient descent and its non-Euclidean variants.
 %  Notice, assuming we start from rest $\dot X_0 = 0$, the  Lyapunov property allows us to conclude,
  %\begin{equation*}
  %f(X_t) - f(x^\ast)\leq \frac{e^{\beta_0} (f(X_0) - f(x^\ast) )+ D_h(x^\ast, X_0)}{e^{\beta_t}}.
  %\end{equation*}
-In Section~\ref{Sec:MomLyap}, 
-  we show how to derive the Lyapunov function for a family of momentum dynamics; furthermore, we show how to discretize the Lyapunov function and obtain a tool which can be used to analyze several algorithms that are discretizations of the family of momentum dynamics.\footnote{The same derivation of the Lyapunov function was added to~\cite[App. C]{Acceleration}}
+In Section~\ref{Sec:MomLyap}, we show how this Lyapunov function emerges from a general framework for analyzing momentum dynamics; furthermore, we show how to discretize the Lyapunov function and thereby obtain a tool which can be used to analyze a variety of algorithms that are discretizations of momentum dynamics.
+%MJ:  I don't view this footnote as necessary; that derivation was in supplementary information \footnote{The same derivation of the Lyapunov function was added to~\cite[App. C]{Acceleration}}
 %
 %
 %
