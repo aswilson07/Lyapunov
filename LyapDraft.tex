@@ -118,7 +118,7 @@ The paper proceeds as follows.  We first describe the related work in viewing op
 %We review how such Lyapunov analysis has been used to analyze mirror decent, reviewing the concepts of Bregman divergence and mirror maps in the process. 
  We then turn to various momentum-based methods, providing a general Lyapunov analysis for Nesterov's accelerated method, the quasi-monotone subgradient method, the conditional gradient method, and a few novel algorithms.  We pay particular attention to the strongly convex case in Euclidean space, highlighting some unique properties of this setup.  Finally, we describe the connection between estimate sequences and Lyapunov functions and discuss directions for future investigation.
 
-\section{The dynamical view of momentum methods}
+\section{The Dynamical View of Momentum Methods}
 
 \paragraph{Problem Setting}
 This paper is concerned with the class of constrained optimization problems
@@ -172,7 +172,7 @@ Wibisono \emph{et al.}~\cite{Acceleration} imposed the following conditions on t
 \end{subequations}
 refering to these conditions as~\emph{ideal scaling}, and showing their necessity for achieving accelerated rates. These conditions will also play an important role in the present work.  Wibosono {\em et al.}~\cite{Acceleration} also require that  $f$ and $h$ be differentiable and convex, and that $h$ be strictly convex. Under the ideal scaling, they demonstrated that the momentum ODE~\eqref{Eq:ELBreg} is the Euler-Lagrange equation for a functional that they referred to as the{\em Bregman Lagrangian}. This means that the family of accelerated gradient dynamics---like the gradient flows which generate gradient methods---can be understood as being generated from a {\em variational principle}. They also presented a Lyapunov function to demonstrate a convergence rate of $O(e^{-\beta_t})$ for the momentum dynamics~\eqref{Eq:ELBreg}. However, they did not provide a Lyapunov analysis of the discrete-time algorithm, nor did they make explicit the connection between the Lyapunov function and the estimate sequence technique. 
 
-\section{Rate-generating Lyapunov Functions}
+\section{Rate-Generating Lyapunov Functions}
 Lyapunov's method~\cite{Lyapunov} is based on the idea of constructing a positive definite quantity $\E: \X \rightarrow \R$ which decreases along the trajectories of the dynamical system $\dot X_t = v(X_t)$:
 \begin{equation*}
 \dot \E(X_t) =\langle \nabla \E(X_t), v(X_t)\rangle < 0.
@@ -358,7 +358,7 @@ involves applying the implicit-Euler method to the mirror descent dynamic, and b
 
 \subsection{The Quasi-Monotone Subgradient Method}
 \label{Sec:QuasiMono}
-The quasi-monotone subgradient method was developed by Nesterov~\cite{Nesterov15} as an alternative to the dual averaging method -- though both achieve the $O(1/\sqrt{k})$ lower bound for the class of methods with bounded subgradients. The advantage of the quasi-monotone method however is that a convergence rate guarantee can be shown for the entire sequence of iterates instead of the average (or minimum) iterate, as is the case with the dual averaging method in the non-Euclidean setting. {\em We begin by studying the quasi-monotone method in the situation where we have full gradients, which we assume to be bounded}. We also set the dual averaging term $\gamma_k \equiv 1$ for convenience and give an analysis of the full algorithm in Appendix~\ref{App:ProofQuasiGen}.  With these minor modifications, the algorithm can be understood as the explicit-Euler method applied to~\eqref{Eq:Z} and the implicit-Euler method applied to~\eqref{Eq:X} (where now, we take $e^{\beta_t} = A_{k+1}$):
+The quasi-monotone subgradient method was developed by Nesterov~\cite{Nesterov15} as an alternative to the dual averaging method.  It also achieves a $O(1/\sqrt{k})$ lower bound, for the class of methods with bounded subgradients. The advantage of the quasi-monotone method however is that a convergence-rate guarantee can be shown for the entire sequence of iterates instead of the average (or minimum) iterate, as is the case with the dual averaging method in the non-Euclidean setting. {\em We begin by studying the quasi-monotone method in the situation where we have full gradients, which we assume to be bounded}. We also set the dual averaging term $\gamma_k \equiv 1$ for convenience and give an analysis of the full algorithm in Appendix~\ref{App:ProofQuasiGen}.  With these minor modifications, the algorithm can be understood as the explicit Euler method applied to~\eqref{Eq:Z} and the implicit Euler method applied to~\eqref{Eq:X} (where now, we take $e^{\beta_t} = A_{k+1}$):
 
 
 
@@ -401,7 +401,7 @@ If we optimize the bound~\eqref{Eq:BoundQuasi} over $A_k$, we can obtain an $O(1
  In the proof given in Appendix~\ref{App:ProofQuasi}, convexity is the only property of $f$ that is necessary to show~\eqref{Eq:BoundQuasi}. Thus, the proof can be extended to include subgradient steps instead of full gradient steps, where now the condition on $f$ is that its subgradients are  bounded. This recovers the result of Nesterov~\cite{Nesterov15} using the technique of estimate sequences. 
 
 \subsection{Other Discretizations}
-We give examples of two other algorithms that are the result of ``discretizing'' the momentum dynamic~\eqref{Eq:DynaBeta}, and analyze them using the discretized Lyapunov function~\eqref{Eq:DiscLyapFunc1}. The proofs of these results can be found in the Appendix~\ref{App:OtherDiscret}. The first method is the result of applying explicit-Euler method to~\eqref{Eq:X} and the implicit-Euler method to~\eqref{Eq:Z}:
+We give examples of two other algorithms that are the result of discretizing the momentum dynamic~\eqref{Eq:DynaBeta}, and analyze them using the discretized Lyapunov function~\eqref{Eq:DiscLyapFunc1}. The proofs of these results can be found in the Appendix~\ref{App:OtherDiscret}. The first method is the result of applying explicit Euler method to~\eqref{Eq:X} and the implicit Euler method to~\eqref{Eq:Z}:
 \begin{algorithm}[H]
 \caption{Method 1}
 {\bf Assumptions:} $f$ is smooth and $\X$ is convex and compact. \\
@@ -444,7 +444,7 @@ Notice, \eqref{Eq:QuasiSub3} is very similar to the quasi-monotone subgradient m
 %%%%%%%%%%%%%%%%%%%%%ACCELERATED GRAD DESCENT %%%%%%%%%%%%%%
 \subsection{Accelerated Mirror Descent}
 \label{Sec:AccGrad}
-We present two variants of the accelerated mirror descent algorithm (the accelerated gradient descent algorithm in the setting where $h = \frac{1}{2}\|\cdot \|^2$). Neither of these correspond to a straight-forward discretization of~\eqref{Eq:E} -- they both entail introducing an additional sequence $\{y_k\}$ to obtain a better bound on the error. The first was the version was introduced by Michel Baes~\cite{Baes09}:
+We present two variants of the accelerated mirror descent algorithm (the accelerated gradient descent algorithm in the setting where $h = \frac{1}{2}\|\cdot \|^2$). Neither of these correspond to a straightforward discretization of~\eqref{Eq:E}---they both entail introducing an additional sequence $\{y_k\}$ to obtain a better bound on the error. The first was the version was introduced by Michel Baes~\cite{Baes09}:
 \begin{algorithm}[H]
 \begin{subequations}\label{Eq:AcceleratedGrad2}
 \caption{Accelerated Mirror Descent (Weakly Convex Setting)}
@@ -457,8 +457,7 @@ x_{k+1} &= \tau_k z_k + (1- \tau_k)  y_k\label{Eq:XSeqAcc2}
 \end{align}
 \end{subequations}
 \end{algorithm}
-\noindent This algorithm satisfies the following optimality conditions, 
-
+\noindent This algorithm satisfies the following optimality conditions:
 \begin{subequations}
 \begin{align}
 z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_k),  \label{Eq:ZSeqAcc3}\\%\label{Eq:ZSeqAcc2}\\
@@ -466,7 +465,7 @@ z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_
 \quad M \|L^{-1} \nabla f(y_{k})\|_\ast^{2} &\leq L^{-1}\langle\nabla f(y_{k}), x_{k} - y_{k}\rangle \label{Eq:YSeqAcc3}
 \end{align}
 \end{subequations}
-The advantage of this version of the accelerated mirror descent algorithm is that it can be extended to accelerate higher-order gradient methods (the details of which we give in Appendix~\ref{App:ProofAccGrad}). The second version, originally introduced by Nesterov~\cite{Nesterov05} entails computing the mirror descent update~\eqref{Eq:ZSeqAcc2} from the gradient at $x$:
+The advantage of this version of the accelerated mirror descent algorithm is that it can be extended to accelerate higher-order gradient methods (the details of which we give in Appendix~\ref{App:ProofAccGrad}). The second version, originally introduced by Nesterov~\cite{Nesterov05}, entails computing the mirror descent update~\eqref{Eq:ZSeqAcc2} from the gradient at $x$:
 \begin{equation*}
 z_k = \arg \min_{z\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla  f(x_i), z\rangle + D_h(z, z_0)\right\}
 \end{equation*}
@@ -562,16 +561,16 @@ The proof of this theorem can be found in Appendix~\ref{App:CondMethod}.
 %
 %%%%%%%%%%%%%%EXTENSIONS
 \subsubsection{Extensions}
-We briefly point out that the algorithm resulting from applying something like the implicit-Euler method to both \eqref{Eq:Frank1}  and \eqref{Eq:Frank2}, 
+We briefly point out that the algorithm resulting from applying something like the implicit Euler method to both \eqref{Eq:Frank1}  and \eqref{Eq:Frank2}, 
 \begin{subequations}
 \begin{align*}
 z_{k+1} &= \arg \min_{z \in \X}\,\,  \langle \nabla f(x_{k+1}), z\rangle\\
 z_{k+1} &= x_{k+1} + \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),
 \end{align*}
 \end{subequations}
-results in algorithm for which we can show $E_{k+1} - E_k \leq 0$ using~\eqref{Eq:FrankWolfeLyap}. However, like most implicit discretization techniques applied to the momentum dynamic~\eqref{Eq:ELBreg}, this does not lead to an algorithm with manageable subproblems.
+results in algorithm for which we can show $E_{k+1} - E_k \leq 0$ using~\eqref{Eq:FrankWolfeLyap}. However, like most implicit discretization techniques applied to the momentum dynamics~\eqref{Eq:ELBreg}, this does not lead to an algorithm with manageable subproblems.
 %
-We now turn our attention to analyzing trust region Newton-like method introduced by Nesterov. This method is given by the following update, 
+We now turn our attention to analyzing the trust region Newton-like method introduced by Nesterov. This method is given by the following update, 
 \begin{algorithm}[H]
 \begin{subequations}\label{Eq:Fank-Wolfe}
 \caption{Conditional Gradient Method~\cite[(5.1)]{NesterovCond15}}
