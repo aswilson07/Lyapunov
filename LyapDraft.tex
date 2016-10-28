@@ -816,7 +816,7 @@ Algorithm & $f_i(x)$ &  $\phi_k(x)$ & $\tilde \varepsilon_k$ \\ \hline
 $\substack{\text{Quasi-Monotone} \\\text{Subgradient}\\\text{ Method}}$ & linear & $\frac{1}{A_k}D_h(x, z_k) + f(x_k)$ & $\frac{1}{2}\sum_{i=0}^{k} \frac{(A_i - A_{i-1})^2}{2}\|\nabla f(x_i)\|^2$  \\ \hline
 $\substack{\text{Accelerated } \\\text{Gradient Method} \\\text{ (Weakly Convex)}} $& linear  &$\frac{1}{A_k}D_h(x, z_k) +  f(x_k) $ & 0 \\  \hline
 $\substack{\text{Accelerated  } \\\text{Method Gradient}\\\text{ (Strongly Convex)}} $  & quadratic &$  f(x_k)  + \frac{\mu}{2}\|x - z_k\|^2$ &  0 \\ \hline
-$\substack{\text{Frank-Wolfe}\\\text{ Algorithm }}$ & linear  & $f(x_k)$ & $ \frac{1}{2}\sum_{i=0}^{k}\frac {(A_{i+1} - A_i)^2}{A_{i+1}} diam(\X)^2$\\
+$\substack{\text{Conditional Gradient}\\\text{ Method }}$ & linear  & $f(x_k)$ & $ \frac{1}{2}\sum_{i=0}^{k}\frac {(A_{i+1} - A_i)^2}{A_{i+1}} diam(\X)^2$\\
 \hline
 \end{tabular}
 \caption{How the Estimate Sequence is defined for the various algorithms}
