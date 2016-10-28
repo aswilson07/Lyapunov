@@ -201,40 +201,38 @@ In this paper, we show that the following function
    \begin{equation}\label{eq:general-sc-lyap}
   \E_t =  e^{\beta_t} \left(f(X_t) - f(x^\ast) + \mu D_h\Big(x^\ast ,X_t + e^{-\alpha_t} \dot X_t\Big)\right),
  \end{equation}
- is a Lyapunov function for a family of momentum dynamics when $f$ is $\mu$-strongly convex ($D_f(y,x) \geq \mu D_h(y,x)$) and $e^{\alpha_t} = \dot \beta_t$. 
-In this paper, we only focus on the setting where $h = \frac{1}{2}\|\cdot\|^2$ is Euclidean. In Section~\ref{Sec:StrongConv}, we show how to derive the Lyapunov function and how it can be used to demonstrate a linear rate of convergence for the family of accelerated gradient descent dynamics.  We also show how a particular discretization of the family of dynamics provides an algorithm for which a commensurate discretization of~\eqref{eq:general-sc-lyap} is a Lyapunov function.
+is a Lyapunov function for a family of momentum dynamics when $f$ is $\mu$-strongly convex ($D_f(y,x) \geq \mu D_h(y,x)$) and $e^{\alpha_t} = \dot \beta_t$.  In Section~\ref{Sec:StrongConv}, we derive this Lyapunov function and how it can be used to demonstrate a linear rate of convergence for the family of accelerated gradient descent dynamics.  (For simplicity, we focus on the setting in which $h = \frac{1}{2}\|\cdot\|^2$ is Euclidean.) We also show that a particular discretization of the family of dynamics provides an algorithm for which a commensurate discretization of~\eqref{eq:general-sc-lyap} is a Lyapunov function.
 
-We briefly mention the appearance of the $e^{-\alpha_t}$ term in~\eqref{Eq:E} and~\eqref{eq:general-sc-lyap}. Given most Lyapunov functions are time-invariant, the appearance of this term in the Lyapunov function could be considered quite mysterious. In~\cite{Acceleration2}, this scaling was studied at length. In particular, it was shown that the family of Lagrangian functionals which generates~\eqref{Eq:EL} is invariant under the action of time reparameterization. By contrast, the mirror descent dynamic, which is a gradient flow, is not invariant under time-reparameterization. %Under the ideal scaling \eqref{Eq:IdeSca}, time reparameterization 
-This invariance property helps to explain why the Lyapunov function remains valid for the momentum dynamic~\eqref{Eq:E} under the ideal scaling condition~\eqref{Eq:IdeSca}.  
+%MJ:  I'd omit this paragraph; it's not going to be understood by most if any readers who haven't read the other paper, and you've already gone down the route of time-varying Lyapunov.  Also, referring to Eq.~\eqref{Eq:EL} here, when it hasn't yet been introduced, is problematic.
+%We briefly mention the appearance of the $e^{-\alpha_t}$ term in~\eqref{Eq:E} and~\eqref{eq:general-sc-lyap}. Given most Lyapunov functions are time-invariant, the appearance of this term in the Lyapunov function could be considered quite mysterious. In~\cite{Acceleration2}, this scaling was studied at length. In particular, it was shown that the family of Lagrangian functionals which generates~\eqref{Eq:EL} is invariant under the action of time reparameterization. By contrast, the mirror descent dynamic, which is a gradient flow, is not invariant under time-reparameterization. %Under the ideal scaling \eqref{Eq:IdeSca}, time reparameterization 
+%This invariance property helps to explain why the Lyapunov function remains valid for the momentum dynamic~\eqref{Eq:E} under the ideal scaling condition~\eqref{Eq:IdeSca}.  
 %in these reparameterizations of time, however, you always have a valid lyapunov function
 %This invariance property might suggest why momentum family is more natural for the purposes of optimization (that is, it might help us understand why the discrete-time implementations of the family of momentum dynamics achieves systematically better rates of convergence than the family of gradient flows). 
 
 
-Note that in both the strongly convex and weakly convex setting, the structure of the Lyapunov function allows to conclude a rate of convergence for the optimality gap $f(X_t) - f(x^\ast)$. In particular, the Lyapunov property $\E_t \leq \E_0$ allows to conclude 
+Note that in both the strongly convex and weakly convex setting, the structure of the Lyapunov function allows us to derive a rate of convergence for the optimality gap $f(X_t) - f(x^\ast)$. In particular, the Lyapunov property $\E_t \leq \E_0$ implies 
 \begin{equation}\label{eq:Guarantee1}
 f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast)) + D_h(x^\ast, X_0 + e^{-\alpha_0} \dot X_0)}{e^{\beta_t}}
 \end{equation}
 and 
 \begin{equation}
-f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast) +\mu D_h(x^\ast ,X_0 -e^{-\alpha_0} \dot X_0))}{e^{\beta_t}}
+f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast) +\mu D_h(x^\ast ,X_0 -e^{-\alpha_0} \dot X_0))}{e^{\beta_t}},
 \end{equation}
-for~\eqref{Eq:E} and \eqref{eq:general-sc-lyap} respectively. The typical convention is that we start from rest $\dot X_0 = 0$. Notice that in both these settings, the rates of convergence in continuous time are the same. The family of dynamics corresponding to the Lyapunov function in the strongly convex setting however explicitly uses strong convexity of $f$, and this allows us to obtain a tighter bound in discrete-time.
+for~\eqref{Eq:E} and \eqref{eq:general-sc-lyap} respectively. The typical convention is that we start from rest $\dot X_0 = 0$. Notice that we obtain the same rates of convergence in these two settings. However, the family of dynamics corresponding to the Lyapunov function in the strongly convex setting uses the strong convexity of $f$, and this allows us to obtain a tighter bound in discrete time.
 
 
 \section{Momentum Methods}
 \label{Sec:MomLyap}
-In this section, we introduce two families of momentum dynamics, both which are generated by functionals defined on continuous time curves. We illustrate how to derive a Lyapunov analysis from these dynamics. Next, we show how these dynamics can be discretized to obtain algorithms. The same discrete time mappings can be applied to the Lyapunov function, resulting in a tool which can be used to analyze the discrete time algorithms. We provide examples for how this works for the quasi-monotone subgradient algorithm, accelerated gradient descent, the conditional gradient algorithm, and several other novel algorithms. 
+In this section, we introduce two families of momentum dynamics, both which are generated by functionals defined on continuous-time curves. We illustrate how to derive a Lyapunov function from these dynamics. Next, we show how these dynamics can be discretized to obtain optimization algorithms. The same discrete-time mappings can be applied to the Lyapunov function, resulting in a tool which can be used to analyze the discrete-time algorithms. We provide examples of this procedure for the quasi-monotone subgradient algorithm, accelerated gradient descent, the conditional gradient algorithm, and several other novel algorithms. 
  \subsection{Lyapunov Analysis}
-We study dynamics which are based on the Euler-Lagrange equation \eqref{Eq:ELBreg} in the setting where the ideal scaling~\eqref{Eq:IdeScaBet} holds with equality~$\dot \beta_t = e^{\alpha_t}$. Notice, now the entire Bregman Lagrangian is parameterized by $\beta_t$, which determines the convergence rate:
+We study dynamics that are based on the Euler-Lagrange equation \eqref{Eq:ELBreg} in the setting where the ideal scaling~\eqref{Eq:IdeScaBet} holds with equality~$\dot \beta_t = e^{\alpha_t}$. Notice, now the entire Bregman Lagrangian is parameterized by $\beta_t$, which determines the convergence rate:
  \begin{subequations}\label{Eq:EL}
  \begin{align}
  Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t \label{Eq:ELZ},\\
  \frac{d}{dt}\nabla h(Z_t) &= -\dot \beta_t e^{\beta_t} \nabla f(X_t)\label{Eq:ELH}.
  \end{align}
  \end{subequations}
-  We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for the momentum dynamic~\eqref{Eq:ELBreg} in a way similar to Lyapunov analysis of the mirror descent dynamic by Nemirovski and Yudin:
-
-  
+We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for the momentum dynamics~\eqref{Eq:ELBreg}; this derivation is similar in spirit to the Lyapunov analysis of mirror descent by Nemirovski and Yudin.
   
 %\begin{small}
 \begin{subequations}\label{Eq:LyapAnal}
@@ -257,16 +255,16 @@ The inequality~\eqref{eq:apply-convexity} follows from the convexity of $f$. Rea
 
  The structure of this derivation provides a tool for us to analyze several discretizations of momentum dynamics~\eqref{Eq:ELBreg}.
  In the following subsections, we demonstrate how to analyze the quasi-monotone subgradient method~\cite{Nesterov15}, the class of accelerated gradient methods~\cite{Baes09,Acceleration}, and the general family of conditional gradient algorithms~\cite{NesterovCond15} using the Lyapunov argument above.
- \subsection{Implicit and Explicit-Euler}
-We study two different ways of discretizing the dynamic $ \dot X_t = v(X_t)$, to obtain an algorithm. The first, called the explicit-Euler method, evaluates the vector field at the current point:
+ \subsection{Implicit and explicit Euler methods}
+The methods that we study are based on compositions of Euler discretizations of the ODE $ \dot X_t = v(X_t)$.  Recall that the \emph{explicit Euler method} evaluates the vector field at the current point to determine a discrete-time step:
 \begin{align*}
-\frac{x_{k+1} - x_k}{\delta} = \frac{X_{t+ \delta} - X_t}{\delta}= v(X_t) = v(x_k).
+\frac{x_{k+1} - x_k}{\delta} = \frac{X_{t+ \delta} - X_t}{\delta}= v(X_t) = v(x_k),
 \end{align*}
 %This can be written,
 %\begin{align*}
 %x_{k+1} - x_k = \delta v(x_k).
 %\end{align*}
-The second method, called the implicit-Euler method, evaluates the vector field at the future point,
+whereas the \emph{implicit Euler method} evaluates the vector field at the future point:
 \begin{align*}
 \frac{x_{k+1} - x_k}{\delta} = \frac{X_{t+ \delta} - X_t}{\delta}= v(X_{t+\delta}) = v(x_{k+1}).
 \end{align*}
@@ -274,35 +272,35 @@ The second method, called the implicit-Euler method, evaluates the vector field 
 %\begin{align*}
 %x_{k+1} - x_k = \delta v(x_{k+1}).
 %\end{align*}
-For first-order dynamics, applying these methods to obtain an algorithm is straight-forward. For the momentum dynamic~\eqref{Eq:EL} on the other hand, which is a system of two first-order equations, one can combine the implicit- and explicit-Euler methods in four different ways, leading to four separate algorithms. To illustrate how this works, we write~\eqref{Eq:EL} as the following system of first-order ODEs,
+In our case, the momentum dynamics~\eqref{Eq:EL} are a system of two first-order equations, and one can compose the implicit and explicit Euler methods in four different ways, leading to four separate algorithms. To illustrate how this works, we write~\eqref{Eq:EL} as the following system of first-order ODEs,
  \begin{subequations}\label{Eq:DynaBeta}
  \begin{align}
  Z_t &= X_t + \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} \dot X_t, \label{Eq:Z}\\
  \frac{d}{dt} \nabla h(Z_t) &= -\frac{d}{dt}\left(e^{\beta_t}\right) \nabla f(X_t). \label{Eq:X}
  \end{align}
  \end{subequations}
- Taking $e^{\beta_t} = A_k$ and $\frac{d}{dt}e^{\beta_t} =\frac{A_{k+1} - A_k}{\delta}$, the implicit-Euler method applied to \eqref{Eq:Z} results in the following sequence:
+ Taking $e^{\beta_t} = A_k$ and $\frac{d}{dt}e^{\beta_t} =\frac{A_{k+1} - A_k}{\delta}$, the implicit Euler method applied to \eqref{Eq:Z} results in the following sequence:
  \begin{align*}
  z_{k+1} &= x_{k+1} + \frac{A_k}{\frac{A_{k+1} - A_k}{\delta}} \frac{x_{k+1} - x_k}{\delta}=  x_{k+1} + \frac{A_k}{A_{k+1} - A_k} (x_{k+1} - x_k).
  \end{align*}
-The explicit-Euler method on the other hand, results in the sequence 
+The explicit Euler method, on the other hand, results in the sequence 
 \begin{align*}
  z_{k} &= x_{k} + \frac{A_k}{\frac{A_{k+1} - A_k}{\delta}} \frac{x_{k+1} - x_k}{\delta}=  x_{k} + \frac{A_k}{A_{k+1} - A_k} (x_{k+1} - x_k).
 \end{align*}
- For equation~\eqref{Eq:X}, the implicit-Euler method results in the following sequence
+ For equation~\eqref{Eq:X}, the implicit Euler method results in the following sequence
  \begin{align*}
  \frac{1}{\delta}(\nabla h(z_{k+1}) - \nabla h(z_k)) = \frac{A_{k+1} - A_k}{\delta} \nabla f(x_{k+1}),
  \end{align*}
- whereas the explicit-Euler method results in the sequence
+ whereas the explicit Euler method results in the sequence
  \begin{align*}
   \frac{1}{\delta}(\nabla h(z_{k+1}) - \nabla h(z_k)) = \frac{A_{k+1} - A_k}{\delta} \nabla f(x_{k}).
  \end{align*}
- In what follows, we analyze three combinations of the implicit and explicit-Euler methods using the Lyapunov analysis above. Furthermore, we show there are at least two slightly different methods, which do not comport to a straight-forward discretization technique, that can also be analyzed using the above Lyapunov analysis. 
+ In what follows, we analyze three combinations of the implicit and explicit Euler methods using our Lyapunov framework. Furthermore, we show there are at least two slightly different methods, which do not comport to a straight-forward discretization technique, that can also be analyzed using the above Lyapunov analysis. 
    \subsection{Momentum-Based Algorithms}
- We give a short analysis of the result of implicit-Euler discretization of both~\eqref{Eq:Z} and~\eqref{Eq:X}. We can write the algorithm as follows,
+ We give a short analysis of the result of implicit Euler discretization of both~\eqref{Eq:Z} and~\eqref{Eq:X}. We can write the algorithm as follows,
 \begin{algorithm}[H]
 %\begin{subequations}\label{Eq:AlgoForward}
-\caption{Implicit-Euler Based Method}
+\caption{Implicit Euler Based Method}
 {\bf Assumptions:} $f, h$ are convex and differentiable.\\
 Choose $A_0 = 1$, $x_{-1}= x_0 = z_0$ and $\tau_{k+1} = \frac{A_{k+1} - A_k}{A_k}$. Define recursively,
 \begin{subequations}\label{Eq:AlgoForward1}
