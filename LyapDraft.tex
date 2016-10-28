@@ -401,7 +401,7 @@ If we optimize the bound~\eqref{Eq:BoundQuasi} over $A_k$, we can obtain an $O(1
  In the proof given in Appendix~\ref{App:ProofQuasi}, convexity is the only property of $f$ that is necessary to show~\eqref{Eq:BoundQuasi}. Thus, the proof can be extended to include subgradient steps instead of full gradient steps, where now the condition on $f$ is that its subgradients are  bounded. This recovers the result of Nesterov~\cite{Nesterov15} using the technique of estimate sequences. 
 
 \subsection{Other Discretizations}
-We give examples of two other algorithms that are the result of discretizing the momentum dynamic~\eqref{Eq:DynaBeta}, and analyze them using the discretized Lyapunov function~\eqref{Eq:DiscLyapFunc1}. The proofs of these results can be found in the Appendix~\ref{App:OtherDiscret}. The first method is the result of applying explicit Euler method to~\eqref{Eq:X} and the implicit Euler method to~\eqref{Eq:Z}:
+We give examples of two other algorithms that are the result of discretizing the momentum dynamics~\eqref{Eq:DynaBeta}, and analyze them using the discretized Lyapunov function~\eqref{Eq:DiscLyapFunc1}. The proofs of these results can be found in the Appendix~\ref{App:OtherDiscret}. The first method is the result of applying the explicit Euler method to~\eqref{Eq:X} and the implicit Euler method to~\eqref{Eq:Z}:
 \begin{algorithm}[H]
 \caption{Method 1}
 {\bf Assumptions:} $f$ is smooth and $\X$ is convex and compact. \\
@@ -420,7 +420,7 @@ z_{k+1} &= x_{k+1} - \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeq
 \nabla h(z_{k+1}) -\nabla h(z_k) &= -(A_{k+1} - A_{k})\nabla f(x_{k}) \label{Eq:XSeqOther1}.
 \end{align}
 \end{subequations}
-\noindent Choosing $A_k = k(k+1)/2$ results in an $O(1/k)$ convergence rate. Note, structurally this algorithm is very similar to the conditional gradient method (see~\ref{App:OtherDiscret} for details). The second method does not comport to a straight-forward discretization technique and is given by the updates,
+\noindent Choosing $A_k = k(k+1)/2$ results in an $O(1/k)$ convergence rate. Note that structurally this algorithm is very similar to the conditional gradient method (see~\ref{App:OtherDiscret} for details). The second method does not correspond to a straightforward discretization technique and is given by the updates,
 \begin{algorithm}[H]
 \caption{Method 2}
 {\bf Assumptions:} $f, h$ are convex and differentiable. $h$ is strongly-convex and $f$ has bounded gradients, $\sup_{x\in\X}\|\nabla f(x)\| = G <\infty$. 
@@ -439,7 +439,7 @@ z_{k} &= x_{k+1} + \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeqMe
 \nabla h(z_{k+1}) -\nabla h(z_k) &= -(A_{k+1} - A_{k})\nabla f(x_{k+1}).\label{Eq:XSeqMethod2}
 \end{align} 
 \end{subequations}
-Notice, \eqref{Eq:QuasiSub3} is very similar to the quasi-monotone subgradient method~\eqref{Eq:QuasiSub1}. In particular, under the same assumptions, it obtains a $O(1/\sqrt{k})$ convergence guarantee. Furthermore, like the quasi-monotone subgradient method, it can be extended to functions which have bounded subgradients instead of full gradients and an additional weighting term can be added.
+Notice, \eqref{Eq:QuasiSub3} is very similar to the quasi-monotone subgradient method~\eqref{Eq:QuasiSub1}. In particular, under the same assumptions, it achieves a $O(1/\sqrt{k})$ convergence rate. Furthermore, like the quasi-monotone subgradient method, it can be extended to functions which have bounded subgradients instead of full gradients and an additional weighting term can be added.
 
 %%%%%%%%%%%%%%%%%%%%%ACCELERATED GRAD DESCENT %%%%%%%%%%%%%%
 \subsection{Accelerated Mirror Descent}
@@ -561,14 +561,14 @@ The proof of this theorem can be found in Appendix~\ref{App:CondMethod}.
 %
 %%%%%%%%%%%%%%EXTENSIONS
 \subsubsection{Extensions}
-We briefly point out that the algorithm resulting from applying something like the implicit Euler method to both \eqref{Eq:Frank1}  and \eqref{Eq:Frank2}, 
+We briefly point out that the algorithm resulting from applying an implicit Euler method to both \eqref{Eq:Frank1}  and \eqref{Eq:Frank2}, 
 \begin{subequations}
 \begin{align*}
 z_{k+1} &= \arg \min_{z \in \X}\,\,  \langle \nabla f(x_{k+1}), z\rangle\\
 z_{k+1} &= x_{k+1} + \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),
 \end{align*}
 \end{subequations}
-results in algorithm for which we can show $E_{k+1} - E_k \leq 0$ using~\eqref{Eq:FrankWolfeLyap}. However, like most implicit discretization techniques applied to the momentum dynamics~\eqref{Eq:ELBreg}, this does not lead to an algorithm with manageable subproblems.
+results in an algorithm for which we can show $E_{k+1} - E_k \leq 0$ using~\eqref{Eq:FrankWolfeLyap}. However, like most implicit discretization techniques applied to the momentum dynamics~\eqref{Eq:ELBreg}, this does not lead to an algorithm with tractable subproblems.
 %
 We now turn our attention to analyzing the trust region Newton-like method introduced by Nesterov. This method is given by the following update, 
 \begin{algorithm}[H]
@@ -638,12 +638,12 @@ where \eqref{Eq:StrongContStrong} uses our strong convexity assumption. In the f
 %
 %
 %
-\subsection{Discretizing the Dynamic}
-As a proof of concept, we begin by analyzing an implicit discretization of the dynamic~\eqref{Eq:StrongDyn}. 
+\subsection{Discretizing the Dynamics}
+As a proof of concept, we begin by analyzing an implicit discretization of the dynamics~\eqref{Eq:StrongDyn}. 
 Denoting  $\tau_k = \frac{A_{k+1} - A_k}{A_k}$, $\dot Z_t = \frac{z_{k+1} - z_k}{\delta}$, $\dot X_t = \frac{x_{k+1} - x_k}{\delta}$, $\frac{1}{\dot \beta_t} = \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} = \frac{A_{k}}{\frac{A_{k+1} - A_k}{\delta}}$, 
 we obtain the following algorithm, 
 \begin{algorithm}[H]
-\caption{Implicit-Euler Based Method (Strong Convexity)}
+\caption{Implicit Euler Based Method (Strong Convexity)}
 {\bf Assumptions:} $f, h$ are convex and differentiable.\\
 Choose $A_0 = 1$, $x_{-1}=x_0 = z_0$ and $\tau_{k+1} = \frac{A_{k+1} - A_k}{A_k}$. Define recursively,
 \begin{subequations}
@@ -751,7 +751,7 @@ then $f(x_k) - f(x^\ast) \leq \frac{1}{A_k} [\phi_0(x^\ast) - f(x^\ast)]$.
 \end{lemma}
 %
 %
-\begin{proof}The proof is simple and can be shown in two lines.
+\begin{proof}The proof is straightforward:
 \begin{align*}
 f(x_k) \leq \phi_k^\ast \equiv \min_{x \in \X} \phi_k(x) &\overset{\eqref{Eq:Ineq1}}{\leq}\min_{x \in\X}\left[\Big(1 - \frac{1}{A_k}\Big)f(x) + \frac{1}{A_k}\phi_0(x)\right]\\
 &\overset{\eqref{Eq:Seq}}{\leq} \Big(1 - \frac{1}{A_k}\Big)f(x^\ast) + \frac{1}{A_k}\phi_0(x^\ast).
@@ -760,7 +760,7 @@ Rearranging gives the desired inequality.
 \end{proof}
 %
 %
-Notice, this definition is not at all constructive. Finding sequences which satisfy these conditions is a highly non-trivial task. The next proposition, introduced by Baes in \cite{Baes09} as a slight of extension of Nesterov's Lemma 2.2.2 \cite{Nesterov04}, provides guidance for constructing estimate sequences. Note, this construction is used in \cite{Nesterov04, Nesterov05, Nesterov08, Baes09, Nesterov15, NesterovCond15}, and is the only known way so far to construct an estimate sequence.
+Notice, this definition is not constructive. Finding sequences which satisfy these conditions is generally a non-trivial task. The next proposition, formalized by Baes in \cite{Baes09} as an  extension of Nesterov's Lemma 2.2.2 \cite{Nesterov04}, provides guidance for constructing estimate sequences. This construction is used in \cite{Nesterov04, Nesterov05, Nesterov08, Baes09, Nesterov15, NesterovCond15}, and is the only known way so far to construct an estimate sequence.
 \begin{proposition}\cite[2.2]{Baes09}\label{Eq:Prop}
  Let $\phi_0: \X \rightarrow \R$ be a convex function such that $\min_{x \in \X} \phi_0(x)\geq f^\ast$. Suppose also that we have a sequence $\{f_k\}_{k\geq 0}$ of functions form $\X$ to $\R$ that underestimates $f$:
 \begin{align}\label{Eq:Under}
