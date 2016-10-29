@@ -1,9 +1,9 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{The dynamical view of momentum methods}{}% 2
-\BOOKMARK [1][-]{section.3}{Rate-generating Lyapunov Functions}{}% 3
+\BOOKMARK [1][-]{section.2}{The Dynamical View of Momentum Methods}{}% 2
+\BOOKMARK [1][-]{section.3}{Rate-Generating Lyapunov Functions}{}% 3
 \BOOKMARK [1][-]{section.4}{Momentum Methods}{}% 4
 \BOOKMARK [2][-]{subsection.4.1}{Lyapunov Analysis}{section.4}% 5
-\BOOKMARK [2][-]{subsection.4.2}{Implicit and Explicit-Euler}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.2}{Implicit and explicit Euler methods}{section.4}% 6
 \BOOKMARK [2][-]{subsection.4.3}{Momentum-Based Algorithms}{section.4}% 7
 \BOOKMARK [2][-]{subsection.4.4}{The Quasi-Monotone Subgradient Method}{section.4}% 8
 \BOOKMARK [2][-]{subsection.4.5}{Other Discretizations}{section.4}% 9
@@ -12,30 +12,26 @@
 \BOOKMARK [3][-]{subsubsection.4.7.1}{Extensions}{subsection.4.7}% 12
 \BOOKMARK [1][-]{section.5}{Strong Convexity}{}% 13
 \BOOKMARK [2][-]{subsection.5.1}{Lyapunov Analysis}{section.5}% 14
-\BOOKMARK [2][-]{subsection.5.2}{Discretizing the Dynamic}{section.5}% 15
+\BOOKMARK [2][-]{subsection.5.2}{Discretizing the Dynamics}{section.5}% 15
 \BOOKMARK [1][-]{section.6}{Estimate Sequences}{}% 16
 \BOOKMARK [2][-]{subsection.6.1}{Equivalence between Estimate Sequences and Lyapunov Functions}{section.6}% 17
 \BOOKMARK [3][-]{subsubsection.6.1.1}{Accelerated Gradient Descent}{subsection.6.1}% 18
 \BOOKMARK [3][-]{subsubsection.6.1.2}{Conditional Gradient Method}{subsection.6.1}% 19
 \BOOKMARK [2][-]{subsection.6.2}{Accelerated Gradient Strong Convexity}{section.6}% 20
-\BOOKMARK [1][-]{section.7}{Discussion and future work}{}% 21
-\BOOKMARK [2][-]{subsection.7.1}{Other discretization methods}{section.7}% 22
-\BOOKMARK [2][-]{subsection.7.2}{Restart Schemes}{section.7}% 23
-\BOOKMARK [2][-]{subsection.7.3}{Further Extensions}{section.7}% 24
-\BOOKMARK [2][-]{subsection.7.4}{Searching for invariants}{section.7}% 25
-\BOOKMARK [1][-]{appendix.A}{Mirror Descent Dynamic}{}% 26
-\BOOKMARK [2][-]{subsection.A.1}{Lyapunov Analysis}{appendix.A}% 27
-\BOOKMARK [1][-]{appendix.B}{Momentum Algorithms}{}% 28
-\BOOKMARK [2][-]{subsection.B.1}{Proof of Theorem 1}{appendix.B}% 29
-\BOOKMARK [2][-]{subsection.B.2}{Proof of General Quasi-Monotone Method}{appendix.B}% 30
-\BOOKMARK [2][-]{subsection.B.3}{Proof of Discretizations}{appendix.B}% 31
-\BOOKMARK [2][-]{subsection.B.4}{Proof of Conditional Gradient Method}{appendix.B}% 32
-\BOOKMARK [2][-]{subsection.B.5}{Proof of Accelerated Gradient Methods}{appendix.B}% 33
-\BOOKMARK [2][-]{subsection.B.6}{Accelerated Gradient Descent: Version 2}{appendix.B}% 34
-\BOOKMARK [1][-]{appendix.C}{Strong Convexity}{}% 35
-\BOOKMARK [2][-]{subsection.C.1}{Proof of Accelerated Gradient \(27\)}{appendix.C}% 36
-\BOOKMARK [2][-]{subsection.C.2}{Proof of Accelerated Gradient \(28\)}{appendix.C}% 37
-\BOOKMARK [1][-]{appendix.D}{Estimate Sequences}{}% 38
-\BOOKMARK [2][-]{subsection.D.1}{The Quasi-Montone Subgradient Method}{appendix.D}% 39
-\BOOKMARK [2][-]{subsection.D.2}{The Conditional Gradient Method}{appendix.D}% 40
-\BOOKMARK [2][-]{subsection.D.3}{Accelerated Gradient Descent \(Strong Convexity\)}{appendix.D}% 41
+\BOOKMARK [1][-]{section.7}{Discussion}{}% 21
+\BOOKMARK [1][-]{appendix.A}{Mirror Descent Dynamic}{}% 22
+\BOOKMARK [2][-]{subsection.A.1}{Lyapunov Analysis}{appendix.A}% 23
+\BOOKMARK [1][-]{appendix.B}{Momentum Algorithms}{}% 24
+\BOOKMARK [2][-]{subsection.B.1}{Proof of Theorem 1}{appendix.B}% 25
+\BOOKMARK [2][-]{subsection.B.2}{Proof of General Quasi-Monotone Method}{appendix.B}% 26
+\BOOKMARK [2][-]{subsection.B.3}{Proof of Discretizations}{appendix.B}% 27
+\BOOKMARK [2][-]{subsection.B.4}{Proof of Conditional Gradient Method}{appendix.B}% 28
+\BOOKMARK [2][-]{subsection.B.5}{Proof of Accelerated Gradient Methods}{appendix.B}% 29
+\BOOKMARK [2][-]{subsection.B.6}{Accelerated Gradient Descent: Version 2}{appendix.B}% 30
+\BOOKMARK [1][-]{appendix.C}{Strong Convexity}{}% 31
+\BOOKMARK [2][-]{subsection.C.1}{Proof of Accelerated Gradient \(27\)}{appendix.C}% 32
+\BOOKMARK [2][-]{subsection.C.2}{Proof of Accelerated Gradient \(28\)}{appendix.C}% 33
+\BOOKMARK [1][-]{appendix.D}{Estimate Sequences}{}% 34
+\BOOKMARK [2][-]{subsection.D.1}{The Quasi-Montone Subgradient Method}{appendix.D}% 35
+\BOOKMARK [2][-]{subsection.D.2}{The Conditional Gradient Method}{appendix.D}% 36
+\BOOKMARK [2][-]{subsection.D.3}{Accelerated Gradient Descent \(Strong Convexity\)}{appendix.D}% 37
