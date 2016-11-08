@@ -1099,7 +1099,7 @@ The gradient flow equation does not explicitly depend on time. As in \cite{Accel
 \begin{equation}\label{Eq:MirrorTime}
 \frac{d}{dt} \nabla h(X_t) = -\dot \tau(t)\nabla f(X_t) = - \dot \beta_t e^{\beta_t} \nabla f(X_t).
 \end{equation}
-Since the vector field explicitly depends on time, \eqref{Eq:MirrorTime} is no longer a gradient flow. Nevertheless, a we can generate a Lyapunov function from the general time-dilated dynamic. 
+Since the vector field explicitly depends on time, \eqref{Eq:MirrorTime} is no longer a gradient flow. Nevertheless, a we can generate a Lyapunov function from the general time-dilated dynamics. 
 %we will outline in the following sections. 
 \subsection{Lyapunov Analysis}
 Using the Bregman divergence of $h$,
@@ -1139,7 +1139,7 @@ If we plug this into \eqref{Eq:Bound1}, we obtain the following inequality,
 \begin{align*}
  \frac{d}{dt} \left( e^{\beta_t}( f(X_t) - f(x^\ast))\right) \leq\dot \beta_t e^{\beta_t} \left( f(X_t) - f(x^\ast)\right) \leq - \frac{d}{dt} D_h(x^\ast,X_t). 
 \end{align*}
-Integrating gives a Lyapunov function for the mirror descent dynamic~\eqref{Eq:MirrorFlow}.
+Integrating gives a Lyapunov function for the mirror descent dynamics~\eqref{Eq:MirrorFlow}.
 
 %
   %%%%%%%%%%%%%%%%%
@@ -1166,7 +1166,7 @@ D^\ast_{k+1, k}  &= -D_h(z_{k+1}, z_k) +  \langle \nabla h(z_{k+1}) - \nabla h(z
 &\quad + (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x_k \rangle \notag\\
 & = \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2- A_{k} \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle  - (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x^\ast\rangle. \notag\\
 &\leq A_k(f(x_{k}) - f(x_{k+1})) - (A_{k+1} -A_{k})(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 \notag\\
-& = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 \notag
+& = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2, \notag
 \end{align}
 \end{subequations}
 %\end{small}
@@ -1204,9 +1204,9 @@ For this method, the notion of a ``prox-center'' is essential. We provide an ana
 \begin{equation}\label{Eq:Lyap3}
 E_k = A_k(f(x_k) - f(x^\ast)) + \gamma_k (D_h(x^\ast, z_k) -D_h(x^\ast, x_0)).
 \end{equation}
-First however, we analyze the dynamics and show how to obtain the discrete Lyapunov function~\eqref{Eq:Lyap3} for the dual-averaged algorithm.
+First, however, we analyze the dynamics and show how to obtain the discrete Lyapunov function~\eqref{Eq:Lyap3} for the dual-averaged algorithm.
  
- \paragraph{The dynamics} We analyze the momentum dynamics~\eqref{Eq:ELBreg} with an additional increasing weighting term ($\dot \gamma_t \geq 0$), which we require to be positive $\gamma_t\geq 0$, $\forall t\in \R$:
+ \paragraph{The dynamics} We analyze the momentum dynamics~\eqref{Eq:ELBreg} with an additional increasing weighting term ($\dot \gamma_t \geq 0$), which we require to be positive, $\gamma_t\geq 0$, $\forall t\in \R$:
  \begin{subequations}\label{Eq:DualAvgDyn}
 \begin{align}
 \frac{d}{dt}\Big(\gamma_t \nabla h(Z_t)\Big) &= -\dot \beta_t e^{\beta_t}\nabla f(X_t)\\
@@ -1220,11 +1220,11 @@ With this additional weighting term we obtain the following bound,
 &=\dot \gamma_t [h(x^\ast) - h(Z_t)] - \dot \gamma_t \langle\nabla h(Z_t), x - Z_t \rangle-\gamma_t\left \langle \frac{d}{dt} \nabla h(Z_t), x - Z_t\right \rangle \notag\\
 &= \dot \gamma_t [h(x^\ast) - h(Z_t)] - \left \langle \frac{d}{dt} \Big(\gamma_t  \nabla h(Z_t)\Big), x^\ast - Z_t \right\rangle \notag\\
 &  \overset{\eqref{Eq:DualAvgDyn}}{=}  \gamma_t [h(x^\ast) - h(Z_t)]  +  \dot \beta_t e^{\beta_t} \left\langle \nabla f(X_t), x^\ast - X_t - \frac{1}{\dot \beta_t} \dot X_t\right\rangle \notag\\
-& \overset{\eqref{Eq:LyapAnal}}{\leq} \dot \gamma_t [h(x^\ast) - h(Z_t)]   - \frac{d}{dt}\left( e^{\beta_t}\left(f(X_t) - f(x^\ast)\right)\right) 
+& \overset{\eqref{Eq:LyapAnal}}{\leq} \dot \gamma_t [h(x^\ast) - h(Z_t)]   - \frac{d}{dt}\left( e^{\beta_t}\left(f(X_t) - f(x^\ast)\right)\right).
 %& \leq  \int_0^t \dot \gamma_s D_h(x^\ast, Z_0)  -\int_0^t \frac{d}{ds}\left\{ e^{\beta_s}\left(f(X_s) - f(x^\ast)\right)\right\} ds,
 \end{align}
 \end{subequations}
-\paragraph{Prox-Center}  We now require $\X$ to be a compact set,  and  define $X_0$ to be the ``prox-center,'' of $\X$:
+\paragraph{Prox-center}  We now require $\X$ to be a compact set,  and  define $X_0$ to be the ``prox-center'' of $\X$:
 \begin{align*}
 X_0 = \arg\min_{x \in \X} \,h(x).
 \end{align*}
@@ -1241,12 +1241,12 @@ from which we can conclude that the following function,
 \begin{equation}
 \E_t = e^{\beta_t}( f(X_t) - f(x^\ast)) + \gamma_t (D_h(x^\ast, Z_t) - D_h(x^\ast, Z_0)),
 \end{equation}
-is a Lyapunov function. We can also conclude the following convergence rate guarantee, 
+is a Lyapunov function. We also obtain the following convergence rate guarantee, 
 \begin{equation}\label{Eq:DualAvgBound}
 f(X_t) - f(X_0) \leq \frac{\gamma_t D_h(x^\ast,Z_0)}{e^{\beta_t}}.
 \end{equation}
 
-\paragraph{The Algorithm} 
+\paragraph{The algorithm} 
 Using the following equality, 
 \begin{align}\label{InEq:DualAvgBound}
 \gamma_{k+1} D_h(x^\ast, z_{k+1}) - \gamma_{k} D_h(x^\ast, z_k)& =\gamma_{k+1} D_h(z_{k+1}, z_k)  +  \langle \gamma_{k+1} \nabla h(z_{k+1}) - \gamma_{k} \nabla h(z_k), z_{k+1} - x^\ast \rangle \notag \\&\quad + (\gamma_{k+1} - \gamma_{k})(h(x^\ast) - h(z_{k+1})),
@@ -1277,7 +1277,7 @@ D^\ast_{\gamma_{k+1}, \gamma_k}& \overset{\eqref{Eq:DualAvgBound3}}{\leq} \gamma
 & = -A_k(f(x_{k+1}) - f(x_k)) - (A_{k+1} - A_k)(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2\notag\\
 &\quad + (\gamma_{k+1} - \gamma_{k})h(x^\ast)\notag\\
 & = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} - A_k)^2}{2\gamma_{k}} \|\nabla f(x_{k+1})\|_\ast^2\notag\\
-&\quad+ (\gamma_{k+1} - \gamma_{k})D_h(x^\ast, x_0).\notag
+&\quad+ (\gamma_{k+1} - \gamma_{k})D_h(x^\ast, x_0),\notag
 \end{align}
 \end{subequations}
 %\end{small}
@@ -1293,12 +1293,12 @@ where $h(x^\ast) = D_h(x^\ast, x_0)$ follows from the definition of the prox-cen
 \begin{align*}
 f(x_k) - f(x^\ast) \leq \frac{A_0(f(x_0) - f(x^\ast)) +  \gamma_k D_h(x^\ast , x_0) +\frac{1}{2}\sum_{i=0}^{k}\frac{(A_{i+1} - A_i)^2}{\gamma_{i-1}}G^2}{A_k}.
 \end{align*}
-This matches the bound Nesterov obtained in \cite{Nesterov15}. Note, that a very similar analysis can be presented for Nesterov's dual averaging algorithm~\cite{Nesterov09}.
+This matches the bound Nesterov obtained in \cite{Nesterov15}. Note that a very similar analysis can be presented for Nesterov's dual averaging algorithm~\cite{Nesterov09}.
 
 %%%%%%%%%%%%%%%%%%%%FRANK WOLFE PROOF %%%%%%%%%%%%%
 \subsection{Proof of Discretizations}
 \label{App:OtherDiscret}
-\subsubsection{Proof of Method 1} We analyze the algorithm~\eqref{Eq:QuasiSub2} using the Lyapunov function~\eqref{Eq:DiscLyapFunc1}. 
+\subsubsection{Proof of Method 1} We analyze the algorithm~\eqref{Eq:QuasiSub2} using the Lyapunov function~\eqref{Eq:DiscLyapFunc1}: 
 \begin{subequations}
 \begin{align}
 E_{k+1} - E_k %&= A_{k+1}(f(x_{k+1}) -f(x^\ast)) - A_k(f(x_k) - f(x^\ast)) + D_h(x^\ast, z_{k+1}) - D_h(x^\ast, z_k) \notag\\
@@ -1311,7 +1311,7 @@ E_{k+1} - E_k %&= A_{k+1}(f(x_{k+1}) -f(x^\ast)) - A_k(f(x_k) - f(x^\ast)) + D_h
   &= A_{k+1}(f(x_{k+1}) -f(x_k) - \langle \nabla f(x_k), x_{k+1} - x_k\rangle) + \alpha_k(f(x_k) - f(x^\ast)+\langle \nabla f(x_k), x^\ast - x_{k}\rangle)  \notag \\ &\quad- D_h(z_{k+1}, z_k) \notag\\
  & \leq A_{k+1} \frac{L}{2}\| x_{k+1} - x_{k}\|^2 \notag\\
 % & =\frac{1}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2} \|x_{k+1} - z_{k+1}\|^ 2\\
-& \overset{\eqref{Eq:XSeqOther1}}{\leq}  \frac{L}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2}diam(\X)^2
+& \overset{\eqref{Eq:XSeqOther1}}{\leq}  \frac{L}{2} \frac{A_{k+1}\alpha_k^2}{A_{k}^2}diam(\X)^2,
 \end{align}
 \end{subequations}
 %\end{small}
@@ -1352,7 +1352,7 @@ which is the same convergence rate as the quasi-monotone subgradient method~\eqr
 %%%%%%%%%%%%%%%%%%%%FRANK WOLFE PROOF %%%%%%%%%%%%%
 \subsection{Proof of Conditional Gradient Method}
 \label{App:CondMethod}
-We use the Lyapunov function \eqref{Eq:FrankWolfeLyap} to analyze conditional gradient method~\eqref{eq:Frank-WolfeAlgo}
+We use the Lyapunov function \eqref{Eq:FrankWolfeLyap} to analyze conditional gradient method~\eqref{eq:Frank-WolfeAlgo}:
 \label{App:ProofAccGrad}
 \begin{subequations}
 \begin{align*}
@@ -1376,7 +1376,7 @@ Choosing $A_{k+1} = \frac{k(k+1)}{2}$ gives the coupling term $\tau_k = \frac{2}
 Notice that our variational condition~\eqref{Eq:Var2Cond} (taking $y = (1- \tau_k)x_k + \tau_k x^\ast$, where as usual, $\tau_k = \frac{\alpha_k}{A_{k+1}}$, and $\alpha_k = A_{k+1} - A_k$) gives the inequality 
 \begin{align}\label{Eq:In1}
 -\alpha_k\langle \nabla f(x_k), x^\ast - x_k\rangle &\leq - A_{k+1}\langle \nabla^2f(x_k)(x_{k+1} - x_k), x_{k+1} - x_k\rangle + \alpha_k \langle \nabla^2f(x_k)(x_{k+1} - x_k), x^\ast - x_k\rangle\notag\\
-&\quad  + A_k \langle \nabla f(x_k), x_k - x_{k+1}\rangle
+&\quad  + A_k \langle \nabla f(x_k), x_k - x_{k+1}\rangle.
 \end{align}
 Noting this, we have 
 \begin{subequations}
@@ -1410,7 +1410,7 @@ We present the generalized accelerated gradient descent algorithm~\cite{Baes09,A
 \begin{algorithm}[H]
 \begin{subequations}\label{Eq:AcceleratedGrad}
 \caption{Accelerated Gradient Descent (Weakly Convex Setting)}
-{\bf Assumptions:} $f, h$ are convex and differentiable.$h$ satisfies smoothness condition $ \frac{1}{p}\|x - y\|^p \leq D_h(x,y)$ and $f$ satisfies smoothness condition $\|\nabla^{p} f\|\leq L$\\
+{\bf Assumptions:} $f, h$ are convex and differentiable. $h$ satisfies smoothness condition $ \frac{1}{p}\|x - y\|^p \leq D_h(x,y)$ and $f$ satisfies smoothness condition $\|\nabla^{p} f\|\leq L$.\\
 Choose $A_0 = 1$, $M>0$, $\tilde A_{k+1} = L^{-1} A_{k+1}$,  $\tau_k = \frac{\tilde A_{k+1}- \tilde A_k}{\tilde A_{k+1}}:= \frac{\alpha_k}{\tilde A_{k+1}}$ and $x_0 = z_0 = y_0$. Define recursively, 
 \begin{align}
 x_{k+1} &= \tau_k z_k + (1- \tau_k)  y_k\label{Eq:ZSeqAcc1}\\
@@ -1418,7 +1418,7 @@ z_k &= \arg \min_{z\in \X} \left\{ \sum_{i=1}^k \alpha_i \langle \nabla f(y_i), 
 \end{align}
 $y_{k}$ is a gradient update 
 \begin{align}
-G_{p,\epsilon,N}(x_k) = \arg \min_y \left\{ f_{p-1}(y;x_k) + \frac{LN}{p}\|y-x_k\|^p\right\}
+G_{p,\epsilon,N}(x_k) = \arg \min_y \left\{ f_{p-1}(y;x_k) + \frac{LN}{p}\|y-x_k\|^p\right\},
 \end{align}
 \end{subequations}
 where 
@@ -1438,7 +1438,7 @@ z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_
 \quad M \|L^{-1}\nabla f(y_{k})\|_\ast^{\frac{p}{p-1}} &\leq L^{-1}\langle\nabla f(y_{k}), x_{k} - y_{k}\rangle \label{Eq:YSeqAcc}
 \end{align}
 \end{subequations}
-where $M = \frac{(N^2 - 1)^{\frac{p-2}{2p-2}}}{2N}$. Denoting $D^\ast_{k+1, k} = D_h(x^\ast,z_{k+1})- D_h(x^\ast,z_{k})$, we obtain the following bound 
+where $M = \frac{(N^2 - 1)^{\frac{p-2}{2p-2}}}{2N}$. Denoting $D^\ast_{k+1, k} = D_h(x^\ast,z_{k+1})- D_h(x^\ast,z_{k})$, we obtain the following bound:
 %\label{App:ProofQuasi}
 %\begin{}
 \begin{subequations}
@@ -1476,7 +1476,7 @@ where the error scales in the following way
 \begin{equation*}
 \varepsilon_k =\left(\frac{p-1}{p}(A_{k+1} -A_{k})^{\frac{p}{p-1}} - A_{k+1}M\right) L^{-\frac{p}{p-1}}\|\nabla  f(y_{k+1})\|_\ast^{\frac{p}{p-1}}.
 \end{equation*}
-Choosing the error to be non-positive mean that $A_k$ can be at most a polynomial of degree $p$. 
+Choosing the error to be nonpositive means that $A_k$ can be at most a polynomial of degree $p$. 
 
 \subsection{Accelerated Gradient Descent: Version 2}
 We now analyze the second version of the accelerated gradient descent algorithm using the same energy functional~\eqref{Eq:LyapAccGrad}:
@@ -1506,7 +1506,7 @@ where
 \begin{align*}
 \varepsilon_k = \frac{1}{2L^2}\left[(A_{k+1} -  A_k)^2 - A_{k+1} \right] \|\nabla f(x_{k+1})\|^2.
 \end{align*}
-To ensure our error $\varepsilon_k$ is non-positive, $A_k$ can be at most a polynomial of degree 2. %Note, this matches the bound for our theorem with $M = \frac{1}{2}$ (or, $N = 1$) 
+To ensure our error $\varepsilon_k$ is nonpositive, $A_k$ can be at most a polynomial of degree two. %Note, this matches the bound for our theorem with $M = \frac{1}{2}$ (or, $N = 1$) 
 
 \section{Strong Convexity}
 \label{App:StrongConvexity}
@@ -1579,7 +1579,7 @@ Choosing $\tau_k \leq 1/\sqrt{\kappa}$ ensures that $\varepsilon_k \leq 0$.
 &\quad + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2\\
 &= -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(x_k) + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2 \\
 &\quad+ \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2\\
-&\leq -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + \left(\frac{\tau_k^2}{2\mu}-\frac{1}{2L}\right)\|\nabla f(x_k)\|^2 + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2
+&\leq -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + \left(\frac{\tau_k^2}{2\mu}-\frac{1}{2L}\right)\|\nabla f(x_k)\|^2 + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2.
 %&\quad + \tau_k \langle \nabla f(y_k), x_{k} - y_k\rangle - \frac{\mu \tau_k}{2} \|y_k - x_{k}\|^2\\
 %&= -\tau_k\left( f(y_k ) - f(x^\ast) + \frac{\mu}{2}\|x^\ast - z_k\|^2 \right) + f(y_{k+1}) - f(y_k)  + \langle\nabla f(x_{k}), y_k - x_{k}\rangle\\
 %&\quad   + \frac{\mu}{2}\|y_k - x_{k}\|^2 + \tau_k \langle \nabla f(x_{k}),y_k - x_{k}\rangle + \frac{\tau_k^2}{2\mu}\|\nabla f(x_{k})\|^2 \\
@@ -1609,18 +1609,18 @@ The discrete-time estimate sequence~\eqref{Eq:Est} for quasi-monotone subgradien
 \begin{align*}
 \phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} &:= f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}\\
 & \overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \left(\phi_k(x) - \frac{\tilde \varepsilon_k}{A_k}\right) + \tau_k f_k(x) \\
-&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+&= \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k) -\frac{\tilde \varepsilon_k}{A_k}\right) + \frac{\alpha_k}{A_{k+1}} f_k(x).
 \end{align*}
 Multiplying through by $A_{k+1}$, we have
 \begin{align*}
 A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}\right) &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) - \frac{\tilde \varepsilon_k}{A_k}\right)\\
 &\quad  + (A_{k+1} - A_k) f_k(x)\\
 &=  A_k \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) - \frac{\tilde \varepsilon_k}{A_k}\right) + (A_{k+1} - A_k) f_k(x)\\
-& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k) - \tilde \varepsilon_k + (A_{k+1} - A_k) f(x)\
+& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k) - \tilde \varepsilon_k + (A_{k+1} - A_k) f(x).
 \end{align*}
 Rearranging, we obtain our Lyapunov argument $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for~\eqref{Eq:DiscLyapFunc1}:
 \begin{align*}
-A_{k+1}(f(x_{k+1}) - f(x)) + D_h(x, z_{k+1}) &\leq A_k (f(x_k) - f(x)) + D_h(x, z_k) + \varepsilon_{k+1}
+A_{k+1}(f(x_{k+1}) - f(x)) + D_h(x, z_{k+1}) &\leq A_k (f(x_k) - f(x)) + D_h(x, z_k) + \varepsilon_{k+1},
 \end{align*}
 %also written $E_{k+1} \leq E_k + \varepsilon_{k+1}$ for \eqref{Eq:DiscLyapFunc1}, 
 where $\varepsilon_{k+1} = \tilde \varepsilon_{k+1} - \tilde \varepsilon_k = \frac{A_{k+1} -A_k}{2}\|\nabla f(x_{k+1})\|^2$.
@@ -1636,7 +1636,8 @@ Going the other direction, from our Lyapunov analysis we can derive the followin
 E_k &\leq E_0 + \tilde \varepsilon_{k+1}\\
 A_{k}(f(x_{k}) - f(x)) + D_h(x, z_{k}) &\leq A_0 (f(x_0) - f(x)) + D_h(x, z_0) + \tilde \varepsilon_{k+1}\notag\\
 A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + \left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) + \tilde \varepsilon_{k+1}\notag \\
-A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) + \tilde \varepsilon_{k+1}\label{Eq:EstSeq}
+A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) + \tilde \varepsilon_{k+1}.
+\label{Eq:EstSeq}
 \end{align}
 \end{subequations}
 Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$) with an additional error term:
@@ -1712,7 +1713,7 @@ E_{k+1} - E_k &\leq -\tau_k E_k\\
 \phi_{k+1} &\leq (1 - \tau_k) \phi_k(x)  + \tau_k f(x)\\
 A_{k+1} \phi_{k+1} &\leq A_k \phi_k + (A_{k+1} - A_k) f(x).
 \end{align*}
-Summing over the righthand side, we obtain the estimate sequence~\eqref{Eq:Ineq1}: 
+Summing over the right-hand side, we obtain the estimate sequence~\eqref{Eq:Ineq1}: 
 \begin{align*}
 \phi_{k+1} &\leq \Big(1 -\frac{A_0}{A_{k+1}}\Big) f(x) + \frac{A_0}{A_{k+1}} \phi_0(x)\\
 & =  \Big(1 -\frac{1}{A_{k+1}}\Big) f(x) + \frac{1}{A_{k+1}} \phi_0(x).\\
