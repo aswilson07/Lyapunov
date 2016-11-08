@@ -375,13 +375,13 @@ involves applying the implicit Euler method to the mirror descent dynamics, and 
 
 \subsection{The Quasi-Monotone Subgradient Method}
 \label{Sec:QuasiMono}
-The quasi-monotone subgradient method was developed by Nesterov~\cite{Nesterov15} as an alternative to the dual averaging method.  It also achieves the $O(1/\sqrt{k})$ lower bound for the class of methods with bounded subgradients. The advantage of the quasi-monotone method however is that a convergence-rate guarantee can be shown for the entire sequence of iterates instead of the average (or minimum) iterate, as is the case with the dual averaging method in the non-Euclidean setting. {\em We begin by studying the quasi-monotone method in the situation where we have full gradients, which we assume to be bounded} and show later how the analysis extends to the setting where we only have access to bounded subgradients. We also set the dual averaging term $\gamma_k \equiv 1$ for convenience and give an analysis of the full algorithm in Appendix~\ref{App:ProofQuasiGen}.  With these minor modifications, the algorithm can be understood as the explicit Euler method applied to~\eqref{Eq:Z} and the implicit Euler method applied to~\eqref{Eq:X} (where now, we take $e^{\beta_t} = A_{k+1}$, while leaving our identification for $\frac{d}{dt} e^{\beta_t}$ unchanged):
+The quasi-monotone subgradient method was developed by Nesterov~\cite{Nesterov15} as an alternative to the dual averaging method.  It also achieves the $O(1/\sqrt{k})$ lower bound for the class of methods with bounded subgradients. The advantage of the quasi-monotone method however is that a convergence-rate guarantee can be shown for the entire sequence of iterates instead of the average (or minimum) iterate, as is the case with the dual averaging method in the non-Euclidean setting. {\em We begin by studying the quasi-monotone method in the situation where we have full gradients, which we assume to be bounded} and show later how the analysis extends to the setting where we only have access to bounded subgradients. We also set the dual averaging term $\gamma_k \equiv 1$ for convenience and give an analysis of the full algorithm in Appendix~\ref{App:ProofQuasiGen}.  With these minor modifications, the algorithm can be understood as the explicit Euler method applied to~\eqref{Eq:Z} and the implicit Euler method applied to~\eqref{Eq:X} (where now we take $e^{\beta_t} = A_{k+1}$, while leaving our identification for $\frac{d}{dt} e^{\beta_t}$ unchanged):
 
 
 
 \begin{algorithm}[H]
 \caption{The Quasi-Monotone (Sub)gradient Method $\gamma_k \equiv 1$}
-{\bf Assumptions:} $f, h$ are convex and differentiable. $h$ is strongly-convex and $f$ has bounded gradients, $\sup_{x\in\X}\|\nabla f(x)\| = G <\infty$. \\
+{\bf Assumptions:} $f, h$ are convex and differentiable. $h$ is strongly convex and $f$ has bounded gradients, $\sup_{x\in\X}\|\nabla f(x)\| = G <\infty$. \\
 Let $A_0 = 1$, $x_0 = z_0$, $\tau_k = \frac{A_{k+1} - A_k}{A_{k+1}}$, $\alpha_k = A_{k} - A_{k-1}$ . Define recursively,
 \begin{subequations}\label{Eq:QuasiSub1}
 \begin{align}
@@ -426,7 +426,7 @@ Let $A_0 = 1$, $x_0 = z_0$, $\alpha_k = A_{k+1} - A_k$ and $\tau_k = \frac{A_{k+
 \begin{subequations}\label{Eq:QuasiSub2}
 \begin{align}
 z_{k+1} &= \arg \min_{z \in \X} \left\{\langle \nabla f(x_k),z \rangle + \frac{1}{\alpha_k} D_h(z, z_k)\right\}\\
-x_{k+1} &= \frac{\tau_k}{\tau_k - 1}z_{k+1} + \frac{1}{\tau_k - 1}  x_k
+x_{k+1} &= \frac{\tau_k}{\tau_k - 1}z_{k+1} + \frac{1}{\tau_k - 1}  x_k.
 \end{align} 
 \end{subequations}
 \end{algorithm}
@@ -456,12 +456,12 @@ z_{k} &= x_{k+1} + \frac{A_{k}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeqMe
 \nabla h(z_{k+1}) -\nabla h(z_k) &= -(A_{k+1} - A_{k})\nabla f(x_{k+1}).\label{Eq:XSeqMethod2}
 \end{align} 
 \end{subequations}
-Notice, \eqref{Eq:QuasiSub3} is very similar to the quasi-monotone subgradient method~\eqref{Eq:QuasiSub1}. In particular, under the same assumptions, it achieves a $O(1/\sqrt{k})$ convergence rate. Furthermore, like the quasi-monotone subgradient method, it can be extended to functions which have bounded subgradients instead of full gradients and an additional weighting term can be added.
+Notice that \eqref{Eq:QuasiSub3} is very similar to the quasi-monotone subgradient method~\eqref{Eq:QuasiSub1}. In particular, under the same assumptions, it achieves a $O(1/\sqrt{k})$ convergence rate. Furthermore, like the quasi-monotone subgradient method, it can be extended to functions which have bounded subgradients instead of full gradients and an additional weighting term can be added.
 
 %%%%%%%%%%%%%%%%%%%%%ACCELERATED GRAD DESCENT %%%%%%%%%%%%%%
 \subsection{Accelerated Mirror Descent}
 \label{Sec:AccGrad}
-We present two variants of the accelerated mirror descent algorithm (which is the accelerated gradient descent algorithm in the setting where $h = \frac{1}{2}\|\cdot \|^2$). Neither of these correspond to a straightforward discretization of~\eqref{Eq:EL}---they both entail introducing an additional sequence $\{y_k\}$ to obtain a better bound on the error. The first is the version introduced by Michel Baes~\cite{Baes09}:
+We present two variants of the accelerated mirror descent algorithm (which is the accelerated gradient descent algorithm in the setting where $h = \frac{1}{2}\|\cdot \|^2$). Neither of these correspond to a straightforward discretization of~\eqref{Eq:EL}---they both entail introducing an additional sequence $\{y_k\}$ to obtain a better bound on the error. The first is the version introduced by Baes~\cite{Baes09}:
 \begin{algorithm}[H]
 \begin{subequations}\label{Eq:AcceleratedGrad2}
 \caption{Accelerated Mirror Descent (Weakly Convex Setting)}
@@ -479,7 +479,7 @@ x_{k+1} &= \tau_k z_k + (1- \tau_k)  y_k\label{Eq:XSeqAcc2}
 \begin{align}
 z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_k),  \label{Eq:ZSeqAcc3}\\%\label{Eq:ZSeqAcc2}\\
 \nabla h(z_{k+1}) - \nabla h(z_{k}) &= -(\tilde A_{k+1} -  \tilde A_{k})  \nabla f(y_{k+1})  \label{Eq:XSeqAcc3}\\ %\label{Eq:XSeqAcc}\\
-\quad M \|L^{-1} \nabla f(y_{k})\|_\ast^{2} &\leq L^{-1}\langle\nabla f(y_{k}), x_{k} - y_{k}\rangle \label{Eq:YSeqAcc3}
+\quad M \|L^{-1} \nabla f(y_{k})\|_\ast^{2} &\leq L^{-1}\langle\nabla f(y_{k}), x_{k} - y_{k}\rangle. \label{Eq:YSeqAcc3}
 \end{align}
 \end{subequations}
 The advantage of this version of the accelerated mirror descent algorithm is that it can be extended to accelerate higher-order gradient methods (the details of which we give in Appendix~\ref{App:ProofAccGrad}). The second version, originally introduced by Nesterov~\cite{Nesterov05}, entails setting $M = \frac{1}{2}$ and computing the mirror descent update~\eqref{Eq:ZSeqAcc2} from the gradient at $x$:
@@ -494,7 +494,7 @@ z_{k} &= y_k + \frac{\tilde A_{k+1}}{\tilde A_{k+1} -\tilde A_{k}} (x_{k+1} - y_
 \quad f(y_k) - f(x_k)  &\leq  -\frac{1}{2L} \| \nabla f(x_{k})\|_\ast^{2}. \label{Eq:YSeqAcc4}
 \end{align}
 \end{subequations}
-As mentioned above, to obtain a convergence guarantee for both algorithms we have replaced the current state $x_k$ by another sequence $y_k$ which simply needs to satisfy~\eqref{Eq:YSeqAcc3}. Furthermore, we have replaced our sequence $A_{k+1}$ by $\tilde A_{k+1}$ which depends on the Lipschitz parameter. We make the same adjustments to the Lyapunov function~\eqref{Eq:DiscLyapFunc1} which we sum up in the following theorem:
+As mentioned above, to obtain a convergence guarantee for both algorithms we have replaced the current state $x_k$ by another sequence $y_k$ which needs to satisfy~\eqref{Eq:YSeqAcc3}. Furthermore, we have replaced our sequence $A_{k+1}$ by $\tilde A_{k+1}$ which depends on the Lipschitz parameter. We make the same adjustments to the Lyapunov function~\eqref{Eq:DiscLyapFunc1} which we summarize in the following theorem:
 \begin{theorem} \label{Thm:AccGrad}
 Using the following Lyapunov function
 \begin{equation}\label{Eq:LyapAccGrad}
@@ -502,12 +502,12 @@ E_k = \tilde A_k(  f(y_k) -  f(x)) + D_h(x, z_k),
 \end{equation}
 we can show
   % which has the effect of scaling the gradient by $\epsilon$ as well. 
-\[E_{k+1} - E_k \leq \varepsilon_k\]
+\[E_{k+1} - E_k \leq \varepsilon_k,\]
 where the error scales in the following way 
 \[\varepsilon_k =  \left(\frac{1}{2}(\tilde A_{k+1} -\tilde A_{k})^{2}- \tilde A_{k+1}M\right)\|\nabla f(y_{k+1})\|^2 \]
 for the accelerated gradient method~\eqref{Eq:AcceleratedGrad2}.
 \end{theorem}
-We choose $x = x^\ast$ and $A_k$ such that $\tilde A_{k+1}^{-1}(\tilde A_{k+1} -\tilde A_{k})^{2} \leq 2M$ to ensure the error is non-positive. With these choices, we obtain the following convergence rate,
+We choose $x = x^\ast$ and $A_k$ such that $\tilde A_{k+1}^{-1}(\tilde A_{k+1} -\tilde A_{k})^{2} \leq 2M$ to ensure the error is nonpositive. With these choices, we obtain the following convergence rate,
 \begin{equation}
  f(y_k) -  f(x^\ast) \leq \frac{\tilde A_0(f(x_0) - f(x^\ast)) + D_h(x^\ast, x_0)}{\tilde A_k}.
 \end{equation}
@@ -518,7 +518,7 @@ We give a proof of both of these methods in Appendix~\ref{App:ProofAccGrad}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FRANK-WOLFE %%%%%%%%%%%%%%%%%
 \subsection{The Conditional Gradient Algorithm}
 \label{Sec:CondGrad}
- The conditional Gradient Method, also called the {\em Frank-Wolfe} algorithm~\cite{FrankWolfe}, has garnered renewed interest over the last several years. This interest has inspired several different analyses~\cite{Freund14, Bach15} of the algorithm. Of particular note is the analysis provided by Nesterov~\cite{NesterovCond15}, who used to technique of estimate sequences to evaluate the algorithm under varying smoothness assumptions and step-size conditions. Nesterov also extended the algorithm to provide an analysis of a trust-region Newton-type method. Here, we explore the conditional gradient method from a dynamical view, and give an alternate analysis of both methods. To do so, we first revisit the derivation of the Lyapunov function. Notice, that if $\dot \beta_t >0 $ and we can ensure the following inequality for our dynamical system
+ The conditional gradient method, also called the \emph{Frank-Wolfe} algorithm~\cite{FrankWolfe}, has garnered renewed interest over the last several years. This interest has inspired several different analyses~\cite{Freund14, Bach15} of the algorithm. Of particular note is the analysis provided by Nesterov~\cite{NesterovCond15}, who used to technique of estimate sequences to evaluate the algorithm under varying smoothness assumptions and step-size conditions. Nesterov also extended the algorithm to provide an analysis of a trust-region Newton-type method. Here, we explore the conditional gradient method from a dynamical view, and give an alternate analysis of both methods. To do so, we first revisit the derivation of the Lyapunov function. Notice, that if $\dot \beta_t >0 $ and we can ensure the following inequality for our dynamical system
 \begin{align}\label{Eq:Frank1} 
 0 \leq \langle \nabla f(X_t), x-  Z_t\rangle,
 \end{align}
@@ -600,7 +600,7 @@ x_{k+1} \in \arg \underset{y=(1-\tau_k)x_k + \tau_k x}{\min} \left\{\langle \nab
 %\end{align}
 \end{subequations}
 \end{algorithm}
-This algorithm has the following optimality conditions 
+This algorithm has the following optimality conditions: 
 \begin{subequations}\label{Eq:FrankTrust}
 \begin{align}
 z_{k} &= x_{k} + \frac{A_{k+1}}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeqFrankTrust}\\
@@ -614,25 +614,25 @@ In Appendix~\ref{App:CondMethod} we show how to recover the bound shown by Neste
 %
 %%%%%%%%%%STRONG CONVEXITY
 \section{Strong Convexity}
-In this section, we introduce a new family of momentum dynamics which can be discretized to obtain the accelerated gradient descent algorithm in the setting where the objective function $f$ is strongly convex. In Appendix~\ref{App:StrongConvexity}, we show how to derive a Lyapunov function using the dynamic. Furthermore, we show how to discretize the dynamics to obtain a discrete-time algorithm which can be analyzed by performing an analogous discretization of the Lyapunov function. 
+In this section, we introduce a new family of momentum dynamics which can be discretized to obtain the accelerated gradient descent algorithm in the setting where the objective function $f$ is strongly convex. In Appendix~\ref{App:StrongConvexity}, we show how to derive a Lyapunov function using the momentum dynamics. Furthermore, we show how to discretize the dynamics to obtain a discrete-time algorithm which can be analyzed by performing an analogous discretization of the Lyapunov function. 
 \label{Sec:StrongConv}
 \subsection{Lyapunov Analysis}
 In this section, we study the Lyapunov function~\eqref{eq:general-sc-lyap} in the Euclidean setting,
 \begin{equation}\label{Eq:StrongLyap}
 \E_t = e^{\beta_t}\left(f(X_t) - f(x^\ast) + \frac{\mu}{2}\|x^\ast- Z_t \|^2\right),
 \end{equation}
-and use it to analyze the following dynamic, 
+and use it to analyze the following dynamics: 
 \begin{subequations}\label{Eq:StrongDyn}
 \begin{align}
 Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t\\
 \mu \dot Z_t &= - \mu\dot X_t - \dot \beta_t \nabla f(X_t).
 \end{align}
 \end{subequations}
-We briefly remark that~\eqref{Eq:StrongDyn} is the Euler-Lagrange equation for the following Lagrangian,
+Note that~\eqref{Eq:StrongDyn} is the Euler-Lagrange equation for the following Lagrangian:
 \begin{equation}\label{Eq:LagStrongConv}
 \mathcal{L}(x, \dot x, t) = e^{\gamma_t + \beta_t - \alpha_t}  \left(\frac{\mu}{2}\left\|\dot x\right\|^2 - f(x)\right),
 \end{equation}
-under the same ideal scaling conditions~\eqref{Eq:IdeSca}, where we take $e^{\alpha_t} = \dot \beta_t$. Furthermore, this Lagrangian can be generalized to include non-Euclidean geometries; however, further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to show an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
+under the same ideal scaling conditions~\eqref{Eq:IdeSca}, where we take $e^{\alpha_t} = \dot \beta_t$. Furthermore, this Lagrangian can be generalized to include non-Euclidean geometries; however, further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to establish an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
 $\dot{\tilde{\E}}_t \leq - \dot \beta_t \tilde{\E}_t$
 for 
 \begin{equation}\label{Eq:StrongLyap2}
@@ -658,7 +658,7 @@ where \eqref{Eq:StrongContStrong} uses our strong convexity assumption. In the f
 \subsection{Discretizing the Dynamics}
 As a proof of concept, we begin by analyzing an implicit discretization of the dynamics~\eqref{Eq:StrongDyn}. 
 Denoting  $\tau_k = \frac{A_{k+1} - A_k}{A_k}$, $\dot Z_t = \frac{z_{k+1} - z_k}{\delta}$, $\dot X_t = \frac{x_{k+1} - x_k}{\delta}$, $\frac{1}{\dot \beta_t} = \frac{e^{\beta_t}}{\frac{d}{dt} e^{\beta_t}} = \frac{A_{k}}{\frac{A_{k+1} - A_k}{\delta}}$, 
-we obtain the following algorithm, 
+we obtain the following algorithm:
 \begin{algorithm}[H]
 \caption{Implicit Euler Based Method (Strong Convexity)}
 {\bf Assumptions:} $f, h$ are convex and differentiable.\\
@@ -747,7 +747,7 @@ for both methods~\eqref{Eq:StrongConv1} and~\eqref{Eq:StrongConv2}, where
 \end{equation}
  and 
 \begin{equation}
-\varepsilon_k = \left(\frac{\tau_k^2}{2\mu} - \frac{1}{2L}\right)\|\nabla f(x_k)\|^2 + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2
+\varepsilon_k = \left(\frac{\tau_k^2}{2\mu} - \frac{1}{2L}\right)\|\nabla f(x_k)\|^2 + \left(\frac{\tau_kL}{2}-\frac{\mu}{2\tau_k}\right)\|x_k - y_k\|^2,
 \end{equation}
 for~\eqref{Eq:StrongConv1} and~\eqref{Eq:StrongConv2} respectively.
 \end{theorem}
@@ -759,9 +759,9 @@ which ensures the standard convergence rate for Nesterov's method applied to str
 
 \section{Estimate Sequences}
 
-In this section, we connect our Lyapunov framework to the technique of estimate sequences.  We derive continuous-time estimate sequences directly from our Lyapunov function and demonstrate how these two techniques are equivalent in continuous and discrete time.
+In this section, we connect our Lyapunov framework directly to the technique of estimate sequences.  We derive continuous-time estimate sequences directly from our Lyapunov function and demonstrate how these two techniques are equivalent in continuous and discrete time.
 
-We begin with a brief reivew of the technique of estimate sequences. 
+We begin with a brief review of the technique of estimate sequences. 
 In \cite{Nesterov04}, Nesterov introduced estimate sequences by giving the following definition:
 \begin{definition}\cite[2.2.1]{Nesterov04} A pair of sequences $\{\phi_k(x)\}_{k=1}^\infty$ and $\{A_k\}_{k=0}^\infty$ $A_k \geq1$ is called an {\em estimate sequence} of function $f(x)$ if 
 \[ \frac{1}{A_k} \rightarrow 0 \]
