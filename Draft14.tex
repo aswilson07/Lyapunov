@@ -1004,20 +1004,20 @@ Other extensions of the Lyapunov analysis left for followup work are to nondeter
 Earlier work by Drori and Teboulle~\cite{DroriTeboulle13}, Kim and Fessler~\cite{Kim2016}, Taylor \emph{et al}~\cite{Taylor2016}, and Lessard~\emph{et al}~\cite{Lessard14} have shown that optimization algorithms could be analyzed by solving convex programming problems.  In particular, Lessard~\emph{et al} show that Lyapunov-like potential functions called \emph{integral quadratic constraints} can be found by solving a constant-sized semidefinite programming problem. It would be interesting to see if these results can be adapted to directly search for Lyapunov functions like those studied in this paper.  This would provide a method to automate the analysis of new techniques, possibly moving beyond momentum methods to novel families of optimization techniques.
 
 \section*{Acknowledgements}
-We would like to give special thanks to Andre Wibisono for the many helpful discussion involving this paper. We would also like to thank Orianna Demassi for her very useful feedback and Stephen Tu who caught a small error in a previous version of this paper.
+We would like to give special thanks to Andre Wibisono for the many helpful discussion involving this paper. We would also like to thank Orianna Demassi for her very useful feedback and Stephen Tu who caught a small error in a previous version of this paper.  This work was supported in part by the Mathematical Data Science program of the Office of Naval Research under grant number N00014-15-1-2670.
 \bibliographystyle{plain}
 \bibliography{refs.bib}
 
 \clearpage
 \appendix
 \section*{Appendix}
-We present the analyses for several results presented in the main text. The Appendix is organized as follows: Appendix~\ref{App:Mirror} presents a review of mirror descent from a dynamical perspective. In particular,  a Lyapunov analysis is derived similar to~\eqref{Eq:LyapAnal}. Many parts of this result can be found in~\cite{NemirovskiiYudin}. Appendix~\ref{App:Momentum} presents the proofs for all the algorithms in Section~\ref{Sec:MomLyap} using our Lyapunov framework and Appendix~\ref{App:StrongConvexity} presents results for the strong convexity setting. Finally, Appendix~\ref{App:EstSeq} presents results showing the equivalence between estimate sequences, as formulated by Baes~\cite{Baes09} and our Lyapunov framework. 
- \section{Mirror Descent Dynamic}
+We present the analyses for several results presented in the main text. The Appendix is organized as follows: Appendix~\ref{App:Mirror} presents a review of mirror descent from a dynamical perspective. In particular,  a Lyapunov analysis is derived similar to~\eqref{Eq:LyapAnal}. This part of the presentation is based on~\cite{NemirovskiiYudin}. Appendix~\ref{App:Momentum} presents the proofs for all the algorithms in Section~\ref{Sec:MomLyap} using our Lyapunov framework and Appendix~\ref{App:StrongConvexity} presents results for the strong convexity setting. Finally, Appendix~\ref{App:EstSeq} presents results showing the equivalence between estimate sequences, as formulated by Baes~\cite{Baes09} and our Lyapunov framework. 
+ \section{Mirror Descent Dynamics}
  \label{App:Mirror}
  We begin with a smooth manifold $\X$ with a local metric $\mathrm{g}(x)$ and a function $f:\X \rightarrow \R$ we would like to minimize. The gradient flow associated with $f$ is the flow induced by the differential equation,
 \begin{equation}
 \dot X_t = v(X_t),
-\end{equation} where the vector field $v(X_t)$ is the ``steepest descent'' direction (the direction that makes $f$ decrease the fastest)
+\end{equation} where the vector field $v(X_t)$ is the ``steepest descent'' direction (the direction that makes $f$ decrease the fastest):
 \begin{equation}
 v(x) = \arg \min _v \left\{ \langle \nabla f(X_t), v\rangle + \frac{1}{2}\|v\|_{\mathrm{g}(X_t)}^2\right\}.
 \end{equation}
@@ -1044,7 +1044,7 @@ which we can also write as,
 \begin{equation}\label{Eq:MirrorFlow}
 \frac{d}{dt} \nabla h(X_t) = - \nabla f(X_t).
 \end{equation}
-While on the surface, the ability to rewrite \eqref{Eq:NatGrad} as \eqref{Eq:MirrorFlow} appears to be a nice algebraic trick, it is actually a manifestation of the following fact: \begin{center}{\em When $h:\X \rightarrow \R$ is strictly convex and $\mathrm{g}(x)= \nabla^2 h(x)$, there is a special map \\$\phi:\X \rightarrow \mathcal{Y}$ called the {\em mirror map}, given by $\phi = \nabla h$, whose push-forward maps\\ a gradient flow on $\X$ to a gradient flow on $\mathcal{Y}$. \cite{Acceleration}}\end{center} As a quick exercise, we can check that the following holds under the mirror map:
+The ability to rewrite \eqref{Eq:NatGrad} as \eqref{Eq:MirrorFlow} is a manifestation of the following fact: \begin{center}{\em When $h:\X \rightarrow \R$ is strictly convex and $\mathrm{g}(x)= \nabla^2 h(x)$, there is a special map \\$\phi:\X \rightarrow \mathcal{Y}$ called the {\em mirror map}, given by $\phi = \nabla h$, whose push-forward maps\\ a gradient flow on $\X$ to a gradient flow on $\mathcal{Y}$. \cite{Acceleration}}\end{center} It can be checked that the following holds under the mirror map:
 
 \begin{center}
 \begin{tikzpicture}
@@ -1092,10 +1092,10 @@ While on the surface, the ability to rewrite \eqref{Eq:NatGrad} as \eqref{Eq:Mir
 %\frac{d}{dt} \nabla h(X_t)  =- \nabla f(X_t)
 %\end{equation}
 %The importance of the Hessian Riemannian gradient flow \eqref{Eq:NatGrad} is that there exists a Lyapunov functional that can be used to show convergence of the dynamic.%, which 
-\paragraph{Time-Dilation} 
+\paragraph{Time-dilation} 
 The gradient flow equation does not explicitly depend on time. As in \cite{Acceleration}, let  $\tau: \mathbb{T} \rightarrow \mathbb{T}'$ be a smooth twice-continuously differential function, where $\mathbb{T}' = \tau(\mathbb{T}) \subseteq \R$ is the image of $\mathbb{T}$. Given a curve $X:\mathbb{T}' \rightarrow \X$, we consider the reparameterized curve $Y:\mathbb{T} \rightarrow \X$ given by 
 \[Y_t = X_{\tau(t)}.\]
- That is,  the new curve is obtained by traversing the old curve at a new speed of time. If we consider the arbitrary time-dilation function $\tau(t) = e^{\beta(t)}:= e^{\beta_t}$, where $\dot \beta_t >0$, applied to the mirror descent dynamics \eqref{Eq:MirrorFlow}, we obtain the following equation, %that the time-dilated mirror descent dynamic is given by the equation
+ That is,  the new curve is obtained by traversing the old curve at a new speed. If we consider the arbitrary time-dilation function $\tau(t) = e^{\beta(t)}:= e^{\beta_t}$, where $\dot \beta_t >0$, applied to the mirror descent dynamics \eqref{Eq:MirrorFlow}, we obtain the following equation, %that the time-dilated mirror descent dynamic is given by the equation
 \begin{equation}\label{Eq:MirrorTime}
 \frac{d}{dt} \nabla h(X_t) = -\dot \tau(t)\nabla f(X_t) = - \dot \beta_t e^{\beta_t} \nabla f(X_t).
 \end{equation}
