@@ -185,7 +185,7 @@ In Section~\ref{Sec:MomLyap}, we show how this Lyapunov function emerges from a 
 %
 %
 %ACCC GRAD STRONG
-\paragraph{Accelerated Gradient Descent (Strong Convexity)}
+\paragraph{Accelerated gradient descent (strong convexity)}
 In this paper, we show that the following function 
    \begin{equation}\label{eq:general-sc-lyap}
   \E_t =  e^{\beta_t} \left(f(X_t) - f(x^\ast) + \mu D_h\Big(x^\ast ,X_t + e^{-\alpha_t} \dot X_t\Big)\right),
@@ -940,7 +940,7 @@ then the above discussion shows that $\{\phi_t(x), e^{\beta_t}\}$ is a continuou
 %
 %
 \subsubsection{Conditional Gradient Method} 
-\paragraph{Continuous-time Estimate Sequence}
+\paragraph{Continuous-time estimate sequence}
 For the conditional gradient method, the following condition needs to hold:
 \begin{align}\label{Eq:InEq4}
 0 &\leq \int_0^t\dot \beta_t e^{\beta_t}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left( e^{ \beta_s}  f(X_s)\right)\,ds.
