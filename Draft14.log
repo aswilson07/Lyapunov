@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  7 NOV 2016 21:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  8 NOV 2016 07:02
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -945,30 +945,30 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
  [4]
 [5]
 
-! LaTeX Error: \begin{align} on input line 224 ended by \end{align*}.
+! LaTeX Error: \begin{align} on input line 226 ended by \end{align*}.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.228  \end{align*}
+l.230  \end{align*}
                    
 ? 
 [6] [7]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 297.
+put line 299.
  [8]
-Overfull \hbox (13.46329pt too wide) in paragraph at lines 355--355
+Overfull \hbox (13.46329pt too wide) in paragraph at lines 356--356
 [] 
  []
 
 [9] [10] [11] [12] [13] [14] [15] [16]
-Overfull \hbox (25.12206pt too wide) in paragraph at lines 710--710
+Overfull \hbox (25.12206pt too wide) in paragraph at lines 711--711
 [] 
  []
 
 [17] [18] [19]
-Overfull \hbox (32.2502pt too wide) in paragraph at lines 845--854
+Overfull \hbox (32.2502pt too wide) in paragraph at lines 846--855
 [][] 
  []
 
@@ -976,101 +976,101 @@ Overfull \hbox (32.2502pt too wide) in paragraph at lines 845--854
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [20]
-Overfull \hbox (41.08197pt too wide) in paragraph at lines 886--886
+Overfull \hbox (41.08197pt too wide) in paragraph at lines 887--887
 [] 
  []
 
 [21] [22] [23] (./Draft14.bbl [24] [25]) [26] [27
 
 ] [28]
-Overfull \hbox (31.26837pt too wide) in paragraph at lines 1171--1171
+Overfull \hbox (31.26837pt too wide) in paragraph at lines 1170--1170
 [] 
  []
 
 [29] [30] [31]
-Overfull \hbox (25.65717pt too wide) in paragraph at lines 1282--1282
+Overfull \hbox (25.65717pt too wide) in paragraph at lines 1281--1281
 [] 
  []
 
 [32]
-Overfull \hbox (12.8775pt too wide) in paragraph at lines 1316--1316
+Overfull \hbox (12.8775pt too wide) in paragraph at lines 1315--1315
 [] 
  []
 
 
-Overfull \hbox (18.58214pt too wide) in paragraph at lines 1341--1341
+Overfull \hbox (18.58214pt too wide) in paragraph at lines 1340--1340
 [] 
  []
 
 [33] [34]
-Overfull \hbox (9.87473pt too wide) in paragraph at lines 1381--1381
+Overfull \hbox (9.87473pt too wide) in paragraph at lines 1380--1380
 [] 
  []
 
 [35]
-Overfull \hbox (6.93pt too wide) in paragraph at lines 1470--1470
+Overfull \hbox (6.93pt too wide) in paragraph at lines 1469--1469
 [] 
  []
 
 [36]
-Overfull \hbox (36.92377pt too wide) in paragraph at lines 1501--1501
+Overfull \hbox (36.92377pt too wide) in paragraph at lines 1500--1500
 [] 
  []
 
 [37]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\hbox' on input line 1516.
+(hyperref)                removing `\hbox' on input line 1515.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\mathsurround' on input line 1516.
+(hyperref)                removing `\mathsurround' on input line 1515.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\z@' on input line 1516.
+(hyperref)                removing `\z@' on input line 1515.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\unskip' on input line 1516.
+(hyperref)                removing `\unskip' on input line 1515.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\@@italiccorr' on input line 1516.
+(hyperref)                removing `\@@italiccorr' on input line 1515.
 
 
-Overfull \hbox (50.43042pt too wide) in paragraph at lines 1547--1547
+Overfull \hbox (50.43042pt too wide) in paragraph at lines 1546--1546
 [] 
  []
 
 [38] [39]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\hbox' on input line 1560.
+(hyperref)                removing `\hbox' on input line 1559.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\mathsurround' on input line 1560.
+(hyperref)                removing `\mathsurround' on input line 1559.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\z@' on input line 1560.
+(hyperref)                removing `\z@' on input line 1559.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\unskip' on input line 1560.
+(hyperref)                removing `\unskip' on input line 1559.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\@@italiccorr' on input line 1560.
+(hyperref)                removing `\@@italiccorr' on input line 1559.
 
 
-Overfull \hbox (38.2805pt too wide) in paragraph at lines 1592--1592
+Overfull \hbox (38.2805pt too wide) in paragraph at lines 1591--1591
 [] 
  []
 
 [40]
-Overfull \hbox (17.9873pt too wide) in paragraph at lines 1621--1621
+Overfull \hbox (17.9873pt too wide) in paragraph at lines 1620--1620
 [] 
  []
 
@@ -1087,7 +1087,7 @@ Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1723.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1723.
 
 Package rerunfilecheck Info: File `Draft14.out' has not changed.
-(rerunfilecheck)             Checksum: 4CA953F57B918975212C53208B1DC62F;2985.
+(rerunfilecheck)             Checksum: 17E4B91B81D68D18609A42BD0E55BA96;2986.
 
 
 LaTeX Warning: There were multiply-defined labels.
@@ -1097,11 +1097,11 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1723.
 Here is how much of TeX's memory you used:
  21243 strings out of 493089
  413501 string characters out of 6134842
- 497431 words of memory out of 5000000
+ 497436 words of memory out of 5000000
  23961 multiletter control sequences out of 15000+600000
  17784 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,19n,66p,1204b,725s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,19n,66p,1203b,725s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -1125,10 +1125,10 @@ st/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist
 onts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fo
 nts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/texmf-dist/fon
 ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Draft14.pdf (43 pages, 444744 bytes).
+Output written on Draft14.pdf (43 pages, 444655 bytes).
 PDF statistics:
- 1393 PDF objects out of 1440 (max. 8388607)
- 1016 compressed objects within 11 object streams
+ 1392 PDF objects out of 1440 (max. 8388607)
+ 1015 compressed objects within 11 object streams
  347 named destinations out of 1000 (max. 500000)
  333 words of extra memory for PDF output out of 10000 (max. 10000000)
 

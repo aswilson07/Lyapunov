@@ -1635,7 +1635,7 @@ Going the other direction, from our Lyapunov analysis we can derive the followin
 \begin{align}
 E_k &\leq E_0 + \tilde \varepsilon_{k+1}\\
 A_{k}(f(x_{k}) - f(x)) + D_h(x, z_{k}) &\leq A_0 (f(x_0) - f(x)) + D_h(x, z_0) + \tilde \varepsilon_{k+1}\notag\\
-A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + \left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) + \tilde \varepsilon_{k+1}\notag \\
+A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + A_0\left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) + \tilde \varepsilon_{k+1}\notag \\
 A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) + \tilde \varepsilon_{k+1}.
 \label{Eq:EstSeq}
 \end{align}

@@ -19,7 +19,7 @@
 \BOOKMARK [3][-]{subsubsection.6.1.2}{Conditional Gradient Method}{subsection.6.1}% 19
 \BOOKMARK [2][-]{subsection.6.2}{Accelerated Gradient Strong Convexity}{section.6}% 20
 \BOOKMARK [1][-]{section.7}{Discussion}{}% 21
-\BOOKMARK [1][-]{appendix.A}{Mirror Descent Dynamic}{}% 22
+\BOOKMARK [1][-]{appendix.A}{Mirror Descent Dynamics}{}% 22
 \BOOKMARK [2][-]{subsection.A.1}{Lyapunov Analysis}{appendix.A}% 23
 \BOOKMARK [1][-]{appendix.B}{Momentum Algorithms}{}% 24
 \BOOKMARK [2][-]{subsection.B.1}{Proof of Theorem 2}{appendix.B}% 25
