@@ -114,7 +114,7 @@ where $\X \subseteq \R^d$ is a closed convex set and $f \colon \X \to \R$ is a c
 % We primarily focus on the case $\X = \R^d$ unless explicitly noted otherwise. 
 %We also assume $f$ has a unique minimizer, $x^* \in \X$, satisfying the optimality condition $\nabla f(x^*) = 0$. 
 We use the standard Euclidean norm $\|x\| = \langle x,x \rangle^{1/2}$ throughout.
-We consider the general non-Euclidean setting in which the space $\X$ is endowed with a distance-generating function $h \colon \X \to \R$ that is convex and essentially smooth (i.e. $h$ is continuously differentiable in $\X$, and $\|\nabla h(x)\|_* \to \infty$ as $\|x\| \to \infty$). The function $h$ can be used to define a measure of distance in $\X$ via its Bregman divergence:
+We consider the general non-Euclidean setting in which the space $\X$ is endowed with a distance-generating function $h \colon \X \to \R$ that is convex and essentially smooth (i.e., $h$ is continuously differentiable in $\X$, and $\|\nabla h(x)\|_* \to \infty$ as $\|x\| \to \infty$). The function $h$ can be used to define a measure of distance in $\X$ via its Bregman divergence:
 \begin{align*}
 D_h(y,x) = h(y) - h(x) - \langle \nabla h(x), y-x \rangle,
 \end{align*}
@@ -129,7 +129,7 @@ The intuition for solving problem~\eqref{eq:main-problem} with momentum methods 
  \begin{align}\label{eq:heavy-ball-ode}
  m \frac{d^2x}{dt^2}& = - \nabla f(x) - m \dot \gamma_t \frac{dx}{dt}
  \end{align}
-corresponds to the equations of motion of an object with mass $m$ in the presence of  friction or viscosity and a potential $f$. The trajectories of this dynamical system will tend to have directions of motion that persist over time, however for some values of $\gamma_t$, the dynamics will converge to the minimum of $f$.  In the limit as the mass goes to zero, and letting $\gamma_t \propto t/m$, we recover the gradient-flow dynamics, which is the continuous-time limit of gradient descent~\cite{Acceleration}.  Thus, the mass term here serves to \emph{accelerate} the progress towards the bottom of the well. 
+corresponds to the equations of motion of an object with mass $m$ in the presence of  friction or viscosity, captured by the derivative of a function $\gamma_t$, and a potential $f$. The trajectories of this dynamical system will tend to have directions of motion that persist over time; however, for some values of $\gamma_t$, the dynamics will converge to the minimum of $f$.  In the limit as the mass goes to zero, and letting $\gamma_t \propto t/m$, we recover the gradient-flow dynamics, which is the continuous-time limit of gradient descent~\cite{Acceleration}.  Thus, the mass term here serves to \emph{accelerate} the progress towards the bottom of the well. 
 
 In seminal work, Polyak defined and analyzed the Heavy Ball method as an application of Euler's method to the dynamical system~\eqref{eq:heavy-ball-ode}, when $\gamma_t$ is linear.  He was able to show \emph{local convergence} of this method, but was unable to prove global convergence.  Moreover, his local convergence result required the assumption that $f$ is strongly convex in the neighborhood of the associated stationary point.
 
@@ -137,7 +137,7 @@ Until recently, this ODE perspective on optimization algorithms was largely aban
  \begin{equation}\label{Eq:SuBoydCandes}
  \ddot X_t + \frac{r}{t} \dot X_t + \nabla f(X_t) = 0,\,\,\,\,r \geq 3.
  \end{equation}
-This is equivalent to~\eqref{eq:heavy-ball-ode}, where the dynamics model an object with unit mass and the damping term is logarithmic, $\gamma_t = r\log t$.  They also established a convergence rate of $O(1/t^2)$ for this continuous-time system via a Lyapunov function argument. This matches the $O(1/\epsilon k^2)$ convergence rate of accelerated gradient descent, given the discretization $t= \sqrt\epsilon k$. Thus, the convergence rate is maintained in passing from continuous time to discrete time. Two things remain unclear from their analysis however:  they introduce an additional sequence $\{y_k\}_{k=1}^\infty$ while discretizing the ODE~\cite[Sec 2]{Acceleration},  which does not correspond to a straightforward discretization technique; and they do not demonstrate what connection---if any---there is between the Lypaunov argument used to analyze the continuous-time dynamics and the technique of estimate sequences used to analyze the discrete-time algorithm. 
+This is equivalent to~\eqref{eq:heavy-ball-ode}, where the object being modeled has unit mass and the damping term is logarithmic, $\gamma_t = r\log t$.  They also established a convergence rate of $O(1/t^2)$ for this continuous-time system via a Lyapunov function argument. This matches the $O(1/\epsilon k^2)$ convergence rate of accelerated gradient descent, given the discretization $t= \sqrt\epsilon k$. Thus, the convergence rate is maintained in passing from continuous time to discrete time. Two things remain unclear from their analysis however:  they introduce an additional sequence $\{y_k\}_{k=1}^\infty$ while discretizing the ODE~\cite[Sec 2]{Acceleration},  which does not correspond to a straightforward discretization technique; and they do not demonstrate what connection---if any---there is between the Lyapunov argument used to analyze the continuous-time dynamics and the technique of estimate sequences used to analyze the discrete-time algorithm. 
 
 Krichene, Bartlett and Bayen~\cite{Krichene15} derived a modified accelerated mirror descent algorithm using a ``discretized'' Lyapunov function. However, their proof targeted a different algorithm than the algorithm in Nesterov's original work~\cite{Nesterov05}. In particular, their analysis entailed an additional smoothness assumption which is not necessary for the original algorithm~\cite{Nesterov05}, or for the original proof technique using estimate sequences.\footnote{In particular, they assume $\frac{\ell }{2} \|x-y\|^2 \leq  D_h(x,y) \leq \frac{L}{2}\|x-y\|^2$%, so that for all intensive purposes, their setting is given by the norm
 . This additional assumption greatly simplifies the proof. However, only the assumption of an upper bound is needed for the most general form of accelerated methods is that $\frac{\ell }{2} \|x-y\|^2 \leq  D_h(x,y)$.} See also Nemirovski and Yudin's original work~\cite{NemirovskiiYudin} for a continuous-time perspective on mirror descent and a Lyapunov analysis of convergence.
@@ -146,7 +146,7 @@ Wibisono, Wilson, and Jordan~\cite{Acceleration} introduced a class of dynamical
  \begin{align} \label{Eq:ELBreg} 
 \frac{d}{dt} \nabla h(X_t + e^{-\alpha_t} \dot X_t) = -e^{\alpha_t+\beta_t} \nabla f(X_t)\,,
 \end{align}
-where $h$ is a strongly convex function associated with the geometry of the space and where $\alpha_t$ and $\beta_t$ are smooth functions of time.  In the case where $\alpha_t=-\log m$, and $\beta_t = \log m$,  the continuous-time limit $m \rightarrow 0$ of this ODE recovers the mirror descent dynamics~\cite[(78)]{Acceleration}, with $h$ playing the role of the distance-generating function.  Indeed, the original motivation for mirror descent by Nemirovski and Yudin was from this continuous perspective, and they demonstrated a Lyapunov argument for the convergence of the continuous-time dynamics (see Section 3.1 of Nemirovski and Yudin~\cite{NemirovskiiYudin}).
+where $h$ is a strongly convex function associated with the geometry of the space and where $\alpha_t$ and $\beta_t$ are smooth functions of time.  In the case where $\alpha_t=-\log m$, and $\beta_t = \log m$,  the continuous-time limit $m \rightarrow 0$ of this ODE recovers the mirror descent dynamics~\cite{Acceleration}, with $h$ playing the role of the distance-generating function.  Indeed, the original motivation for mirror descent by Nemirovski and Yudin was from this continuous perspective, and they demonstrated a Lyapunov argument for the convergence of the continuous-time dynamics (see Section 3.1 of Nemirovski and Yudin~\cite{NemirovskiiYudin}).
 
 Wibisono \emph{et al.}~\cite{Acceleration} imposed the following conditions on the functions $\alpha_t$, $\beta_t$, and $\gamma_t$:
 \begin{subequations}\label{Eq:IdeSca}
@@ -164,15 +164,17 @@ Lyapunov's method~\cite{Lyapunov} is based on the idea of constructing a positiv
 \end{equation*}
 The existence of such a \emph{Lyapunov function} guarantees that the dynamical system converges: if the function is positive yet strictly decreasing along all trajectories, then the dynamical system must eventually approach a region where $\E(X)$ is minimal.  If this region coincides with the stationary points of the dynamics, then all trajectories must converge to a stationary point.
 
-In this paper, we are interested in obtaining Lyapunov functions for dynamical systems designed for optimization.  In optimization, we are typically interested in the~\emph{rate of convergence} of a method, not mere convergence.  To facilitate such rate analysis, we study time-dependent Lyapunov functions.  Though it is unconventional to have Lyapunov functions depend explicitly on time, like the dynamics~\eqref{Eq:ELBreg}, our Lyapunov function is parameterized explicitly by $\alpha_t$, $\beta_t$, and $\gamma_t$.  The family of dynamics that obey the ideal scaling constraints~\eqref{Eq:IdeSca} is invariant under time reparemeterizations.  Such time-invariance properties provide more flexibility in algorithm design and analysis, as we will see throughout this paper.
+In this paper, we are interested in obtaining Lyapunov functions for dynamical systems designed for optimization.  In optimization, we are typically interested in the~\emph{rate of convergence} of a method, not mere convergence.  To facilitate such rate analysis, we study time-dependent Lyapunov functions.  Though it is unconventional to have Lyapunov functions depend explicitly on time, our Lyapunov function is parameterized explicitly by $\alpha_t$, $\beta_t$, and $\gamma_t$, reflecting the dependence of the dynamics~\eqref{Eq:ELBreg} on these functions.
+
+The family of dynamics that obey the ideal scaling constraints~\eqref{Eq:IdeSca} is invariant under time reparametrizations.  Such time-invariance properties provide more flexibility in algorithm design and analysis, as we will see throughout this paper.
 
 We begin by presenting time-varying Lyapunov functions that can verify the convergence rates of continuous-time momentum flows, and we then turn to the corresponding discrete-time analysis.
 
-\paragraph{General Accelerated Mirror Descent} In Wibisono {\em et al.}~\cite{Acceleration}, the following Lyapunov function 
+\paragraph{General Accelerated Mirror Descent} In Wibisono {\em et al.}~\cite{Acceleration}, the following Lyapunov function:
 \begin{align}\label{Eq:E}
 \E_t \,=\, e^{\beta_t} (f(X_t)-f(x^*)) + D_h\left(x^*, \, X_t + e^{-\alpha_t} \dot X_t\right),
 \end{align}
-was introduced to analyze the flow that forms the basis for accelerated gradient descent and its non-Euclidean variants.
+was introduced to analyze the flow that forms the basis for accelerated mirror descent.
 %  Notice, assuming we start from rest $\dot X_0 = 0$, the  Lyapunov property allows us to conclude,
  %\begin{equation*}
  %f(X_t) - f(x^\ast)\leq \frac{e^{\beta_0} (f(X_0) - f(x^\ast) )+ D_h(x^\ast, X_0)}{e^{\beta_t}}.
@@ -199,27 +201,27 @@ is a Lyapunov function for a family of momentum dynamics when $f$ is $\mu$-stron
 
 Note that in both the strongly convex and weakly convex setting, the structure of the Lyapunov function allows us to derive a rate of convergence for the optimality gap $f(X_t) - f(x^\ast)$. In particular, the Lyapunov property $\E_t \leq \E_0$ implies 
 \begin{equation}\label{eq:Guarantee1}
-f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast)) + D_h(x^\ast, X_0 + e^{-\alpha_0} \dot X_0)}{e^{\beta_t}}
+f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast)) + D_h(x^\ast, X_0 + e^{-\alpha_0} \dot X_0)}{e^{\beta_t}},
 \end{equation}
 and 
 \begin{equation}
 f(X_t) - f(x^\ast) \leq \frac{e^{\beta_0}(f(X_0) - f(x^\ast) +\mu D_h(x^\ast ,X_0 -e^{-\alpha_0} \dot X_0))}{e^{\beta_t}},
 \end{equation}
-for~\eqref{Eq:E} and \eqref{eq:general-sc-lyap} respectively. The typical convention is that the dynamics start from rest $\dot X_0 = 0$. Notice that we obtain the same rates of convergence in these two settings. However, the family of dynamics corresponding to the Lyapunov function in the strongly convex setting uses the strong convexity of $f$, and this allows us to obtain a tighter bound in discrete time.
+for~\eqref{Eq:E} and \eqref{eq:general-sc-lyap} respectively. The typical convention is that the dynamics start from rest $\dot X_0 = 0$. Notice that we obtain the same rates of convergence in these two settings. However, the family of dynamics corresponding to the Lyapunov function in the strongly convex setting exploits the strong convexity of $f$, and this allows us to obtain a tighter bound in discrete time.
 
 
 \section{Momentum Methods}
 \label{Sec:MomLyap}
 In this section, we introduce two families of momentum dynamics, both which are generated by functionals defined on continuous-time curves. We illustrate how to derive a Lyapunov function from these dynamics. Next, we show how these dynamics can be discretized to obtain optimization algorithms. The same discrete-time mappings can be applied to the Lyapunov function, resulting in a tool which can be used to analyze the discrete-time algorithms. We provide examples of this procedure for the quasi-monotone subgradient algorithm, accelerated gradient descent, the conditional gradient algorithm, and several other novel algorithms. 
  \subsection{Lyapunov Analysis}
-We study dynamics that are based on the Euler-Lagrange equation \eqref{Eq:ELBreg} in the setting where the ideal scaling~\eqref{Eq:IdeScaBet} holds with equality~$\dot \beta_t = e^{\alpha_t}$. Notice, now the entire Bregman Lagrangian is parameterized by $\beta_t$, which determines the convergence rate:
+We study dynamics that are based on the Euler-Lagrange equation \eqref{Eq:ELBreg} in the setting where the ideal scaling~\eqref{Eq:IdeScaBet} holds with equality~$\dot \beta_t = e^{\alpha_t}$. This implies that the Bregman Lagrangian is parameterized by $\beta_t$, which determines the convergence rate:
  \begin{subequations}\label{Eq:EL}
  \begin{align}
  Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t \label{Eq:ELZ},\\
  \frac{d}{dt}\nabla h(Z_t) &= -\dot \beta_t e^{\beta_t} \nabla f(X_t)\label{Eq:ELH}.
  \end{align}
  \end{subequations}
-We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for the momentum dynamics~\eqref{Eq:EL}; this derivation is similar in spirit to the Lyapunov analysis of mirror descent by Nemirovski and Yudin. We first point the following nice identity, 
+We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for the momentum dynamics~\eqref{Eq:EL}; this derivation is similar in spirit to the Lyapunov analysis of mirror descent by Nemirovski and Yudin.  We have:
 \begin{subequations}
 \begin{align}
  \frac{d}{dt}D_h\left(x, Z_t\right)  &= \frac{d}{dt}\left( h(x) - h(Z_t) - \langle \nabla h(Z_t), x- Z_t\rangle\right)  \notag\\
@@ -227,7 +229,7 @@ We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for t
  &= -\left\langle \frac{d}{dt} \nabla h\left(Z_t\right), x - Z_t\right\rangle. \, \notag%\label{eq:apply-identity}\\
  \end{align*}
  \end{subequations}
-  Using this identity, we have the following argument:
+Using this identity, we obtain the following argument:
 %\begin{small}
 \begin{subequations}\label{Eq:LyapAnal}
 \begin{align}
@@ -247,7 +249,7 @@ Here~\eqref{eq:apply-dynamics} uses the momentum dynamics%~\eqref{Eq:EL}.
 ~\eqref{Eq:ELH} and~\eqref{Eq:ELZ}. 
 The inequality~\eqref{eq:apply-convexity} follows from the convexity of $f$. Rearranging terms and taking $x = x^\ast$, we have shown that the function~\eqref{Eq:E} has nonpositive derivative for all $t$ and is hence a Lyapunov function for the family of momentum dynamics~\eqref{Eq:EL}.
 
- The structure of this derivation provides a tool for us to analyze several discretizations of momentum dynamics~\eqref{Eq:ELBreg}.
+ The structure of this derivation provides a tool for the analysis of several discretizations of momentum dynamics~\eqref{Eq:ELBreg}.
  In the following subsections, we demonstrate how to analyze the quasi-monotone subgradient method~\cite{Nesterov15}, the class of accelerated gradient methods~\cite{Baes09,Acceleration}, and the general family of conditional gradient algorithms~\cite{NesterovCond15} using the Lyapunov argument above.
  \subsection{Implicit and explicit Euler methods}
 The methods that we study are based on compositions of Euler discretizations of the ODE $ \dot X_t = v(X_t)$.  Recall that the \emph{explicit Euler method} evaluates the vector field at the current point to determine a discrete-time step:
@@ -289,9 +291,9 @@ The explicit Euler method, on the other hand, results in the sequence
  \begin{align*}
 \nabla h(z_{k+1}) - \nabla h(z_k) = (A_{k+1} - A_k) \nabla f(x_{k}).
  \end{align*}
- In what follows, we analyze three combinations of the implicit and explicit Euler methods using our Lyapunov framework. Furthermore, we show there are at least two slightly different methods, which do not comport to a straight-forward discretization technique, that can also be analyzed using the above Lyapunov analysis. 
+ In the following, we analyze three combinations of the implicit and explicit Euler methods using our Lyapunov framework. Furthermore, we show there are at least two slightly different methods, which do not comport to a straightforward discretization technique, that can also be analyzed using our Lyapunov analysis. 
    \subsection{Momentum-Based Algorithms}
- We give a short analysis of the result of implicit Euler discretization of both~\eqref{Eq:Z} and~\eqref{Eq:X}. We can write the algorithm as follows,
+ We give a short analysis of the result of implicit Euler discretization of both~\eqref{Eq:Z} and~\eqref{Eq:X}. We can write the algorithm as follows:
 \begin{algorithm}[H]
 %\begin{subequations}\label{Eq:AlgoForward}
 \caption{Implicit Euler Based Method}
@@ -311,14 +313,13 @@ z_{k+1} = x_{k+1} + \frac{A_k}{A_{k+1} -A_{k}} (x_{k+1} - x_k),\label{Eq:ZSeq}\\
 \nabla h(z_{k+1}) - \nabla h(z_k) = -(A_{k+1} - A_{k})\nabla f(x_{k+1})\label{Eq:XSeq}.
 \end{align}
 \end{subequations}
-\noindent To analyze this algorithm, we make the same continuous to discrete time identifications to~\eqref{Eq:E}, which results in the following 
-discrete-time energy function,
+\noindent To analyze this algorithm, we make the same continuous to discrete time identifications as in~\eqref{Eq:E}, which results in the following discrete-time energy function:
 \begin{align}\label{Eq:DiscLyapFunc1}
  E_k = A_k(f(x_k) - f(x)) + D_h(x, z_{k}). 
  \end{align}
 \begin{theorem}
 Consider the 
- Euler discretization~\eqref{Eq:ImplicEul}. Using the discrete Lyapunov function~\eqref{Eq:DiscLyapFunc1}, the following bound holds,
+ Euler discretization~\eqref{Eq:ImplicEul}. Using the discrete Lyapunov function~\eqref{Eq:DiscLyapFunc1}, the following bound holds:
 \begin{equation*}
 E_{k+1} - E_k \leq \varepsilon_k,
 \end{equation*}
@@ -348,8 +349,8 @@ E_{k+1} - E_k &= A_{k+1}(f(x_{k+1}) - f(x)) - A_k(f(x_k) - f(x)) -\langle \nabla
 &\quad + A_k \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle- D_h(z_{k+1}, z_k)\notag\\
 %
 &\leq A_{k+1}(f(x_{k+1}) - f(x)) - A_k(f(x_k) - f(x)) + (A_{k+1} - A_k)(f(x) - f(x_{k+1})) \notag\\
-&\quad  + A_k (f(x_k) - f(x_{k+1}))- D_h(z_{k+1}, z_k),\notag \\
-&=- D_h(z_{k+1}, z_k) \notag
+&\quad  + A_k (f(x_k) - f(x_{k+1}))- D_h(z_{k+1}, z_k)\notag \\
+&=- D_h(z_{k+1}, z_k), \notag
 %& {\color{red}= - \frac{d}{dt}\left\{ e^{\beta_t}\left(f(X_t) - f(x)\right)\right\}\label{Eq:cond1}}\\
 %& = - D_h(z_{k+1}, z_k), \notag
 \end{align}
@@ -358,9 +359,9 @@ E_{k+1} - E_k &= A_{k+1}(f(x_{k+1}) - f(x)) - A_k(f(x_k) - f(x)) -\langle \nabla
 where the inequality follows from the convexity of $f$. 
 \end{proof}
 %From \eqref{Eq:LyapDiscArg}, we have shown that $E_{k+1} - E_k \leq \varepsilon_k $, where the error $\varepsilon_k = -D_h(z_{k+1}, z_k) \leq 0 $ is negative. 
-\noindent Taking $x = x^\ast$, writing $E_k \leq E_0$ allows us to obtain a convergence rate guarantee analogous to~\eqref{eq:Guarantee1},
+\noindent Taking $x = x^\ast$, and writing $E_k \leq E_0$ allows us to obtain a convergence rate guarantee analogous to~\eqref{eq:Guarantee1}:
 \begin{equation}
-f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast, x_0) + A_0 (f(x_0) - f(x^\ast))}{A_k},
+f(x_k) - f(x^\ast) \leq \frac{D_h(x^\ast, x_0) + A_0 (f(x_0) - f(x^\ast))}{A_k}.
 \end{equation} 
 %which is equivalent to using the same discrete-time identifications. 
 %
@@ -368,7 +369,7 @@ We remark that the subequations corresponding to~\eqref{Eq:AlgoForward1} are dif
 \begin{equation}
 x_{k+1} = \arg\min_{x\in\X} \left\{ f(x) + \frac{1}{A_{k+1} - A_k}D_h\left(x, x_k\right)\right\},
 \end{equation}
-involves applying the implicit Euler method to the mirror descent dynamic, and both yield a $O(1/A_k)$ convergence rate. 
+involves applying the implicit Euler method to the mirror descent dynamics, and both yield a $O(1/A_k)$ convergence rate. 
 %MJ This sentence isn't clear, and I'm not sure it's worth including.
 %Nevertheless, the proof structure which we demonstrated from this thought experiment serves as the backbone for analyzing many discretizations of \eqref{Eq:DynaBeta}, several of which constitute popular methods used throughout optimization.
 
