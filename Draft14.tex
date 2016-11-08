@@ -219,13 +219,20 @@ We study dynamics that are based on the Euler-Lagrange equation \eqref{Eq:ELBreg
  \frac{d}{dt}\nabla h(Z_t) &= -\dot \beta_t e^{\beta_t} \nabla f(X_t)\label{Eq:ELH}.
  \end{align}
  \end{subequations}
-We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for the momentum dynamics~\eqref{Eq:EL}; this derivation is similar in spirit to the Lyapunov analysis of mirror descent by Nemirovski and Yudin.
-  
-%\begin{small}
-\begin{subequations}\label{Eq:LyapAnal}
+We begin by demonstrating how to derive the Lyapunov function~\eqref{Eq:E} for the momentum dynamics~\eqref{Eq:EL}; this derivation is similar in spirit to the Lyapunov analysis of mirror descent by Nemirovski and Yudin. We first point the following nice identity, 
+\begin{subequations}
 \begin{align}
  \frac{d}{dt}D_h\left(x, Z_t\right)  &= \frac{d}{dt}\left( h(x) - h(Z_t) - \langle \nabla h(Z_t), x- Z_t\rangle\right)  \notag\\
 & = - \langle \nabla h(Z_t), \dot Z_t\rangle -\left\langle \frac{d}{dt} \nabla h(Z_t),x - Z_t\right\rangle  + \langle \nabla h(Z_t), \dot Z_t\rangle \notag\\ 
+ &= -\left\langle \frac{d}{dt} \nabla h\left(Z_t\right), x - Z_t\right\rangle. \, \notag%\label{eq:apply-identity}\\
+ \end{align*}
+ \end{subequations}
+  Using this identity, we have the following argument:
+%\begin{small}
+\begin{subequations}\label{Eq:LyapAnal}
+\begin{align}
+ \frac{d}{dt}D_h\left(x, Z_t\right)  %&= \frac{d}{dt}\left( h(x) - h(Z_t) - \langle \nabla h(Z_t), x- Z_t\rangle\right)  \notag\\
+%& = - \langle \nabla h(Z_t), \dot Z_t\rangle -\left\langle \frac{d}{dt} \nabla h(Z_t),x - Z_t\right\rangle  + \langle \nabla h(Z_t), \dot Z_t\rangle \notag\\ 
  &= -\left\langle \frac{d}{dt} \nabla h\left(Z_t\right), x - Z_t\right\rangle \, \notag\\%\label{eq:apply-identity}\\
 &=   \dot \beta_t e^{\beta_t}\left\langle\nabla f(X_t), x  - X_{t} - \frac{1}{\dot \beta_t} \dot X_{s} \right\rangle  \, \label{eq:apply-dynamics}   \\
 & =   \dot \beta_t e^{\beta_t} \langle \nabla f(X_t), x - X_t \rangle\, - e^{ \beta_t} \langle \nabla f(X_t), \dot X_t\rangle dt\, \notag   \\
@@ -622,9 +629,9 @@ Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t\\
 \end{subequations}
 We briefly remark that~\eqref{Eq:StrongDyn} is the Euler-Lagrange equation for the following Lagrangian,
 \begin{equation}\label{Eq:LagStrongConv}
-\mathcal{L}(x, \dot x, t) = \dot \beta_t e^{2\beta_t} \left(\frac{\mu}{2}\left\|\frac{\dot x}{\dot \beta_t}\right\|^2 - f(x)\right),
+\mathcal{L}(x, \dot x, t) = e^{\gamma_t + \beta_t - \alpha_t}  \left(\frac{\mu}{2}\left\|\dot x\right\|^2 - f(x)\right),
 \end{equation}
-and that this Lagrangian can be generalized to include non-Euclidean geometries; however, further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to show an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
+under the same ideal scaling conditions~\eqref{Eq:IdeSca}, where we take $e^{\alpha_t} = \dot \beta_t$. Furthermore, this Lagrangian can be generalized to include non-Euclidean geometries; however, further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to show an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
 $\dot{\tilde{\E}}_t \leq - \dot \beta_t \tilde{\E}_t$
 for 
 \begin{equation}\label{Eq:StrongLyap2}
@@ -745,7 +752,7 @@ for~\eqref{Eq:StrongConv1} and~\eqref{Eq:StrongConv2} respectively.
 \end{theorem}
 The proof of this result is in Appendix \ref{App:StrongConvexity}. In both cases, to ensure the error is nonpositive we must set  $\tau_k\leq 1/\sqrt{\kappa}$, where $\kappa = L/\mu$ is the condition number.  Indeed, setting $\tau_k = 1/\sqrt{\kappa}$ results in the recurrence
 \[
-\tilde E_{k+1} \leq \Big(1-\tfrac{1}{\sqrt{\kappa}}\Big) \tilde  E_k, 
+\tilde E_{k+1} \leq \left(1-\tfrac{1}{\sqrt{\kappa}}\right) \tilde  E_k, 
 \]
 which ensures the standard convergence rate for Nesterov's method applied to strongly convex functions~\cite{Nesterov04}.
 
@@ -886,7 +893,7 @@ Going the other direction, from our Lyapunov analysis we can derive the followin
 \begin{align}
 E_k &\leq E_0\\
 A_{k}(f(x_{k}) - f(x)) + D_h(x, z_{k}) &\leq A_0 (f(x_0) - f(x)) + D_h(x, z_0) \notag\\
-A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + \left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) \notag \\
+A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + A_0\left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) \notag \\
 A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) \label{Eq:EstSeq}
 \end{align}
 \end{subequations}
@@ -935,7 +942,7 @@ then the above discussion shows that $\{\phi_t(x), e^{\beta_t}\}$ is a continuou
 \paragraph{Continuous-time Estimate Sequence}
 For the conditional gradient method, the algorithm simply needed to ensure,
 \begin{align}\label{Eq:InEq4}
-0 &\leq \int_0^t\dot \beta_t e^{\beta_t}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left\{ e^{ \beta_s}  f(X_s)\right\}\,ds.
+0 &\leq \int_0^t\dot \beta_t e^{\beta_t}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left( e^{ \beta_s}  f(X_s)\right)\,ds.
 \end{align}
  We can write~\eqref{Eq:InEq4} as, 
 \begin{align*}
@@ -965,7 +972,8 @@ where the the second to last line follows from completing the square.\footnote{W
  Integrating both sides results in the following inequality, 
 \begin{align*}
 e^{\beta_t} f(X_t) + e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2 &\leq \int_0^t\dot \beta_t e^{\beta_t}[ f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle+ \frac{\mu}{2} \|x - X_s\|^2]\, ds\\
-& \quad+ e^{\beta_0}f(X_0) + e^{\beta_0}\frac{\mu}{2} \|x - X_0\|^2.
+& \quad+ e^{\beta_0}f(X_0) + e^{\beta_0}\frac{\mu}{2} \|x - X_0\|^2.\\
+&\leq \int_0^t\dot \beta_t e^{\beta_t}f(x) \,ds+ e^{\beta_0}f(X_0) + e^{\beta_0}\frac{\mu}{2} \|x - X_0\|^2.
 \end{align*}
 Therefore, 
 \begin{align*}
@@ -1158,7 +1166,7 @@ D^\ast_{k+1, k}  &= -D_h(z_{k+1}, z_k) +  \langle \nabla h(z_{k+1}) - \nabla h(z
 & =\frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2- A_{k+1} \left\langle \nabla f(x_{k+1}), x_{k+1} - x_k\right\rangle - (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x^\ast\rangle \notag\\
 &\quad + (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x_k \rangle \notag\\
 & = \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2- A_{k} \langle \nabla f(x_{k+1}), x_{k+1} - x_k\rangle  - (A_{k+1} -A_{k})\langle \nabla f(x_{k+1}), x_{k+1} - x^\ast\rangle. \notag\\
-&\leq -A_k(f(x_{k+1}) - f(x_k)) - (A_{k+1} -A_{k})(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 \notag\\
+&\leq A_k(f(x_{k}) - f(x_{k+1})) - (A_{k+1} -A_{k})(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 \notag\\
 & = A_k (f(x_k) - f(x^\ast)) - A_{k+1}(f(x_{k+1}) - f(x^\ast)) + \frac{(A_{k+1} -A_{k})^2}{2} \|\nabla f(x_{k+1})\|_\ast^2 \notag
 \end{align}
 \end{subequations}
@@ -1222,13 +1230,13 @@ With this additional weighting term we obtain the following bound,
 X_0 = \arg\min_{x \in \X} \,h(x).
 \end{align*}
 Without loss of generality, we choose $h(X_0) = 0$, so that $h(x) =D_h(x,X_0) \geq 0, \, \forall x \in \X$.
-Using this definition, from~\eqref{Eq:Last} we obtain the following bound:
+Using this definition and rearranging~\eqref{Eq:Last}, we obtain the following bound:
 % \begin{align*}
 %\int_0^t \frac{d}{ds} \left\{ \gamma_s D_h(x^\ast,Z_s) \right\} \, ds \leq  \int_0^t \frac{d}{ds}\left\{\gamma_s D_h(x^\ast, X_0)\right\}  -\int_0^t \frac{d}{ds}\left\{ e^{\beta_s}\left(f(X_s) - f(x^\ast)\right)\right\} ds
 %\end{align*}
 %
 \begin{align*}
- \frac{d}{dt}\left( e^{\beta_t}\left(f(X_t) - f(x^\ast)\right)\right) \,\leq  \frac{d}{dt} \left( -\gamma_t D_h(x^\ast,Z_t) + \gamma_t D_h(x^\ast, Z_0) \right) ,
+ \frac{d}{dt}\left( e^{\beta_t}\left(f(X_t) - f(x^\ast)\right)\right) \,\leq  \frac{d}{dt} \Big( \gamma_t D_h(x^\ast, Z_0) -\gamma_t D_h(x^\ast,Z_t) \Big) ,
 \end{align*}
 from which we can conclude that the following function, 
 \begin{equation}
