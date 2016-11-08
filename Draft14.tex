@@ -1206,7 +1206,7 @@ E_k = A_k(f(x_k) - f(x^\ast)) + \gamma_k (D_h(x^\ast, z_k) -D_h(x^\ast, x_0)).
 \end{equation}
 First however, we analyze the dynamics and show how to obtain the discrete Lyapunov function~\eqref{Eq:Lyap3} for the dual-averaged algorithm.
  
- \paragraph{The Dynamic} We analyze the momentum dynamics~\eqref{Eq:ELBreg} with an additional increasing weighting term ($\dot \gamma_t \geq 0$), which we require to be positive $\gamma_t\geq 0$, $\forall t\in \R$:
+ \paragraph{The dynamics} We analyze the momentum dynamics~\eqref{Eq:ELBreg} with an additional increasing weighting term ($\dot \gamma_t \geq 0$), which we require to be positive $\gamma_t\geq 0$, $\forall t\in \R$:
  \begin{subequations}\label{Eq:DualAvgDyn}
 \begin{align}
 \frac{d}{dt}\Big(\gamma_t \nabla h(Z_t)\Big) &= -\dot \beta_t e^{\beta_t}\nabla f(X_t)\\
@@ -1372,7 +1372,7 @@ E_k \leq E_0 + \frac{L}{2} diam(\X)^2\sum_{i=0}^k \frac{\alpha_{i}^2}{A_{k}}.
 Choosing $A_{k+1} = \frac{k(k+1)}{2}$ gives the coupling term $\tau_k = \frac{2}{k+2}$ and $O(1/k)$ convergence rate. This recovers the bounds shown by Nesterov~\cite{NesterovCond15}. 
 
 
-\paragraph{Proof of Extension}
+\paragraph{Proof of extension}
 Notice that our variational condition~\eqref{Eq:Var2Cond} (taking $y = (1- \tau_k)x_k + \tau_k x^\ast$, where as usual, $\tau_k = \frac{\alpha_k}{A_{k+1}}$, and $\alpha_k = A_{k+1} - A_k$) gives the inequality 
 \begin{align}\label{Eq:In1}
 -\alpha_k\langle \nabla f(x_k), x^\ast - x_k\rangle &\leq - A_{k+1}\langle \nabla^2f(x_k)(x_{k+1} - x_k), x_{k+1} - x_k\rangle + \alpha_k \langle \nabla^2f(x_k)(x_{k+1} - x_k), x^\ast - x_k\rangle\notag\\
@@ -1604,7 +1604,7 @@ Integrating and setting $x = x^\ast$ shows that~\eqref{eq:general-sc-lyap} is a 
 \section{Estimate Sequences}
 \label{App:EstSeq}
 \subsection{The Quasi-Montone Subgradient Method}
-\paragraph{Equivalence in Discrete time}
+\paragraph{Equivalence in discrete time}
 The discrete-time estimate sequence~\eqref{Eq:Est} for quasi-monotone subgradient method can be written:
 \begin{align*}
 \phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} &:= f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}\\
@@ -1648,7 +1648,7 @@ Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$) with a
 \end{subequations}
 Note, given accelerated gradient method and quasi-monotone subgradient method have the same continuous-time limit, the equivalence between the Lyapunov argument and method estimate sequences holds for this setting.
 \subsection{The Conditional Gradient Method}
-\paragraph{Equivalence in Discrete time}
+\paragraph{Equivalence in discrete time}
 The discrete-time estimate sequence~\eqref{Eq:Est} for conditional gradient method can be written:
 \begin{align*}
 \phi_{k+1}(x) - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}} := f(x_{k+1})  - \frac{\tilde \varepsilon_{k+1}}{A_{k+1}}&\overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \left(\phi_k(x) - \frac{\tilde \varepsilon_k}{A_k}\right) + \tau_k f_k(x) \\
