@@ -630,7 +630,7 @@ Z_t &= X_t + \frac{1}{\dot \beta_t} \dot X_t\\
 \end{subequations}
 Note that~\eqref{Eq:StrongDyn} is the Euler-Lagrange equation for the following Lagrangian:
 \begin{equation}\label{Eq:LagStrongConv}
-\mathcal{L}(x, \dot x, t) = e^{\gamma_t + \beta_t - \alpha_t}  \left(\frac{\mu}{2}\left\|\dot x\right\|^2 - f(x)\right),
+\mathcal{L}(x, \dot x, t) = e^{\gamma_t + \beta_t + \alpha_t}  \left(\frac{\mu}{2}e^{-2\alpha_t}\left\|\dot x\right\|^2 - f(x)\right),
 \end{equation}
 under the same ideal scaling conditions~\eqref{Eq:IdeSca}, where we take $e^{\alpha_t} = \dot \beta_t$. Furthermore, this Lagrangian can be generalized to include non-Euclidean geometries; however, further exploration of this Lagrangian is outside the scope of this work. Here, we demonstrate that~\eqref{Eq:StrongLyap} can be used to establish an $O(e^{-\beta_t})$ rate of convergence for~\eqref{Eq:StrongDyn} with a strong convexity assumption. To do so, note that if we can ensure  $\dot \E_t = e^{\beta_t}\dot \beta_t \tilde{\E}_t + e^{\beta_t} \dot{\tilde{\E}}_t \leq 0$, which amounts to ensuring
 $\dot{\tilde{\E}}_t \leq - \dot \beta_t \tilde{\E}_t$
