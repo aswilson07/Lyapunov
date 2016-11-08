@@ -792,11 +792,11 @@ Rearranging gives the desired inequality.
 \end{proof}
 %
 %
-Notice, this definition is not constructive and the definition of an estimation sequence is rather general. Finding sequences which satisfy these conditions is a non-trivial task. The next proposition, formalized by Baes in \cite{Baes09} as an  extension of Nesterov's Lemma 2.2.2 \cite{Nesterov04}, provides guidance for constructing estimate sequences. This construction is used in \cite{Nesterov04, Nesterov05, Nesterov08, Baes09, Nesterov15, NesterovCond15}, and is the only known way so far to construct an estimate sequence.  We will see below that this particular class of estimate sequences can be turned into our Lyapunov functions with a few algebraic manipulations (and vice-versa).
+Notice that this definition is not constructive and the definition of an estimation sequence is rather general. Finding sequences which satisfy these conditions is a non-trivial task. The next proposition, formalized by Baes in \cite{Baes09} as an  extension of Nesterov's Lemma 2.2.2 \cite{Nesterov04}, provides guidance for constructing estimate sequences. This construction is used in \cite{Nesterov04, Nesterov05, Nesterov08, Baes09, Nesterov15, NesterovCond15}, and is the only known way so far to construct an estimate sequence.  We will see below that this particular class of estimate sequences can be turned into our Lyapunov functions with a few algebraic manipulations (and vice-versa).
 \begin{proposition}\cite[2.2]{Baes09}\label{Eq:Prop}
- Let $\phi_0: \X \rightarrow \R$ be a convex function such that $\min_{x \in \X} \phi_0(x)\geq f^\ast$. Suppose also that we have a sequence $\{f_k\}_{k\geq 0}$ of functions form $\X$ to $\R$ that underestimates $f$:
+ Let $\phi_0: \X \rightarrow \R$ be a convex function such that $\min_{x \in \X} \phi_0(x)\geq f^\ast$. Suppose also that we have a sequence $\{f_k\}_{k\geq 0}$ of functions from $\X$ to $\R$ that underestimates $f$:
 \begin{align}\label{Eq:Under}
-f_k(x) \leq f(x) \quad \text{ for all $x \in \X$ and all $k \geq 0$}
+f_k(x) \leq f(x) \quad \text{ for all $x \in \X$ and all $k \geq 0$}.
 \end{align}
 Define recursively $A_0 = 1$ 
 \begin{align}
@@ -805,7 +805,7 @@ Define recursively $A_0 = 1$
 \end{align}
 and 
 \begin{equation}\label{Eq:Est}
-\phi_{k+1}(x) := (1 - \tau_k) \phi_k(x) + \tau_k f_k(x) = \frac{1}{A_{k+1}} \left(A_0\phi_0(x) + \sum_{i=0}^k a_i f_i(x)\right)
+\phi_{k+1}(x) := (1 - \tau_k) \phi_k(x) + \tau_k f_k(x) = \frac{1}{A_{k+1}} \left(A_0\phi_0(x) + \sum_{i=0}^k a_i f_i(x)\right),
 \end{equation}
 for all $k\geq 0$. Then $\left(\{\phi_k\}_{k\geq0}, \{A_k\}_{k\geq0}\right)$ is an estimate sequence.
 \end{proposition}
@@ -816,9 +816,9 @@ for all $k\geq 0$. Then $\left(\{\phi_k\}_{k\geq0}, \{A_k\}_{k\geq0}\right)$ is 
 %\end{equation}
 %as our estimate sequence. 
 
-\noindent From \eqref{Eq:Seq} and \eqref{Eq:Est}, we observe that the following  invariant,
+\noindent From \eqref{Eq:Seq} and \eqref{Eq:Est}, we observe that the following  invariant:
 \begin{align}\label{Eq:EstSeqInv}
-A_{k+1} f(x_{k+1}) &\leq \min_x A_{k+1} \phi_{k+1}(x) = \min_x  \sum_{i=0}^k \alpha_i f_i(x) +  A_0\phi_0(x)
+A_{k+1} f(x_{k+1}) &\leq \min_x A_{k+1} \phi_{k+1}(x) = \min_x  \sum_{i=0}^k \alpha_i f_i(x) +  A_0\phi_0(x),
 \end{align}
 is maintained. In \cite{Nesterov15, NesterovCond15}, this technique was extended to incorporate a error term $\{\tilde \varepsilon_k\}_{k=1}^\infty$,
 \begin{equation}\label{Eq:Est2}
@@ -828,19 +828,19 @@ Rearranging, we have
 \begin{align}\label{Eq:EstSeqInv2}
 A_{k+1} f(x_{k+1}) &\leq \min_x A_{k+1}\phi_{k+1}(x) = \min_x  \sum_{i=0}^k \alpha_i f_i(x) +  A_0\left(\phi_0(x) - \frac{\tilde \varepsilon_0}{A_0}\right) + \tilde \varepsilon_{k+1}.
 \end{align}
-Notice the similar argument to Lemma~\ref{Lem:Nest2.2.1} holds,
+Notice that the analogous argument to that of Lemma~\ref{Lem:Nest2.2.1} holds:
 \begin{subequations}\label{Eq:EstSeqErr}
 \begin{align}
 A_{k+1} f(x_{k+1}) &\leq \sum_{i=0}^k \alpha_i f_i(x^\ast) + A_0 (\phi_0(x^\ast) - \tilde \varepsilon_0)  + \tilde \varepsilon_{k+1}\notag\\
 &\overset{\eqref{Eq:Under}}{\leq} \sum_{i=0}^k \alpha_i f(x^\ast) +  A_0\phi_0(x^\ast)  + \tilde \varepsilon_{k+1}\notag\\
-& \overset{\eqref{Eq:alpha}}{=} A_{k+1} f(x^\ast) +  A_0\phi_0(x^\ast) + \tilde \varepsilon_{k+1}.
+& \overset{\eqref{Eq:alpha}}{=} A_{k+1} f(x^\ast) +  A_0\phi_0(x^\ast) + \tilde \varepsilon_{k+1},
 \end{align}
 \end{subequations}
 where in the second inequality we use the fact that $\varepsilon_k \geq 0,\,\, \forall k$. Rearranging,
 \begin{align*}
 f(x_{k+1}) - f(x^\ast) \leq \frac{1}{A_{k+1}}\left(A_0\phi_0(x^\ast)  + \tilde \varepsilon_{k+1}\right).
 \end{align*}
-Thus, we simply need to choose our sequence $\{A_k\}_{k=1}^\infty$ to ensure $\tilde \varepsilon_{k+1}/ A_{k+1} \rightarrow 0$. The following table illustrates the choices of $\phi_k(x)$ and $\tilde \varepsilon_k$ for the four methods analyzed using estimate sequences: 
+Thus, we simply need to choose our sequence $\{A_k\}_{k=1}^\infty$ to ensure $\tilde \varepsilon_{k+1}/ A_{k+1} \rightarrow 0$. The following table illustrates the choices of $\phi_k(x)$ and $\tilde \varepsilon_k$ for the four methods discussed earlier: 
 \begin{center}
 \begin{table}[h!]
 \begin{tabular}{|c|c|c|c|}%\label{Eq:Table}
@@ -848,7 +848,7 @@ Thus, we simply need to choose our sequence $\{A_k\}_{k=1}^\infty$ to ensure $\t
 Algorithm & $f_i(x)$ &  $\phi_k(x)$ & $\tilde \varepsilon_k$ \\ \hline
 $\substack{\text{Quasi-Monotone} \\\text{Subgradient}\\\text{ Method}}$ & linear & $\frac{1}{A_k}D_h(x, z_k) + f(x_k)$ & $\frac{1}{2}\sum_{i=0}^{k} \frac{(A_i - A_{i-1})^2}{2}\|\nabla f(x_i)\|^2$  \\ \hline
 $\substack{\text{Accelerated } \\\text{Gradient Method} \\\text{ (Weakly Convex)}} $& linear  &$\frac{1}{A_k}D_h(x, z_k) +  f(x_k) $ & 0 \\  \hline
-$\substack{\text{Accelerated  } \\\text{Method Gradient}\\\text{ (Strongly Convex)}} $  & quadratic &$  f(x_k)  + \frac{\mu}{2}\|x - z_k\|^2$ &  0 \\ \hline
+$\substack{\text{Accelerated  } \\\text{Gradient Method}\\\text{ (Strongly Convex)}} $  & quadratic &$  f(x_k)  + \frac{\mu}{2}\|x - z_k\|^2$ &  0 \\ \hline
 $\substack{\text{Conditional Gradient}\\\text{ Method }}$ & linear  & $f(x_k)$ & $ \frac{1}{2}\sum_{i=0}^{k}\frac {(A_{i+1} - A_i)^2}{A_{i+1}} diam(\X)^2$\\
 \hline
 \end{tabular}
@@ -856,11 +856,11 @@ $\substack{\text{Conditional Gradient}\\\text{ Method }}$ & linear  & $f(x_k)$ &
 \label{table:Table}
 \end{table}
 \end{center}
-where linear is defined as 
+Here "linear" is defined as 
 \begin{equation}
 f_i(x) = f(x_i) + \langle \nabla f(x_i), x - x_i\rangle
 \end{equation}
-and quadratic is defined as, 
+and "quadratic" is defined as
 \begin{equation}
 f_i(x) = f(x_i) + \langle \nabla f(x_i), x - x_i\rangle + \frac{\mu}{2}\|x - x_i\|^2.
 \end{equation}
@@ -869,21 +869,21 @@ f_i(x) = f(x_i) + \langle \nabla f(x_i), x - x_i\rangle + \frac{\mu}{2}\|x - x_i
 %If we ignore the the error term $B_k$, the accelerated gradient method and quasi-monotone gradient method maintains the invariant 
 %\subsection{Accelerated Gradient and Quasi-Monotone Subgradient}
 \subsection{Equivalence between Estimate Sequences and Lyapunov Functions}
-Now we demonstrate how these two frameworks are equivalent.  The continuous-time view shows that the errors in both the Lyapunov function and estimate sequences are due to discretization errors. We provide a sketch for how this works for most of these methods, leaving some of the details for Appendix~\ref{App:EstSeq}.
+We now demonstrate an equivalence between these two frameworks.  The continuous-time view shows that the errors in both the Lyapunov function and estimate sequences are due to discretization errors. We provide a sketch for how this works for most of these methods, leaving some of the details for Appendix~\ref{App:EstSeq}.
 \subsubsection{Accelerated Gradient Descent}
-\paragraph{Equivalence in Discrete time}
+\paragraph{Equivalence in discrete time}
 The discrete-time estimate sequence~\eqref{Eq:Est} for accelerated gradient descent can be written:
 \begin{align*}
 \phi_{k+1}(x) &:= f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1}) \\
 & \overset{\eqref{Eq:Est}}{=} (1 - \tau_k) \phi_k(x)  + \tau_k f_k(x) \\
-&\overset{\text{Table}~\ref{table:Table}}{=} \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k)\right) + \frac{\alpha_k}{A_{k+1}} f_k(x)
+&\overset{\text{Table}~\ref{table:Table}}{=} \left(1 - \frac{\alpha_k}{A_{k+1}} \right)\left(f(x_k) +\frac{1}{A_k} D_h(x, z_k)\right) + \frac{\alpha_k}{A_{k+1}} f_k(x).
 \end{align*}
 Multiplying through by $A_{k+1}$, we have
 \begin{align*}
 A_{k+1} \left(f(x_{k+1}) + \frac{1}{A_{k+1}}D_h(x, z_{k+1})\right) &= (A_{k+1} - \alpha_k) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k)\right) + \alpha_k f_k(x)\\
 &= (A_{k+1} - (A_{k+1} - A_k)) \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k)\right) + (A_{k+1} - A_k) f_k(x)\\
 &=  A_k \left(f(x_k) + \frac{1}{A_k}D_h(x, z_k) \right) + (A_{k+1} - A_k) f_k(x)\\
-& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k)+ (A_{k+1} - A_k) f(x)\
+& \overset{\eqref{Eq:Under}}{\leq}  A_k f(x_k) + D_h(x, z_k)+ (A_{k+1} - A_k) f(x).
 \end{align*}
 Rearranging, we obtain the inequality $E_{k+1} \leq E_k$ for our Lyapunov function~\eqref{Eq:DiscLyapFunc1}. 
 %
@@ -895,10 +895,10 @@ Going the other direction, from our Lyapunov analysis we can derive the followin
 E_k &\leq E_0\\
 A_{k}(f(x_{k}) - f(x)) + D_h(x, z_{k}) &\leq A_0 (f(x_0) - f(x)) + D_h(x, z_0) \notag\\
 A_{k}\left(f(x_{k}) - \frac{1}{A_{k}}D_h(x, z_{k})\right) &\leq (A_k -  A_0) f(x) + A_0\left(f(x_0)+ \frac{1}{A_0}  D_h(x^\ast, z_0)\right) \notag \\
-A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x) \label{Eq:EstSeq}
+A_k \phi_k(x) &\leq (A_k -A_0) f(x) + A_0 \phi_0(x). \label{Eq:EstSeq}
 \end{align}
 \end{subequations}
-Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$):
+Rearranging, we obtain the estimate sequence~\eqref{Eq:Ineq1}, with $A_0 = 1$:
 \begin{subequations}
 \begin{align}
 \phi_k(x) &\leq \Big(1 -\frac{A_0}{A_k}\Big) f(x) + \frac{A_0}{A_k} \phi_0(x) \\
@@ -906,7 +906,7 @@ Rearranging, we obtain our estimate sequence~\eqref{Eq:Ineq1} ($A_0 = 1$):
 \end{align}
 \end{subequations}
 % Note, the error term $\tilde \varepsilon_{k=1} \equiv 0$ for the accelerated gradient descent method, allowing us to recover the standard estimate sequence~\eqref{Eq:Ineq1}. 
-\paragraph{Equivalence in Continuous time}
+\paragraph{Equivalence in continuous time}
 From the derivation of the Lyapunov function \eqref{Eq:LyapAnal}, we have the following equality:
 \begin{align*}
 \frac{d}{ds}D_h\left(x, Z_s\right)  &= \dot \beta_t e^{\beta_t}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left( e^{ \beta_s}  f(X_s)\right)\,.
@@ -941,25 +941,25 @@ then the above discussion shows that $\{\phi_t(x), e^{\beta_t}\}$ is a continuou
 %
 \subsubsection{Conditional Gradient Method} 
 \paragraph{Continuous-time Estimate Sequence}
-For the conditional gradient method, the algorithm simply needed to ensure,
+For the conditional gradient method, the following condition needs to hold:
 \begin{align}\label{Eq:InEq4}
 0 &\leq \int_0^t\dot \beta_t e^{\beta_t}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle] -  \frac{d}{ds}\left( e^{ \beta_s}  f(X_s)\right)\,ds.
 \end{align}
- We can write~\eqref{Eq:InEq4} as, 
+ We can write this as
 \begin{align*}
 e^{ \beta_t}  f(X_t) \leq \int_0^t\dot \beta_t e^{\beta_t}  [f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle]ds   + e^{\beta_0} f(X_0),
 \end{align*}
-and from the derivation of the Lypaynov function, we can conclude
+and, from the derivation of the Lypaynov function, we conclude
 \begin{align*}
 e^{\beta_t} f(X_t) \leq  (e^{\beta_t} - e^{\beta_0}) f(x) + e^{\beta_0}f(X_0).
 \end{align*}
-Thus, $\{f(X_t),e^{\beta_t}\}$ is a continuous-time estimate sequence for this method. In Appendix~\ref{App:EstSeq}, we show the equivalence in discrete time between estimate sequences and our Lyapunov framework in this setting.
+Thus, $\{f(X_t),e^{\beta_t}\}$ is a continuous-time estimate sequence for this method. In Appendix~\ref{App:EstSeq}, we show the corresponding equivalence in discrete time.
 %
 
 %
 %
 \subsection{Accelerated Gradient Strong Convexity}
-Notice that for the dynamic~\eqref{Eq:StrongDyn}, the following holds:
+Notice that for the dynamics in~\eqref{Eq:StrongDyn}, the following holds:
 \begin{align}\label{Eq:Strong}
  \frac{d}{dt}\left(e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2\right)\, &=  \dot \beta_t e^{\beta_t} \frac{\mu}{2} \|x - Z_t\|^2 - e^{\beta_t} \mu\langle \dot Z_t, x - Z_t\rangle \notag\\
  &=  \dot \beta_t e^{\beta_t} \frac{\mu}{2} \|x - Z_t\|^2 + e^{\beta_t} \mu\langle \dot X_t, x - Z_t\rangle  + \dot  \beta_t e^{\beta_t} \left\langle \nabla f(X_t), x - X_t - \frac{1}{\dot \beta_t} \dot X_t\right\rangle \notag \\
@@ -969,7 +969,7 @@ Notice that for the dynamic~\eqref{Eq:StrongDyn}, the following holds:
  %&\quad  - \left(\frac{1}{\dot \beta_s} - \dot \beta_s\right)e^{\beta_s} \frac{\mu}{2}\| \dot X_s\|^2\\
  &=   \dot \beta_t e^{\beta_t}\left( f(X_t) + \langle \nabla f(X_t), x - X_t \rangle+ \frac{\mu}{2} \|x - X_t\|^2\right)   -  \frac{d}{dt}\left( e^{ \beta_t}  f(X_t)\right),
 \end{align}
-where the the second to last line follows from completing the square.\footnote{We remark also that this derivation also shows how to derive the Lyapunov function~\eqref{Eq:StrongLyap} from the dynamic~\eqref{Eq:StrongDyn}.} %and choosing $\dot \beta_t^2 \leq 1$\footnote{The residual $e^{\beta_t}\frac{\mu \dot \beta_t}{2}\left(\frac{1}{\dot \beta_t^2} - 1\right)$ is the same as the residual term~\eqref{Eq:StrongResid} in the discrete-time setting (where $\dot \beta_t$ is discretized into the sequence $\{\tau_k\}_{k=1}^\infty$), except that it is scaled by an additional $e^{\beta_t}$. We dropped the exponential scaling in the discrete-time energy functional for simplicity.}
+where the the second to last line follows from completing the square.\footnote{We remark also that this derivation also shows how to derive the Lyapunov function~\eqref{Eq:StrongLyap} from the dynamics in~\eqref{Eq:StrongDyn}.} %and choosing $\dot \beta_t^2 \leq 1$\footnote{The residual $e^{\beta_t}\frac{\mu \dot \beta_t}{2}\left(\frac{1}{\dot \beta_t^2} - 1\right)$ is the same as the residual term~\eqref{Eq:StrongResid} in the discrete-time setting (where $\dot \beta_t$ is discretized into the sequence $\{\tau_k\}_{k=1}^\infty$), except that it is scaled by an additional $e^{\beta_t}$. We dropped the exponential scaling in the discrete-time energy functional for simplicity.}
  Integrating both sides results in the following inequality, 
 \begin{align*}
 e^{\beta_t} f(X_t) + e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2 &\leq \int_0^t\dot \beta_t e^{\beta_t}[ f(X_s)+ \langle \nabla f(X_s), x - X_s \rangle+ \frac{\mu}{2} \|x - X_s\|^2]\, ds\\
@@ -978,28 +978,26 @@ e^{\beta_t} f(X_t) + e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2 &\leq \int_0^t\dot \
 \end{align*}
 Therefore, 
 \begin{align*}
-e^{\beta_t} f(X_t) + e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2 \leq (e^{\beta_t} - e^{\beta_0}) f(x) + e^{\beta_0}  f(X_0) + e^{\beta_0} \frac{\mu}{2} \|x - Z_0\|^2.
+e^{\beta_t} f(X_t) + e^{\beta_t}\frac{\mu}{2} \|x - Z_t\|^2 \leq (e^{\beta_t} - e^{\beta_0}) f(x) + e^{\beta_0}  f(X_0) + e^{\beta_0} \frac{\mu}{2} \|x - Z_0\|^2,
 \end{align*}
 and hence \begin{align*}
-\{f(X_t) + \frac{\mu}{2} \|x - Z_t\|^2, e^{\beta_t}\},
+\{f(X_t) + \frac{\mu}{2} \|x - Z_t\|^2, e^{\beta_t}\}
 \end{align*}
 is a continuous-time estimate sequence. In Appendix~\ref{App:EstSeq}, we show the equivalence in discrete time between estimate sequences and our Lyapunov framework in this setting.
 
 \section{Discussion}
-In this paper, we have presented a Lyapunov framework for analyzing several method used in optimization. We showed that a single family of Lyapunov functions can be used to verify the convergence rates of a variety of momentum methods, making Polyak's original physical intuition rigorous.  We demonstrated that convergence rates could be understood as the consequence of discretization errors incurred when passing from continuous to discrete time.  Consistently, implicit discretization schemes result in harder subproblems for algorithms, but provide an almost exact approximation of the continuous-time dynamics.   On the other hand, when explicit discretization schemes are used, the algorithms incur discretization error, and require assumptions about the problem instance to guarantee good convergence properities.
+In this paper, we have presented a Lyapunov framework for analyzing a variety of gradient-based methods for optimization. We showed that a single family of Lyapunov functions can be used to verify the convergence rates of a large collection of momentum methods, making Polyak's original physical intuition rigorous.  We demonstrated that convergence rates could be understood as the consequence of discretization errors incurred when passing from continuous to discrete time.  Consistently, implicit discretization schemes result in harder subproblems for algorithms, but provide an almost exact approximation of the continuous-time dynamics.   On the other hand, when explicit discretization schemes are used, the algorithms incur discretization error, and require assumptions about the problem instance to guarantee good convergence properities.
 
-We close with a discussion of some possible directions for future work.
+We close with a discussion of some possible directions for future work.  First, note that requiring that the continuous-time Lyapunov function remain a Lyapunov function in discrete time places significant constraints on which ODE solvers can be used.  In this paper, we show that we can derive new algorithms using a restricted set of ODE techniques (several of which are nonstandard) but it remains to be seen if other methods can be applied in this setting.  Techniques such as the midpoint method and Runge Kutta provide more accurate solutions of ODEs than Euler methods~\cite{Butcher20001}.  Is it possible to analyze such techniques as optimization methods?  We expect that these methods do not achieve better asymptotic convergence rates, but may inherit additional favorable properties.  Determining the advantages of such schemes could provide more robust optimization techniques in certain scenarios.
 
-Requiring that the continuous-time Lyapunov function remain a Lyapunov function in discrete time places significant constraints on which ODE solvers can be used.  In this paper, we show that we can derive new algorithms using a restricted set of ODE techniques (several of which are nonstandard) but it remains to be seen if other methods can be analyzed.  Techniques such as the midpoint method and Runge Kutta provide more accurate solutions of ODEs than Euler methods~\cite{Butcher20001}.  Is it possible to analyze such techniques as optimization methods?  We expect that these methods do not achieve better asymptotic convergence rates, but may inherit additional favorable properties.  Determining the advantages of such schemes could provide more robust optimization techniques in certain scenarios.
-
-Several restart schemes have been suggested for the strongly convex setting based on the momentum dynamics~\eqref{Eq:ELBreg}. In many settings,  while the Lipschitz parameter can be estimated using backtracking line-search, the strong convexity parameter is often hard---if not impossible---to estimate~\cite{SuBoydCandes15}.  Therefore, many~\cite{ODonoghue15,SuBoydCandes15,Krichene15} have developed heuristics to empirically speed up the convergence rate of the ODE (or discrete-time algorithm), based on model misspecification. In particular, both Su, Boyd, and Candes~\cite{SuBoydCandes15} and Krichene, Bayen and Bartlett~\cite{Krichene15} develop restart schemes designed for the strongly convex setting based on the momentum dynamics~\eqref{Eq:ELBreg}. Our analysis suggests that restart schemes based on the dynamics~\eqref{Eq:StrongDyn} might lead to better results. 
+Several restart schemes have been suggested for the strongly convex setting based on the momentum dynamics~\eqref{Eq:ELBreg}. In many settings,  while the Lipschitz parameter can be estimated using backtracking line-search, the strong convexity parameter is often hard---if not impossible---to estimate~\cite{SuBoydCandes15}.  Therefore, many authors~\cite{ODonoghue15,SuBoydCandes15,Krichene15} have developed heuristics to empirically speed up the convergence rate of the ODE (or discrete-time algorithm), based on model misspecification. In particular, both Su, Boyd, and Candes~\cite{SuBoydCandes15} and Krichene, Bayen and Bartlett~\cite{Krichene15} develop restart schemes designed for the strongly convex setting based on the momentum dynamics~\eqref{Eq:ELBreg}. Our analysis suggests that restart schemes based on the dynamics~\eqref{Eq:StrongDyn} might lead to better results. 
 
 As mentioned in Section~\ref{Sec:StrongConv}, the dynamics~\eqref{Eq:StrongDyn} developed for the setting when $f$ is strongly convex can be viewed variationally, as the Euler-Lagrange equation for a different Lagrangian functional. %A quick check shows that it is the Euler-Lagrange equation for the following Lagrangian
 %\begin{equation}\label{Eq:LagStrongConv}
 %\mathcal{L}(x, \dot x, t) = \dot \beta_t e^{2\beta_t} \left(\frac{\mu}{2}\left\|\frac{\dot x}{\dot \beta_t}\right\|^2 - f(x)\right)
 %\end{equation}
 While outside the scope of this paper, the Lagrangian~\eqref{Eq:LagStrongConv} can be generalized to a non-Euclidean setting. In follow-up work, we plan to study this second Lagrangian family and its properties further. %A natural question is whether the 
-Other extensions of the Lyapunov analysis left for follow-up work are to nondeterministic settings such as accelerated coordinate ascent and stochastic gradient descent. A natural question we hope to answer is whether a dynamical perspective can be developed in these settings. 
+Other extensions of the Lyapunov analysis left for followup work are to nondeterministic settings such as accelerated coordinate ascent and stochastic gradient descent. A natural question we hope to answer is whether a dynamical perspective can be fruitfully applied in these settings. 
 %the Lyapunov analysis introduced in this paper can be extended to other settings, such as accelerated coordinate ascent~\cite{Zeyuan16} and stochastic gradient descent, and whether a dynamical perspective can be developed in these settings.  %. Preliminary results suggests that this extension is indeed possible. %In followup work, we will present these extensions. 
 %Of particular interest will be understanding the dynamical perspective these extensions potentially provide when randomness is introduced to~\eqref{Eq:EL} and~\eqref{Eq:StrongDyn}. %Furthermore, recently there has been several connections made between optimization and sampling schemes~\cite{ }
 
