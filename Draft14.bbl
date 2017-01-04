@@ -21,34 +21,31 @@ S{\'{e}}bastien Bubeck, Yin~Tat Lee, and Mohit Singh.
 J.C. Butcher.
 \newblock Numerical methods for ordinary differential equations in the 20th
   century.
-\newblock {\em Journal of Computational and Applied Mathematics}, 125(1--2):1
-  -- 29, 2000.
-\newblock Numerical Analysis 2000. Vol. VI: Ordinary Differential Equations and
-  Integral Equations.
+\newblock {\em Journal of Computational and Applied Mathematics},
+  125(1--2):1--29, 2000.
 
 \bibitem{Chebyshev}
 P.~L Chebyshev.
 \newblock Th{\'{e}}orie des m{\'{e}}canismes connus sous le nom de
   parall{\'{e}}logrammes.
-\newblock {\em M{\'{e}}moires pr{\'{e}}sent{\'{e}}s {\'{a}} l'Acad{\'{e}}mie
+\newblock {\em M{\'{e}}moires Pr{\'{e}}sent{\'{e}}s {\'{a}} l'Acad{\'{e}}mie
   Imp{\'{e}}riale des Sciences de St-P{\'{e}}tersbourg}, VII(539-568), 1854.
 
 \bibitem{ChenTeboulle93}
 Gong Chen and Marc Teboulle.
 \newblock Convergence analysis of a proximal-like minimization algorithm using
-  bregman functions.
-\newblock {\em SIAM Journal on Optimization}, 3(3):538--543, 1993.
+  {B}regman functions.
+\newblock {\em SIAM Journal of Optimization}, 3(3):538--543, 1993.
 
 \bibitem{DroriTeboulle13}
-Y.~Drori and M.~Teboulle.
+Yoel Drori and Marc Teboulle.
 \newblock Performance of first-order methods for smooth convex minimization: a
   novel approach.
-\newblock {\em Mathematical Programming}, pages 1--32, 2013.
+\newblock {\em Math. Program.}, 145(1-2):451--482, 2014.
 
 \bibitem{Fazel}
 Dmitry Drusvyatskiy, Maryam Fazel, and Scott Roy.
-\newblock An optimal first order method based on optimal quadratic averaging an
-  optimal first order method based on optimal quadratic averaging.
+\newblock An optimal first order method based on optimal quadratic averaging.
 \newblock {\em ArXiv preprint arXiv:1604.06543}, 2016.
 
 \bibitem{FrankWolfe}
@@ -58,8 +55,14 @@ M~Frank and P.~Wolfe.
 
 \bibitem{Freund14}
 Robert~M. Freund and Paul Grigas.
-\newblock New analysis and results for the franke-wolfe method.
+\newblock New analysis and results for the {F}rank-{W}olfe method.
 \newblock Arxiv preprint arXiv, 2014.
+
+\bibitem{Karimi16}
+Sahar Karimi and Stephen Vavasis.
+\newblock A unified convergence bound for conjugate gradient and accelerated
+  gradient.
+\newblock {\em ArXiv e-prints ar{X}iv:1605.00320v1}, May 2016.
 
 \bibitem{Kim2016}
 Donghwan Kim and Jeffrey~A. Fessler.
@@ -113,13 +116,14 @@ Yurii Nesterov.
 Yurii Nesterov.
 \newblock Complexity bounds for primal-dual methods minimizing the model of
   objective function.
-\newblock Technical report, Universit{\'e} catholique de Louvain, Center for
+\newblock Technical report, Universit{\'e} Catholique de Louvain, Center for
   Operations Research and Econometrics (CORE), 2015.
 
 \bibitem{Nesterov15}
 Yurii Nesterov and Vladimir Shikhman.
 \newblock Quasi-monotone subgradient methods for nonsmooth convex minimization.
-\newblock {\em J. Optimization Theory and Applications}, 165(3):917--940, 2015.
+\newblock {\em Journal of Optimization Theory and Applications},
+  165(3):917--940, 2015.
 
 \bibitem{ODonoghue15}
 Brendan O'Donoghue and Emmanuel Cand\`{e}s.
@@ -135,7 +139,7 @@ Boris~T. Polyak.
 \bibitem{Rumelhardt}
 David~E. Rumelhart, Geoffrey~E. Hinton, and Ronald~J. Williams.
 \newblock Learning representations by back-propagating errors.
-\newblock {\em Nature}, 323(6088):533--536, 10 1986.
+\newblock {\em Nature}, 323(6088):533--536, 1986.
 
 \bibitem{SuBoydCandes14}
 Weijie Su, Stephen Boyd, and Emmanuel~J. Cand\`{e}s.
@@ -146,8 +150,8 @@ Weijie Su, Stephen Boyd, and Emmanuel~J. Cand\`{e}s.
 
 \bibitem{SuBoydCandes15}
 Weijie {Su}, Stephen {Boyd}, and Emmanuel~J. {Cand\`{e}s}.
-\newblock {A Differential Equation for Modeling Nesterov's Accelerated Gradient
-  Method: Theory and Insights}.
+\newblock A differential equation for modeling {N}esterov's accelerated
+  gradient method: Theory and insights.
 \newblock {\em ArXiv e-prints ar{X}iv:1503.01243}, 2015.
 
 \bibitem{Taylor2016}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  8 NOV 2016 07:02
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  31 DEC 2016 15:30
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -711,21 +711,8 @@ File: pgflibraryarrows.code.tex 2013/09/23 v3.0.0 (rcs-revision 1.16)
 \c@example=\count134
 \c@theorem=\count135
 \c@observation=\count136
- (/usr/local/texlive/2015/texmf-dist/tex/latex/floatrow/floatrow.sty
-Package: floatrow 2008/08/02 v0.3b floatrow: float package extension
 
-
-! Package floatrow Error: Do not use float package with floatrow.
-(floatrow)                The latter will be skipped.
-
-See the floatrow package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.33   \@namedef{opt@floatrow.sty}{}\endinput}
-                                              
-? 
-) (/usr/local/texlive/2015/texmf-dist/tex/latex/blindtext/blindtext.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/blindtext/blindtext.sty
 Package: blindtext 2012/01/06 V2.0 blindtext-Package
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/tools/xspace.sty
@@ -875,20 +862,20 @@ LaTeX Warning: Label `Eq:EstSeq' multiply defined.
 )
 \openout1 = `Draft14.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
  ABD: EveryShipout initializing macros
 (/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -908,7 +895,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box66
-Package hyperref Info: Link coloring ON on input line 74.
+Package hyperref Info: Link coloring ON on input line 73.
  (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
@@ -917,25 +904,25 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count171
 )
-LaTeX Info: Redefining \ref on input line 74.
-LaTeX Info: Redefining \pageref on input line 74.
-LaTeX Info: Redefining \nameref on input line 74.
+LaTeX Info: Redefining \ref on input line 73.
+LaTeX Info: Redefining \pageref on input line 73.
+LaTeX Info: Redefining \nameref on input line 73.
 
 (./Draft14.out) (./Draft14.out)
 \@outlinefile=\write4
 \openout4 = `Draft14.out'.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 81.
+LaTeX Font Info:    Try loading font information for U+msa on input line 82.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 81.
+LaTeX Font Info:    Try loading font information for U+msb on input line 82.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+rsfs on input line 81.
+LaTeX Font Info:    Try loading font information for U+rsfs on input line 82.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/jknapltx/ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
@@ -943,165 +930,151 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
  [4]
-[5]
-
-! LaTeX Error: \begin{align} on input line 226 ended by \end{align*}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.230  \end{align*}
-                   
-? 
-[6] [7]
+[5] [6] [7]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 299.
+put line 282.
  [8]
-Overfull \hbox (13.46329pt too wide) in paragraph at lines 356--356
+Overfull \hbox (13.46329pt too wide) in paragraph at lines 327--327
 [] 
  []
 
 [9] [10] [11] [12] [13] [14] [15] [16]
-Overfull \hbox (25.12206pt too wide) in paragraph at lines 711--711
+Overfull \hbox (25.12206pt too wide) in paragraph at lines 676--676
 [] 
  []
 
-[17] [18] [19]
-Overfull \hbox (32.2502pt too wide) in paragraph at lines 846--855
+[17] [18] [19] [20]
+Overfull \hbox (33.54697pt too wide) in paragraph at lines 805--814
 [][] 
  []
 
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[20]
-Overfull \hbox (41.08197pt too wide) in paragraph at lines 887--887
+[21]
+Overfull \hbox (41.08197pt too wide) in paragraph at lines 843--843
 [] 
  []
 
-[21] [22] [23] (./Draft14.bbl [24] [25]) [26] [27
-
-] [28]
-Overfull \hbox (31.26837pt too wide) in paragraph at lines 1170--1170
+[22] [23] [24] (./Draft14.bbl [25] [26]) [27]
+Overfull \hbox (31.26837pt too wide) in paragraph at lines 1084--1084
 [] 
  []
 
-[29] [30] [31]
-Overfull \hbox (25.65717pt too wide) in paragraph at lines 1281--1281
+[28
+
+] [29]
+Overfull \hbox (25.65717pt too wide) in paragraph at lines 1185--1185
 [] 
  []
 
-[32]
-Overfull \hbox (12.8775pt too wide) in paragraph at lines 1315--1315
+[30]
+Overfull \hbox (12.8775pt too wide) in paragraph at lines 1219--1219
 [] 
  []
 
 
-Overfull \hbox (18.58214pt too wide) in paragraph at lines 1340--1340
+Overfull \hbox (18.58214pt too wide) in paragraph at lines 1241--1241
 [] 
  []
 
-[33] [34]
-Overfull \hbox (9.87473pt too wide) in paragraph at lines 1380--1380
+[31] [32]
+Overfull \hbox (9.87473pt too wide) in paragraph at lines 1281--1281
+[] 
+ []
+
+[33]
+Overfull \hbox (2.67993pt too wide) in paragraph at lines 1366--1366
+[] 
+ []
+
+[34]
+Overfull \hbox (46.04878pt too wide) in paragraph at lines 1397--1397
 [] 
  []
 
 [35]
-Overfull \hbox (6.93pt too wide) in paragraph at lines 1469--1469
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\hbox' on input line 1412.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\mathsurround' on input line 1412.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\z@' on input line 1412.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\unskip' on input line 1412.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\@@italiccorr' on input line 1412.
+
+
+Overfull \hbox (50.43042pt too wide) in paragraph at lines 1435--1435
 [] 
  []
 
-[36]
-Overfull \hbox (36.92377pt too wide) in paragraph at lines 1500--1500
+[36] [37]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\hbox' on input line 1448.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\mathsurround' on input line 1448.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\z@' on input line 1448.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\unskip' on input line 1448.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\@@italiccorr' on input line 1448.
+
+
+Overfull \hbox (38.2805pt too wide) in paragraph at lines 1472--1472
 [] 
  []
 
-[37]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\hbox' on input line 1515.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\mathsurround' on input line 1515.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\z@' on input line 1515.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\unskip' on input line 1515.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\@@italiccorr' on input line 1515.
-
-
-Overfull \hbox (50.43042pt too wide) in paragraph at lines 1546--1546
+[38]
+Overfull \hbox (17.9873pt too wide) in paragraph at lines 1501--1501
 [] 
  []
 
-[38] [39]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\hbox' on input line 1559.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\mathsurround' on input line 1559.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\z@' on input line 1559.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\unskip' on input line 1559.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\@@italiccorr' on input line 1559.
-
-
-Overfull \hbox (38.2805pt too wide) in paragraph at lines 1591--1591
+[39] [40]
+Overfull \hbox (55.34018pt too wide) in paragraph at lines 1583--1583
 [] 
  []
 
-[40]
-Overfull \hbox (17.9873pt too wide) in paragraph at lines 1620--1620
-[] 
- []
-
-[41] [42]
-Overfull \hbox (55.34018pt too wide) in paragraph at lines 1708--1708
-[] 
- []
-
-[43]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1723.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1723.
+[41]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1598.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1598.
  (./Draft14.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1723.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1723.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1598.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1598.
 
 Package rerunfilecheck Info: File `Draft14.out' has not changed.
-(rerunfilecheck)             Checksum: 17E4B91B81D68D18609A42BD0E55BA96;2986.
+(rerunfilecheck)             Checksum: E7B0E4A1FA7755C939A6FDC1DD2C9B3E;2858.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1723.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1598.
  ) 
 Here is how much of TeX's memory you used:
- 21243 strings out of 493089
- 413501 string characters out of 6134842
- 497436 words of memory out of 5000000
- 23961 multiletter control sequences out of 15000+600000
+ 21145 strings out of 493089
+ 411379 string characters out of 6134842
+ 496998 words of memory out of 5000000
+ 23881 multiletter control sequences out of 15000+600000
  17784 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,19n,66p,1203b,725s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,19n,66p,1203b,464s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -1119,16 +1092,15 @@ ive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive
 texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2015/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2015/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2015/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2015/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2015/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/texmf-dist/fon
-ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Draft14.pdf (43 pages, 444655 bytes).
+dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2015/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/texmf-dist/f
+onts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on Draft14.pdf (41 pages, 427880 bytes).
 PDF statistics:
- 1392 PDF objects out of 1440 (max. 8388607)
- 1015 compressed objects within 11 object streams
- 347 named destinations out of 1000 (max. 500000)
- 333 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1340 PDF objects out of 1440 (max. 8388607)
+ 974 compressed objects within 10 object streams
+ 333 named destinations out of 1000 (max. 500000)
+ 317 words of extra memory for PDF output out of 10000 (max. 10000000)
 
